@@ -13,6 +13,7 @@ module.exports = {
     TEXT_INPUT:'#a6a6a4',
     HEADER_COLOR: '#ffe9d6',
     MENU_COLOR: '#EF6A43',
-    STATUS_MENU:'#ec4646'
+    STATUS_MENU:'#ec4646',
+    PRIMARY_COLOR: '#E1223C'
   },
 };

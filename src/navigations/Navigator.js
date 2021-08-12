@@ -8,8 +8,9 @@ import FlashcardScreen from '../screens/flashcard';
 import FlashcardListScreen from '../screens/flashcardlist';
 import ProfileScreen from '../screens/profile';
 
-import MIcon from 'react-native-vector-icons/MaterialIcons';
-import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FeatherIcons from 'react-native-vector-icons/Feather';
+import AntIcons from 'react-native-vector-icons/AntDesign';
 
 
 import {
@@ -114,8 +115,8 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_HOME_STACK_PATH]: {
       screen: HomeStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ tintColor }) => {
-          return <MIcon name="home" size={24} color={tintColor} />;
+        tabBarIcon: ({ focused,tintColor }) => {
+          return <AntIcons name="search1" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
       })
@@ -123,8 +124,8 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_FLASHCARD_STACK_PATH]: {
       screen: FlashcardsStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ tintColor }) => {
-          return <MIcon name="search" size={24} color={tintColor} />;
+        tabBarIcon: ({ focused,tintColor }) => {
+          return <FeatherIcons name="bookmark" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
       })
@@ -132,8 +133,8 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_FLASHCARD_LIST_STACK_PATH]: {
       screen: FlashcardlistStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ tintColor }) => {
-          return <MCIcon name="pot-steam" size={24} color={tintColor} />;
+        tabBarIcon: ({ focused,tintColor }) => {
+          return <AntIcons name="edit" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
       })
@@ -141,8 +142,8 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_PROFILE_STACK_PATH]: {
       screen: ProfileStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ tintColor }) => {
-          return <MCIcon name="dots-horizontal" size={24} color={tintColor} />;
+        tabBarIcon: ({ focused,tintColor }) => {
+          return <MIcon name="account-outline" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
       })
@@ -151,7 +152,7 @@ export const MainAppNavigator = createBottomTabNavigator(
   },
   {
     tabBarOptions: {
-      showLabel: true,
+      showLabel: false,
       activeTintColor: Constants.appColors.BLUE,
       inactiveTintColor: Constants.appColors.GRAY,
       tabBarVisible: true

@@ -18,7 +18,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Provider store={store}>
-        <StatusBar barStyle="light-content" hidden={true} backgroundColor='#E1223C' />
+        <StatusBar barStyle="light-content" hidden={false} backgroundColor='#E1223C' />
         <AppContainer
           ref={navigatorRef => {
             NavigationService.setTopLevelNavigator(navigatorRef);

@@ -35,3 +35,29 @@ module.exports = {
   }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+      {/* <View style={{flex:1}}>
+      {
+        !searchText ?
+          <View style={{ flex: 1 }}>
+            <Text style={{ marginVertical: 16, fontWeight: 'bold' }}>RECENT SEARCH</Text>
+            <View style={{ height: 1, borderWidth: .5 }} />
+            {
+              reacientlySearchedData.length ? <View>{renderRecentSearchData()}</View> : <Text style={{ paddingTop: 16 }}>{reacientlySearchedStatus}</Text>
+            }
+          </View>
+          :
+          <>
+          </>
+      }
+      </View> */}

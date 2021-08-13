@@ -11,3 +11,7 @@ export const NAVIGATION_FLASHCARD_LIST_SCREEN_PATH = 'FlashcardListScreen';
 
 export const NAVIGATION_PROFILE_STACK_PATH = 'Profile';
 export const NAVIGATION_PROFILE_SCREEN_PATH = 'ProfileScreen';
+
+
+export const NAVIGATION_SIGNUP_SCREEN_PATH = 'SignupScreen';
+export const NAVIGATION_LOGIN_SCREEN_PATH = 'LoginScreen';

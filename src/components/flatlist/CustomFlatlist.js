@@ -4,9 +4,6 @@ import CustomFlatlistItem from './CustomFlatlistItem';
 import Constants from '../../utills/Constants';
 import Size from '../../utills/Size';
 import AntIcon from 'react-native-vector-icons/Fontisto';
-import Icon2 from 'react-native-vector-icons/AntDesign';
-// import Filter from '_utils/Filter';
-// import {sortMenuData,cuisineMenuData} from '_utils/localData';
 
 const CustomFlatlist = (props) => {
 
@@ -46,7 +43,6 @@ const CustomFlatlist = (props) => {
         eachData={dataSet.item}
         onPress={() => props.onPress(dataSet.item)}
         type='product_item'
-        //onImagePress={()=>props.onImagePress(dataSet.item)}
       />
     );
   };

@@ -18,7 +18,7 @@ android:orientation="vertical">
 <TextView
         android:layout_width="match_parent" 
         android:layout_height="match_parent" 
-        android:text="Korean Dictionary"
+        android:text="한국어 사전\nKorean Dictionary"
         android:textSize="18dp"
         android:gravity="center"
         android:textStyle="bold"

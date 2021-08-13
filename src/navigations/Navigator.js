@@ -2,15 +2,19 @@ import React, { Component } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Constants from '../utills/Constants'
-import HomeScreen from '../screens/home';
-import FlashcardScreen from '../screens/flashcard';
-import FlashcardListScreen from '../screens/flashcardlist';
-import ProfileScreen from '../screens/profile';
+import Constants from '../utills/Constants';
 
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import AntIcons from 'react-native-vector-icons/AntDesign';
+
+import HomeScreen from '../screens/home';
+import FlashcardScreen from '../screens/flashcard';
+import FlashcardListScreen from '../screens/flashcardlist';
+import ProfileScreen from '../screens/profile';
+import LoginScreen from '../screens/login';
+import SignupScreen from '../screens/signup';
+
 
 
 import {
@@ -27,6 +31,10 @@ import {
 
    NAVIGATION_FLASHCARD_STACK_PATH,
    NAVIGATION_FLASHCARD_SCREEN_PATH,
+
+   NAVIGATION_SIGNUP_SCREEN_PATH,
+   NAVIGATION_LOGIN_SCREEN_PATH,
+
 
 } from './Routes';
 
@@ -93,6 +101,8 @@ import {
  const ProfileStack = createStackNavigator(
   {
     [NAVIGATION_PROFILE_SCREEN_PATH]: ProfileScreen,
+    [NAVIGATION_LOGIN_SCREEN_PATH]: LoginScreen,
+    [NAVIGATION_SIGNUP_SCREEN_PATH]:SignupScreen,
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,

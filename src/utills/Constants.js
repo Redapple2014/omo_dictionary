@@ -2,7 +2,7 @@ module.exports = {
   appColors: {
     GRAY: 'gray',
     LIGHTGRAY: 'lightgray',
-    DARKGRAY: 'darkgray',
+    DARKGRAY: '#707070',
     WHITE: 'white',
     TRANSPARENT: 'transparent',
     BLACK: 'black',
@@ -16,4 +16,6 @@ module.exports = {
     STATUS_MENU:'#ec4646',
     PRIMARY_COLOR: '#E1223C'
   },
+  createAccountTitleText:'Create an Account',
+  haveAccountTitleText:'I Already Have an Account',
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Constants from '../utills/Constants';
+import Constants, { forgetPasswordText } from '../utills/Constants';
 
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeatherIcons from 'react-native-vector-icons/Feather';
@@ -14,6 +14,7 @@ import FlashcardListScreen from '../screens/flashcardlist';
 import ProfileScreen from '../screens/profile';
 import LoginScreen from '../screens/login';
 import SignupScreen from '../screens/signup';
+import ForgetPasswordScreen from '../screens/forgetpassword';
 
 
 
@@ -34,7 +35,7 @@ import {
 
    NAVIGATION_SIGNUP_SCREEN_PATH,
    NAVIGATION_LOGIN_SCREEN_PATH,
-
+   NAVIGATION_FORGET_PASSWORD_SCREEN_PATH,
 
 } from './Routes';
 
@@ -103,6 +104,7 @@ import {
     [NAVIGATION_PROFILE_SCREEN_PATH]: ProfileScreen,
     [NAVIGATION_LOGIN_SCREEN_PATH]: LoginScreen,
     [NAVIGATION_SIGNUP_SCREEN_PATH]:SignupScreen,
+    [NAVIGATION_FORGET_PASSWORD_SCREEN_PATH]:ForgetPasswordScreen,
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,

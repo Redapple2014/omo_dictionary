@@ -9,7 +9,7 @@ module.exports = {
     RED: 'red',
     GREEN: 'green',
     BLUE: 'blue',
-    LOG_IN_BUTTON_COLOR:'#EF6A43',
+    BUTTON_COLOR:'#02BC29',
     TEXT_INPUT:'#a6a6a4',
     HEADER_COLOR: '#ffe9d6',
     MENU_COLOR: '#EF6A43',
@@ -18,4 +18,8 @@ module.exports = {
   },
   createAccountTitleText:'Create an Account',
   haveAccountTitleText:'I Already Have an Account',
+  loginButtonText:'Log In',
+  forgetPasswordText:'Forget Password',
+  createYourAccountText:'Create Your Account',
+
 };

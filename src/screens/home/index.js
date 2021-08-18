@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Image, StatusBar, Keyboard, FlatList, Text, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, Platform, Image, StatusBar, Keyboard, FlatList, Text, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
 const HomeScreen = () => {
 
@@ -17,7 +18,7 @@ const HomeScreen = () => {
 
 
   //delete recently searched data
-  const removeItemValue  = async function (key) {
+  const removeItemValue = async function (key) {
     try {
       await AsyncStorage.removeItem(key);
       setReacientlySearchedData([])
@@ -110,8 +111,10 @@ const HomeScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar barStyle="light-content" hidden={false} backgroundColor='#E1223C' />
-      <View style={{ backgroundColor: 'red', height: isKeyboardVisible || searchText.length > 0 ? 100 : Sizes.WINDOW_HEIGHT * 0.38, backgroundColor: Constants.appColors.PRIMARY_COLOR, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+        <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+      </View>
+      <View style={{ backgroundColor: 'red', height: isKeyboardVisible || searchText.length > 0 ? Sizes.WINDOW_HEIGHT * .1 : Sizes.WINDOW_HEIGHT * 0.38, backgroundColor: Constants.appColors.PRIMARY_COLOR, justifyContent: 'center', alignItems: 'center' }}>
         {isKeyboardVisible || searchText.length > 0 ? <></> : <Image source={require('../../assets/logo/omo-logo.png')} style={{ width: 200, height: 80, resizeMode: 'contain' }} />}
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -121,17 +124,17 @@ const HomeScreen = () => {
           value={searchText}
           onChangeText={value => setSearchText(value)}
           inputContainerStyle={{ backgroundColor: Constants.appColors.WHITE, height: 45, borderRadius: 10, top: -1 }}
-          containerStyle={{ padding: 0, margin: 0, borderRadius: 18, height: 45, width: '95%', top: isKeyboardVisible ? 24 : searchText.length > 0 ? 24 : 190, position: 'absolute', alignSelf: 'center' }}
+          containerStyle={{ padding: 0, margin: 0, borderRadius: 18, height: 45, width: '95%', top: isKeyboardVisible ? Sizes.WINDOW_HEIGHT * 0.01 : searchText.length > 0 ? Sizes.WINDOW_HEIGHT * 0.01 : Sizes.WINDOW_HEIGHT * 0.3, position: 'absolute', alignSelf: 'center' }}
           inputStyle={{ color: 'black' }}
           placeholder='Search in Korean or English'
           onSubmitEditing={onSearchSubmit}
         />
       </TouchableWithoutFeedback>
       {
-        isKeyboardVisible && reacientlySearchedData.length!=0 ? <>
+        isKeyboardVisible && reacientlySearchedData.length != 0 ? <>
           <View style={{ marginVertical: 8, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8 }}>
             <Text style={{ fontWeight: 'bold', }}>Recently Searched</Text>
-            <TouchableOpacity onPress={()=>
+            <TouchableOpacity onPress={() =>
               removeItemValue('search_data')
             }>
               <Text style={{ fontWeight: '400', textDecorationLine: 'underline' }}>Clear History</Text>

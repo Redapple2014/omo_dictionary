@@ -37,8 +37,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Omo needs to access photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Omo needs to access camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Omo needs to access microphone</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Omo needs to access your location</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

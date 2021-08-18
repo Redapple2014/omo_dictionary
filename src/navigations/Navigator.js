@@ -21,25 +21,25 @@ import ForgetPasswordScreen from '../screens/forgetpassword';
 import {
   BOTTOM_TAB_NAVIGATOR,
 
-   NAVIGATION_HOME_STACK_PATH,
-   NAVIGATION_HOME_SCREEN_PATH,
+  NAVIGATION_HOME_STACK_PATH,
+  NAVIGATION_HOME_SCREEN_PATH,
 
-   NAVIGATION_FLASHCARD_LIST_STACK_PATH,
-   NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
+  NAVIGATION_FLASHCARD_LIST_STACK_PATH,
+  NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
 
-   NAVIGATION_PROFILE_STACK_PATH,
-   NAVIGATION_PROFILE_SCREEN_PATH,
+  NAVIGATION_PROFILE_STACK_PATH,
+  NAVIGATION_PROFILE_SCREEN_PATH,
 
-   NAVIGATION_FLASHCARD_STACK_PATH,
-   NAVIGATION_FLASHCARD_SCREEN_PATH,
+  NAVIGATION_FLASHCARD_STACK_PATH,
+  NAVIGATION_FLASHCARD_SCREEN_PATH,
 
-   NAVIGATION_SIGNUP_SCREEN_PATH,
-   NAVIGATION_LOGIN_SCREEN_PATH,
-   NAVIGATION_FORGET_PASSWORD_SCREEN_PATH,
+  NAVIGATION_SIGNUP_SCREEN_PATH,
+  NAVIGATION_LOGIN_SCREEN_PATH,
+  NAVIGATION_FORGET_PASSWORD_SCREEN_PATH,
 
 } from './Routes';
 
- const HomeStack = createStackNavigator(
+const HomeStack = createStackNavigator(
   {
     [NAVIGATION_HOME_SCREEN_PATH]: HomeScreen,
   },
@@ -59,7 +59,7 @@ import {
   }
 );
 
- const FlashcardsStack = createStackNavigator(
+const FlashcardsStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_SCREEN_PATH]: FlashcardScreen,
   },
@@ -79,7 +79,7 @@ import {
   }
 );
 
- const FlashcardlistStack = createStackNavigator(
+const FlashcardlistStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_LIST_SCREEN_PATH]: FlashcardListScreen,
   },
@@ -99,12 +99,12 @@ import {
   }
 );
 
- const ProfileStack = createStackNavigator(
+const ProfileStack = createStackNavigator(
   {
     [NAVIGATION_PROFILE_SCREEN_PATH]: ProfileScreen,
     [NAVIGATION_LOGIN_SCREEN_PATH]: LoginScreen,
-    [NAVIGATION_SIGNUP_SCREEN_PATH]:SignupScreen,
-    [NAVIGATION_FORGET_PASSWORD_SCREEN_PATH]:ForgetPasswordScreen,
+    [NAVIGATION_SIGNUP_SCREEN_PATH]: SignupScreen,
+    [NAVIGATION_FORGET_PASSWORD_SCREEN_PATH]: ForgetPasswordScreen,
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,
@@ -127,7 +127,7 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_HOME_STACK_PATH]: {
       screen: HomeStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused,tintColor }) => {
+        tabBarIcon: ({ focused, tintColor }) => {
           return <AntIcons name="search1" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
@@ -136,7 +136,7 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_FLASHCARD_STACK_PATH]: {
       screen: FlashcardsStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused,tintColor }) => {
+        tabBarIcon: ({ focused, tintColor }) => {
           return <FeatherIcons name="bookmark" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
@@ -145,7 +145,7 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_FLASHCARD_LIST_STACK_PATH]: {
       screen: FlashcardlistStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused,tintColor }) => {
+        tabBarIcon: ({ focused, tintColor }) => {
           return <AntIcons name="edit" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true
@@ -154,7 +154,7 @@ export const MainAppNavigator = createBottomTabNavigator(
     [NAVIGATION_PROFILE_STACK_PATH]: {
       screen: ProfileStack,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused,tintColor }) => {
+        tabBarIcon: ({ focused, tintColor }) => {
           return <MIcon name="account-outline" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: true

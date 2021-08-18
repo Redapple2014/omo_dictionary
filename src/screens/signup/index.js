@@ -9,8 +9,8 @@ import Verify from '../../utills/Validation';
 import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import EIcons from 'react-native-vector-icons/Entypo';
-import {launchImageLibrary} from 'react-native-image-picker';
-
+import { launchImageLibrary } from 'react-native-image-picker';
+import { getStatusBarHeight } from "react-native-status-bar-height";
 const SinupScreen = (props) => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
@@ -21,14 +21,14 @@ const SinupScreen = (props) => {
     const [isSecureConPassword, setIsSecureConPassword] = useState(true);
     const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
-    const [profilePicDetails,setProfilePicDetails] = useState(null)
+    const [profilePicDetails, setProfilePicDetails] = useState(null)
     const chooseFile = () => {
         let options = {
             mediaType: "photo"
         };
         launchImageLibrary(options, (response) => {
             console.log('Response = ', response);
-    
+
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
@@ -43,27 +43,27 @@ const SinupScreen = (props) => {
                 let source = response;
                 setProfilePicDetails(source.assets[0])
                 console.log("source==>", source.assets[0])
-                
+
 
             }
         });
     };
-    
-
-
 
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader
-                title='New Account'
-                leftIcon='Cancel'
-                onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-            />
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+                <CustomHeader
+                    title='New Account'
+                    leftIcon='Cancel'
+                    onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
+                />
+            </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: 'center' }}>
-                    <View style={{width: 100, borderRadius: 50, height: 100, marginTop: 16, marginBottom: 8 }}>
+                    <View style={{ width: 100, borderRadius: 50, height: 100, marginTop: 16, marginBottom: 8 }}>
                         {
-                            profilePicDetails === null ? <Image source={require('../../assets/images/profile_pic.png')} style={[{ width: 100, height: 100,borderRadius:50, resizeMode: 'contain' }]} /> : <Image source={{uri: profilePicDetails.uri,}} style={[{ width: 100, height: 100,borderRadius:50, resizeMode: 'cover' }]} />
+                            profilePicDetails === null ? <Image source={require('../../assets/images/profile_pic.png')} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'contain' }]} /> : <Image source={{ uri: profilePicDetails.uri, }} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'cover' }]} />
                         }
                         <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, position: 'absolute', width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', top: 72, left: 64, zIndex: 2 }}>
                             <TouchableOpacity onPress={chooseFile}>

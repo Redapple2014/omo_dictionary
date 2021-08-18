@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
 import Constants from '../../utills/Constants';
@@ -13,20 +13,20 @@ const CustomInput = (props) => {
       autoCapitalize={props.autoCapitalize}
       returnKeyType={props.returnKeyType}
       autoCorrect={props.autoCorrect}
-      inputContainerStyle={[styles.textInputContainerStyle,props.inputContainerStyle]}
+      inputContainerStyle={[styles.textInputContainerStyle, props.inputContainerStyle]}
       keyboardType={props.keyboardType}
       leftIconContainerStyle={styles.leftIconContainerStyle}
       placeholderTextColor={props.placeholderTextColor}
       placeholderFontSize={props.placeholderFontSize}
-      containerStyle={[styles.containerStyle,props.containerStyle]}
+      containerStyle={[styles.containerStyle, props.containerStyle]}
       value={props.value}
       maxLength={props.maxLength}
-      secureTextEntry = {props.secureTextEntry}
+      secureTextEntry={props.secureTextEntry}
       onChangeText={props.onChangeText}
-      rightIcon = {props.rightIcon}
-      errorMessage = {props.errorMessage}
+      rightIcon={props.rightIcon}
+      errorMessage={props.errorMessage}
       placeholderStyle={props.placeholderStyle}
-      errorStyle = {props.errorStyle}
+      errorStyle={props.errorStyle}
     />
   );
 }
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
   textInputContainerStyle: {
     margin: 4,
     fontSize: 12,
-borderWidth:0,
-borderBottomColor:'white'
+    borderWidth: 0,
+    borderBottomColor: 'white'
   },
   leftIconContainerStyle: {
     marginRight: 16

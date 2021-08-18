@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from "../../components/button/CustomButton";
@@ -10,8 +10,8 @@ import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import {
     NAVIGATION_FORGET_PASSWORD_SCREEN_PATH
-  } from '../../navigations/Routes';
-
+} from '../../navigations/Routes';
+import { getStatusBarHeight } from "react-native-status-bar-height";
 const LoginScreen = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,19 +19,19 @@ const LoginScreen = (props) => {
     const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false)
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false)
 
-function onForgetPasswordPress() {
-    props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
-}
+    function onForgetPasswordPress() {
+        props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
+    }
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader
-                title='Login'
-                leftIcon='Cancel'
-                onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-                // rightIcon='Save'
-                // onPressrightIcon={()=>console.log('log log')}
-            />
-
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+                <CustomHeader
+                    title='Login'
+                    leftIcon='Cancel'
+                    onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
+                />
+            </View>
             <CustomInput
                 label='Username'
                 labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}

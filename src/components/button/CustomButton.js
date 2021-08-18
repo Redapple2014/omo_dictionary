@@ -12,9 +12,9 @@ const CustomButton = (props) => {
     <TouchableOpacity onPress={props.onPress} disabled={props.isButtonActive}>
       <View style={[props.style, { justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }]}>
         {
-          props.iconTitle && <Icon name={props.iconTitle} type={props.iconType} size={22} color={props.iconStyle.color} style={[styles.iconStyle,props.iconStyle]} /> 
+          props.iconTitle && <Icon name={props.iconTitle} type={props.iconType} size={22} color={props.iconStyle.color} style={[styles.iconStyle, props.iconStyle]} />
         }
-        <Text style={[{ textAlign: 'center',color:Constants.appColors.WHITE },props.titleStyle]}>{title}</Text>
+        <Text style={[{ textAlign: 'center', color: Constants.appColors.WHITE }, props.titleStyle]}>{title}</Text>
       </View>
     </TouchableOpacity>
   );

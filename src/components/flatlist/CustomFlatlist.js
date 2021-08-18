@@ -60,7 +60,7 @@ const CustomFlatlist = (props) => {
               </View>
             </TouchableOpacity>
           </View>
-          :<></>
+          : <></>
       }
       {
         props.title ? <Text style={props.titleStyle}>{props.title}</Text> : <></>

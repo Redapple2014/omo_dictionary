@@ -1,0 +1,136 @@
+[
+    {
+            "id": 27733,
+            "homonym_number": 1,
+            "lexicalUnit": "단어",
+            "partOfSpeech": "명사",
+            "vocabularyLevel": "고급",
+            "semanticCategory": "자연 > 지형",
+            "Lemma": {
+                "writtenForm": "가"
+            },
+            "WordForm": [
+                {
+                    "type": "발음",
+                    "pronunciation": "가ː",
+                    "sound": "https://dicmedia.korean.go.kr/multimedia/naver/2016/20000/17000/27733_ga-.wav"
+                }
+            ],
+            "Sense": [
+                {
+                    "id": 1,
+                    "definition": "어떤 장소나 물건의 둘레나 끝부분.",
+                    "SenseExample": [
+                        {
+                            "id": 1,
+                            "type": "구",
+                            "example_1": "가를 꾸미다."
+                        },
+                        {
+                            "id": 2,
+                            "type": "구",
+                            "example_1": "가를 장식하다."
+                        },
+                        {
+                            "id": 3,
+                            "type": "구",
+                            "example_1": "가에 걸치다."
+                        },
+                        {
+                            "id": 4,
+                            "type": "구",
+                            "example_1": "가에 달다."
+                        },
+                        {
+                            "id": 5,
+                            "type": "구",
+                            "example_1": "가에 달라붙다."
+                        },
+                        {
+                            "id": 6,
+                            "type": "구",
+                            "example_1": "가에 세우다."
+                        },
+                        {
+                            "id": 7,
+                            "type": "구",
+                            "example_1": "가에 앉다."
+                        },
+                        {
+                            "id": 8,
+                            "type": "문장",
+                            "example_1": "공원의 중앙에는 잔디밭이 있고 가에는 울타리가 둘러쳐져 있었다."
+                        },
+                        {
+                            "id": 9,
+                            "type": "문장",
+                            "example_1": "민준이는 금방이라도 일어날 듯이 의자 가에 엉덩이만 살짝 걸치고 앉았다."
+                        },
+                        {
+                            "id": 10,
+                            "type": "대화",
+                            "example_1": "차는 어디에 주차했어요?",
+                            "example_2": "저기 운동장 가에 세워 뒀어요."
+                        }
+                    ],
+                    "Equivalent": [
+                        {
+                            "language": "몽골어",
+                            "lemma": "зах, ирмэг",
+                            "definition": "ямар нэгэн газар буюу эд зүйлийн зах болон төгсгөл хэсэг."
+                        },
+                        {
+                            "language": "베트남어",
+                            "lemma": "viền, mép, bờ ",
+                            "definition": "Phần cuối cùng hoặc chu vi của đồ vật hay địa điểm nào đó. "
+                        },
+                        {
+                            "language": "타이어",
+                            "lemma": "ริม, ข้าง, ฝั่ง, ด้าน, ด้านข้าง, ขอบ, ปลาย, รอบ, สุด",
+                            "definition": "บริเวณปลายหรือเส้นรอบวงของสิ่งของหรือสถานที่ใด ๆ"
+                        },
+                        {
+                            "language": "인도네시아어",
+                            "lemma": "batas, pinggir, tepi",
+                            "definition": "bagian lingkar atau ujung dari suatu tempat atau barang"
+                        },
+                        {
+                            "language": "러시아어",
+                            "lemma": "окраина; край; обочина",
+                            "definition": "Окружность или конечная часть какого-либо места или предмета."
+                        },
+                        {
+                            "language": "영어",
+                            "lemma": "edge; verge",
+                            "definition": "The perimeter or outer limits of a place or a thing."
+                        },
+                        {
+                            "language": "일본어",
+                            "lemma": "はし【端】。ふち【縁】。へ【辺】。へん【辺】",
+                            "definition": "ある場所や物の縁または端の部分。"
+                        },
+                        {
+                            "language": "프랑스어",
+                            "lemma": "bord, rebord, bordure, contour",
+                            "definition": "Contour, limite ou extrémité d'un lieu ou un objet."
+                        },
+                        {
+                            "language": "스페인어",
+                            "lemma": "borde, extremo",
+                            "definition": "Parte última o periferia de algo o de algún lugar."
+                        },
+                        {
+                            "language": "아랍어",
+                            "lemma": "طرف حدّ",
+                            "definition": "محيط مكان ما أو شيء ما أو طرف مكان ما أو شيء ما"
+                        },
+                        {
+                            "language": "중국어",
+                            "lemma": "边，边上",
+                            "definition": "某个场所或东西的四周或末端。"
+                        }
+                    ]
+    }
+     ]
+    }
+    ]

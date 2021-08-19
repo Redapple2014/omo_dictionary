@@ -13,6 +13,7 @@ import { store } from './store/store';
 
 const AppContainer = createAppContainer(MainAppNavigator);
 
+
 const App = () => {
   useEffect(() => SplashScreen.hide());
   return (

@@ -5,7 +5,34 @@ import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import PouchDB from 'pouchdb-react-native';
+import d1 from '../../resources/dictionary/dict_1.json';
+import d2 from '../../resources/dictionary/dict_2.json';
+import axios from 'axios';
+var localDB = new PouchDB('dev');
+console.log(localDB)
 
+var toinsert = [d1];
+toinsert.forEach(function (json) {
+  insert(json)
+})
+
+async function insert(json) {
+  // await localDB.bulkDocs(json).then(function (result) {
+  //   console.log('Row inserted Successfully');
+  // }).catch(function (err) {
+  //   console.log('Unable to insert into DB. Error: ' + err.name + ' - ' + err.message);
+  // });
+}
+
+
+
+
+localDB.allDocs().then(function (result) {
+console.log(JSON.stringify(result))
+}).catch(function (err) {
+  console.log(err);
+});
 const HomeScreen = () => {
 
   const MAX_NUMBER_OF_RECENT_DATA = 3

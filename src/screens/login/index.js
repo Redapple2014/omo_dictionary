@@ -8,9 +8,14 @@ import Sizes from '../../utills/Size';
 import Verify from '../../utills/Validation';
 import CustomInput from '../../components/input/CustomInput';
 import {NavigationActions} from 'react-navigation';
-import auth from '@react-native-firebase/auth';
 import {NAVIGATION_FORGET_PASSWORD_SCREEN_PATH} from '../../navigations/Routes';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-community/async-storage';
+import {
+  NAVIGATION_PROFILE_SCREEN_PATH
+} from '../../navigations/Routes';
+
 const LoginScreen = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,30 +23,27 @@ const LoginScreen = (props) => {
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
   const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
 
+  
   function onForgetPasswordPress() {
     props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
   }
 
-  function register() {
-    auth()
-      .createUserWithEmailAndPassword(
-        'jane.doe@example.com',
-        'SuperSecretPassword!',
-      )
-      .then(() => {
-        console.log('User account created & signed in!');
+  const userLogin = () => {
+    if (email.length == 0 || password.length == 0) {
+      alert('Enter details to signin')
+  } 
+  else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
+      alert('Enter a valid email/password')
+  }
+  else {
+      auth()
+      .signInWithEmailAndPassword(email,password)
+      .then((res) => {
+        AsyncStorage.setItem('user_data', JSON.stringify(res.user))
+        props.navigation.navigate(NAVIGATION_PROFILE_SCREEN_PATH,{userdata: res.user })
       })
-      .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-        }
-
-        if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
-        }
-
-        console.error(error);
-      });
+      .catch(error => alert('Fail to login. Check your id & password'))
+    }
   }
 
   return (
@@ -154,7 +156,7 @@ const LoginScreen = (props) => {
           }}
           title={`${Constants.loginButtonText}`}
           titleStyle={{fontSize: 14, fontWeight: 'bold'}}
-          onPress={() => console.log('log in Press')}
+          onPress={userLogin}
         />
         <CustomButton
           style={{

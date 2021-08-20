@@ -23,7 +23,7 @@ const CustomHeader = (props) => {
       <Text style={styles.textStyle}>{props.title}</Text>
       {
         props.rightIcon ?
-          <View style={{ right: -16, top: 10, position: 'absolute' }}>
+          <View style={{ right: 0, top: 10, position: 'absolute',marginLeft:4 }}>
             <TouchableOpacity style={{ width: 70 }} onPress={props.onPressrightIcon}>
               <Text style={{ fontSize: 18, color: 'white' }}>{props.rightIcon}</Text>
             </TouchableOpacity></View> : <></>

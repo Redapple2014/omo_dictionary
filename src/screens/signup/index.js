@@ -11,6 +11,11 @@ import { NavigationActions } from 'react-navigation';
 import EIcons from 'react-native-vector-icons/Entypo';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import auth from '@react-native-firebase/auth';
+import {
+    NAVIGATION_LOGIN_SCREEN_PATH
+} from '../../navigations/Routes';
+
 const SinupScreen = (props) => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
@@ -22,6 +27,8 @@ const SinupScreen = (props) => {
     const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
     const [profilePicDetails, setProfilePicDetails] = useState(null)
+    const [loading, SetLoading] = useState(false)
+
     const chooseFile = () => {
         let options = {
             mediaType: "photo"
@@ -43,11 +50,43 @@ const SinupScreen = (props) => {
                 let source = response;
                 setProfilePicDetails(source.assets[0])
                 console.log("source==>", source.assets[0])
-
-
             }
         });
     };
+
+    function setToDefalult() {
+        setName('');
+        setUsername('')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+    }
+
+    const registerUser = () => {
+        if (email.length == 0 || password.length == 0 || name.length == 0 || username == 0) {
+            alert('Enter details to signup!')
+        } else if (password != confirmPassword) {
+            alert('Password mismatch')
+        }
+        else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
+            alert('Enter a valid email/password')
+        }
+        else {
+            SetLoading(true)
+            auth()
+              .createUserWithEmailAndPassword(email,password)
+              .then((res) => {
+                res.user.updateProfile({
+                displayName:name,
+                })
+                setToDefalult()
+                console.log('User registered successfully!')
+                props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH)
+              })
+              .catch(error => alert('Unable to register. Check Your Internet Connection'))      
+            console.log('suc')
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -197,7 +236,7 @@ const SinupScreen = (props) => {
                         style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.BUTTON_COLOR, marginBottom: 8, borderRadius: 10 }}
                         title={`${Constants.createYourAccountText}`}
                         titleStyle={{ fontSize: 14, fontWeight: 'bold' }}
-                        onPress={() => console.log('create account Press')}
+                        onPress={registerUser}
                     />
                 </View>
             </ScrollView>

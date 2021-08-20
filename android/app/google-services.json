@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "781062724797",
+    "project_id": "omo-korean",
+    "storage_bucket": "omo-korean.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781062724797:android:0c90b5d092a42663a56bd4",
+        "android_client_info": {
+          "package_name": "com.omokorean"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781062724797-d8ajri8uh1o9c288h0lnocqfgqtjtgt7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh_JCdDUp8JbIbli2x5rHiZ_W8JIBCHio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781062724797-d8ajri8uh1o9c288h0lnocqfgqtjtgt7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

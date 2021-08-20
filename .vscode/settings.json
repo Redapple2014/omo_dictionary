@@ -1,3 +1,4 @@
 {
-    "json.maxItemsComputed": 5000000000000
+    "json.maxItemsComputed": 5000000000000,
+    "git.ignoreLimitWarning": true
 }

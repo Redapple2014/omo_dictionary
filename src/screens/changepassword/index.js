@@ -9,7 +9,7 @@ import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 
-const ForgetPasswordScreen = (props) => {
+const ChangePasswordScreen = (props) => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -83,8 +83,6 @@ const ForgetPasswordScreen = (props) => {
                             color={Constants.appColors.TEXT_INPUT}
                         /></TouchableOpacity>}
             />
-
-
             <CustomInput
                 label='Confirm Password'
                 labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
@@ -112,17 +110,13 @@ const ForgetPasswordScreen = (props) => {
                             color={Constants.appColors.TEXT_INPUT}
                         /></TouchableOpacity>}
             />
-
-
-
-
         </View>
     )
 }
 
-ForgetPasswordScreen.navigationOptions = {
+ChangePasswordScreen.navigationOptions = {
     headerShown: false
 }
 
 
-export default ForgetPasswordScreen;
+export default ChangePasswordScreen;

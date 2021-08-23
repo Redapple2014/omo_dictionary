@@ -15,8 +15,9 @@
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+        android:windowSoftInputMode="stateUnspecified|adjustPan"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize"
+       
         android:exported="true"
         >
         <intent-filter>

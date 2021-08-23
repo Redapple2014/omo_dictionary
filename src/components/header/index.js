@@ -23,7 +23,7 @@ const CustomHeader = (props) => {
       <Text style={styles.textStyle}>{props.title}</Text>
       {
         props.rightIcon ?
-          <View style={{ right: 0, top: 10, position: 'absolute',marginLeft:4 }}>
+          <View style={{ right: -16, top: 12, position: 'absolute',marginLeft:4 }}>
             <TouchableOpacity style={{ width: 70 }} onPress={props.onPressrightIcon}>
               <Text style={{ fontSize: 18, color: 'white' }}>{props.rightIcon}</Text>
             </TouchableOpacity></View> : <></>
@@ -40,14 +40,15 @@ const styles = StyleSheet.create({
     padding: 6,
     justifyContent: 'center',
     alignItems: 'center',
-
+paddingVertical:8
   },
   textStyle: {
     color: Constants.appColors.WHITE,
     fontSize: 20,
     marginLeft: 8,
     marginTop: 4,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight:'bold'
   },
   addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
 })

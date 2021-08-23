@@ -15,7 +15,20 @@ const AppContainer = createAppContainer(MainAppNavigator);
 
 
 const App = () => {
-  useEffect(() => SplashScreen.hide());
+
+  const [hideSplash, setHideSplash] = React.useState(false);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setHideSplash(true);
+    }, 2000); 
+  }, []);
+  
+  React.useEffect(() => {
+    hideSplash && SplashScreen.hide();
+  }, [hideSplash]);
+
+
   return (
     <NavigationContainer>
       <Provider store={store}>

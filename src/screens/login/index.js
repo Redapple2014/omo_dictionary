@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StatusBar, TouchableOpacity, Platform} from 'react-native';
 import CustomHeader from '../../components/header';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Octicons';
 import CustomButton from '../../components/button/CustomButton';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -57,13 +57,13 @@ const LoginScreen = (props) => {
           barStyle="light-content"
           backgroundColor={Constants.appColors.PRIMARY_COLOR}
         />
-        <CustomHeader
+        {/* <CustomHeader
           title="Login"
           leftIcon="Cancel"
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
-        />
+        /> */}
       </View>
       <CustomInput
         label="Username"
@@ -72,6 +72,7 @@ const LoginScreen = (props) => {
           marginBottom: 4,
           color: Constants.appColors.DARKGRAY,
           fontWeight: '400',
+          marginLeft:4
         }}
         placeholder=" Please enter username or email"
         autoCapitalize="none"
@@ -103,6 +104,7 @@ const LoginScreen = (props) => {
           marginBottom: 4,
           color: Constants.appColors.DARKGRAY,
           fontWeight: '400',
+          marginLeft:4
         }}
         autoCapitalize="none"
         returnKeyType="next"
@@ -137,10 +139,10 @@ const LoginScreen = (props) => {
             onPress={() => setIsSecurePassword(!isSecurePassword)}>
             <Icon
               name={
-                password && isSecurePassword ? 'eye-sharp' : 'eye-off-sharp'
+                password && isSecurePassword ? 'eye' : 'eye-closed'
               }
-              size={24}
-              color={Constants.appColors.TEXT_INPUT}
+              size={22}
+              color='#3DB2FF'
             />
           </TouchableOpacity>
         }

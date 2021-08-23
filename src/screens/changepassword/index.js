@@ -31,7 +31,7 @@ const ChangePasswordScreen = (props) => {
             </View>
             <CustomInput
                 label='Old Password'
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}
@@ -58,7 +58,7 @@ const ChangePasswordScreen = (props) => {
             />
             <CustomInput
                 label='New Password'
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}
@@ -85,7 +85,7 @@ const ChangePasswordScreen = (props) => {
             />
             <CustomInput
                 label='Confirm Password'
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}

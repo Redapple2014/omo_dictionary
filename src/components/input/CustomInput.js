@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
     margin: 4,
     fontSize: 12,
     borderWidth: 0,
-    borderBottomColor: 'white'
+    borderBottomColor: 'white',
+    height:48
   },
   leftIconContainerStyle: {
     marginRight: 16

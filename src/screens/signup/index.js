@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomHeader from "../../components/header";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Octicons';
 import CustomButton from "../../components/button/CustomButton";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -74,16 +74,16 @@ const SinupScreen = (props) => {
         else {
             SetLoading(true)
             auth()
-              .createUserWithEmailAndPassword(email,password)
-              .then((res) => {
-                res.user.updateProfile({
-                displayName:name,
+                .createUserWithEmailAndPassword(email, password)
+                .then((res) => {
+                    res.user.updateProfile({
+                        displayName: name,
+                    })
+                    setToDefalult()
+                    console.log('User registered successfully!')
+                    props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH)
                 })
-                setToDefalult()
-                console.log('User registered successfully!')
-                props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH)
-              })
-              .catch(error => alert('Unable to register. Check Your Internet Connection'))      
+                .catch(error => alert('Unable to register. Check Your Internet Connection'))
             console.log('suc')
         }
     }
@@ -92,33 +92,34 @@ const SinupScreen = (props) => {
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
-                <CustomHeader
+                {/* <CustomHeader
                     title='New Account'
                     leftIcon='Cancel'
                     onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-                />
+                /> */}
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: 'center' }}>
-                    <View style={{ width: 100, borderRadius: 50, height: 100, marginTop: 16, marginBottom: 8 }}>
-                        {
-                            profilePicDetails === null ? <Image source={require('../../assets/images/profile_pic.png')} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'contain' }]} /> : <Image source={{ uri: profilePicDetails.uri, }} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'cover' }]} />
-                        }
-                        <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, position: 'absolute', width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', top: 72, left: 64, zIndex: 2 }}>
-                            <TouchableOpacity onPress={chooseFile}>
+                    <TouchableOpacity onPress={chooseFile}>
+                        <View style={{ width: 100, borderRadius: 50, height: 100, marginTop: 16, marginBottom: 8 }}>
+                            {
+                                profilePicDetails === null ? <Image source={require('../../assets/images/profile_pic.png')} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'contain' }]} /> : <Image source={{ uri: profilePicDetails.uri, }} style={[{ width: 100, height: 100, borderRadius: 50, resizeMode: 'cover' }]} />
+                            }
+                            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, position: 'absolute', width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', top: 72, left: 64, zIndex: 2 }}>
+
                                 <EIcons name='edit' size={16} color='white' />
-                            </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 </View>
                 <CustomInput
                     label='Name'
-                    labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your name'
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
-                    inputContainerStyle={{ margin: 4, fontSize: 12, backgroundColor: 'white', borderRadius: 6, borderWidth: 0 }}
+                    inputContainerStyle={{ margin: 4, fontSize: 12, backgroundColor: 'white', borderRadius: 6, borderWidth: 0}}
                     keyboardType='email-address'
                     leftIconContainerStyle={{ marginRight: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
@@ -133,7 +134,7 @@ const SinupScreen = (props) => {
                 />
                 <CustomInput
                     label='Username'
-                    labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your username'
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -153,7 +154,7 @@ const SinupScreen = (props) => {
                 />
                 <CustomInput
                     label='Email'
-                    labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your email'
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -176,7 +177,7 @@ const SinupScreen = (props) => {
 
                 <CustomInput
                     label='Password'
-                    labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -197,16 +198,21 @@ const SinupScreen = (props) => {
                     errorMessage={password && !isPasswordErrorMsg ? 'Password is invalid' : ''}
                     onSubmitEditing={() => console.log('submit log in')}
                     rightIcon={
-                        <TouchableOpacity onPress={() => setIsSecurePassword(!isSecurePassword)}>
-                            <Icon
-                                name={password && isSecurePassword ? 'eye-sharp' : 'eye-off-sharp'}
-                                size={24}
-                                color={Constants.appColors.TEXT_INPUT}
-                            /></TouchableOpacity>}
+                        <TouchableOpacity
+                        onPress={() => setIsSecurePassword(!isSecurePassword)}>
+                        <Icon
+                          name={
+                            password && isSecurePassword ? 'eye' : 'eye-closed'
+                          }
+                          size={22}
+                          color='#3DB2FF'
+                        />
+                      </TouchableOpacity>
+                        }
                 />
                 <CustomInput
                     label='Confirm Password'
-                    labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -226,9 +232,9 @@ const SinupScreen = (props) => {
                     rightIcon={
                         <TouchableOpacity onPress={() => setIsSecureConPassword(!isSecureConPassword)}>
                             <Icon
-                                name={confirmPassword && isSecureConPassword ? 'eye-sharp' : 'eye-off-sharp'}
+                                name={confirmPassword && isSecureConPassword ? 'eye' : 'eye-closed'}
                                 size={24}
-                                color={Constants.appColors.TEXT_INPUT}
+                                color='#3DB2FF'
                             /></TouchableOpacity>}
                 />
                 <View style={{ alignItems: 'center' }}>

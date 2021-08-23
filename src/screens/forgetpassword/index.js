@@ -43,6 +43,7 @@ const ForgetPasswordScreen = (props) => {
           marginBottom: 4,
           color: Constants.appColors.DARKGRAY,
           fontWeight: '400',
+          marginLeft:4
         }}
         placeholder=" Please enter your email"
         autoCapitalize="none"

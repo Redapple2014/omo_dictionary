@@ -9,30 +9,45 @@ import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1.json';
 import d2 from '../../resources/dictionary/dict_2.json';
 import axios from 'axios';
-var localDB = new PouchDB('dev');
-console.log(localDB)
 
+//db instance with db_name
+var localDB = new PouchDB('dev');
+
+//document list
 var toinsert = [d1];
+
+//lopping of all json
 toinsert.forEach(function (json) {
-  insert(json)
+
+  //iterate each json and get each document
+
+  // json.forEach(function (element,index){
+  //   //console.log(index,'***************',JSON.stringify(element))
+  //  // insert(element)
+  // })
+
+
+  //insert(json)
 })
 
+
+//insert function
 async function insert(json) {
-  // await localDB.bulkDocs(json).then(function (result) {
-  //   console.log('Row inserted Successfully');
-  // }).catch(function (err) {
-  //   console.log('Unable to insert into DB. Error: ' + err.name + ' - ' + err.message);
-  // });
+  //bulk data insert
+  await localDB.bulkDocs(json).then(function (result) {
+    console.log('Row inserted Successfully');
+  }).catch(function (err) {
+    console.log('Unable to insert into DB. Error: ' + err.name + ' - ' + err.message);
+  });
+
+  //single document insert
+  // try {
+  //   var response = await localDB.put(json);
+  // } catch (err) {
+  //   console.log(err);
+  // }
 }
 
-
-
-
-localDB.allDocs().then(function (result) {
-console.log(JSON.stringify(result))
-}).catch(function (err) {
-  console.log(err);
-});
 const HomeScreen = () => {
 
   const MAX_NUMBER_OF_RECENT_DATA = 3
@@ -63,11 +78,11 @@ const HomeScreen = () => {
       .then(req => {
         if (!req) {
           setReacientlySearchedStatus('No recent search data avalible');
-          console.log('no data found on recent search')
+          //console.log('no data found on recent search')
           return
         }
         setReacientlySearchedData(JSON.parse(req))
-        console.log(JSON.parse(req))
+        //console.log(JSON.parse(req))
       })
       .catch(error => console.log('error!'));
   }
@@ -89,6 +104,10 @@ const HomeScreen = () => {
   }
 
   useEffect(() => {
+
+    //destroy db
+    //localDB.destroy()
+
     getDatafromStorage();
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -109,6 +128,30 @@ const HomeScreen = () => {
 
     };
   }, []);
+
+
+  //fetch data by id
+async function fetchDataById(){
+  const id = '27734'
+  localDB.get(id).then(function (doc) {
+   console.log(`data : ${id} `,JSON.stringify(doc))
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+// get all documents
+  // localDB.allDocs().then(function (result) {
+  //   console.log(JSON.stringify('************ ',result))
+  //   }).catch(function (err) {
+  //     console.log(err);
+  //   });
+}
+
+
+useEffect(()=>{
+
+  fetchDataById()
+})
 
 
   //render recently rearched data

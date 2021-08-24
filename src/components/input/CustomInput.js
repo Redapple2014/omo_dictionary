@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
 import Constants from '../../utills/Constants';
 
-const CustomInput = (props) => {
-  return (
+const CustomInput = React.forwardRef((props,ref) => (
     <Input
+      ref={ref}
       label={props.label}
       labelStyle={props.labelStyle}
       inputStyle={props.inputStyle}
@@ -27,9 +27,10 @@ const CustomInput = (props) => {
       errorMessage={props.errorMessage}
       placeholderStyle={props.placeholderStyle}
       errorStyle={props.errorStyle}
+      onSubmitEditing={props.onSubmitEditing}
     />
-  );
-}
+  )
+);
 
 export default CustomInput;
 

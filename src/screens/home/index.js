@@ -141,8 +141,8 @@ const HomeScreen = () => {
       <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
         <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
       </View>
-      <View style={{ backgroundColor: 'red', height: isKeyboardVisible || searchText.length > 0 ? Sizes.WINDOW_HEIGHT * .1 : Sizes.WINDOW_HEIGHT * 0.38, backgroundColor: Constants.appColors.PRIMARY_COLOR, justifyContent: 'center', alignItems: 'center' }}>
-        {isKeyboardVisible || searchText.length > 0 ? <></> : <Image source={require('../../assets/logo/omo-logo.png')} style={{ width: 200, height: 80, resizeMode: 'contain' }} />}
+      <View style={{ backgroundColor: 'red',justifyContent:'center', height: isKeyboardVisible || searchText.length > 0 ? Sizes.WINDOW_HEIGHT * .1 : Sizes.WINDOW_HEIGHT * 0.38, backgroundColor: Constants.appColors.PRIMARY_COLOR, justifyContent: 'center', alignItems: 'center' }}>
+        {isKeyboardVisible || searchText.length > 0 ? <></> : <View style={{marginBottom:Sizes.WINDOW_WIDTH*.18}}><Image source={require('../../assets/logo/omo-logo_1.png')} style={{ width: 300, height: 100, resizeMode: 'contain' }} /></View>}
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <CustomSearchBar
@@ -150,7 +150,7 @@ const HomeScreen = () => {
           lightTheme
           value={searchText}
           onChangeText={value => setSearchText(value)}
-          inputContainerStyle={{ backgroundColor: Constants.appColors.WHITE, height: 45, borderRadius: 10, top: -1 }}
+          inputContainerStyle={{ backgroundColor: Constants.appColors.WHITE, height: 48, borderRadius: 10, top: -1 }}
           containerStyle={{ padding: 0, margin: 0, borderRadius: 18, height: 45, width: '95%', top: isKeyboardVisible ? Sizes.WINDOW_HEIGHT * 0.01 : searchText.length > 0 ? Sizes.WINDOW_HEIGHT * 0.01 : Sizes.WINDOW_HEIGHT * 0.3, position: 'absolute', alignSelf: 'center' }}
           inputStyle={{ color: 'black' }}
           placeholder='Search in Korean or English'

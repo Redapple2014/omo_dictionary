@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import CustomHeader from "../../components/header";
 import CustomButton from '../../components/button/CustomButton';
@@ -14,6 +14,8 @@ import auth from '@react-native-firebase/auth';
 const ForgetPasswordScreen = (props) => {
   const [email, setEmail] = useState('');
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
+
+  const emailInputRef = useRef(null)
 
   const forgetPasswordPress = () => {
 
@@ -38,6 +40,7 @@ const ForgetPasswordScreen = (props) => {
       </View>
       <CustomInput
         label="Email"
+        ref={emailInputRef}
         labelStyle={{
           fontSize: 14,
           marginBottom: 4,
@@ -60,13 +63,14 @@ const ForgetPasswordScreen = (props) => {
         leftIconContainerStyle={{ marginRight: 16 }}
         placeholderTextColor={Constants.appColors.LIGHTGRAY}
         placeholderFontSize={2}
-        containerStyle={{ height: 50, padding: 8 }}
+        containerStyle={{ height: 56, padding: 8 }}
         value={email}
         onChangeText={(value) => {
           setEmail(value);
           setIsEmailErrorMsg(Verify.varifyEmail(value));
         }}
         errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+        onSubmitEditing={forgetPasswordPress}
       />
       <View style={{ paddingVertical: 56, alignItems: 'center' }}>
         <CustomButton

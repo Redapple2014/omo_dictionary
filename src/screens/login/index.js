@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import {View, Text, StatusBar, TouchableOpacity, Platform} from 'react-native';
 import CustomHeader from '../../components/header';
 import Icon from 'react-native-vector-icons/Octicons';
@@ -23,6 +23,9 @@ const LoginScreen = (props) => {
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
   const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
 
+
+  const emailInputRef = useRef(null)
+  const passwordInputRef = useRef(null)
   
   function onForgetPasswordPress() {
     props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
@@ -67,6 +70,7 @@ const LoginScreen = (props) => {
       </View>
       <CustomInput
         label="Username"
+        ref={emailInputRef}
         labelStyle={{
           fontSize: 14,
           marginBottom: 4,
@@ -89,16 +93,18 @@ const LoginScreen = (props) => {
         leftIconContainerStyle={{marginRight: 16}}
         placeholderTextColor={Constants.appColors.LIGHTGRAY}
         placeholderFontSize={2}
-        containerStyle={{height: 50, padding: 8}}
+        containerStyle={{height: 56, padding: 8}}
         value={email}
         onChangeText={(value) => {
           setEmail(value);
           setIsEmailErrorMsg(Verify.varifyEmail(value));
         }}
         errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+        onSubmitEditing={()=>passwordInputRef.current.focus()}
       />
       <CustomInput
         label="Password"
+        ref={passwordInputRef}
         labelStyle={{
           fontSize: 14,
           marginBottom: 4,
@@ -146,6 +152,7 @@ const LoginScreen = (props) => {
             />
           </TouchableOpacity>
         }
+        onSubmitEditing={userLogin}
       />
       <View style={{paddingVertical: 16, alignItems: 'center'}}>
         <CustomButton

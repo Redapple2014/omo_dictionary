@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useRef} from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Octicons';
@@ -28,6 +28,12 @@ const SinupScreen = (props) => {
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
     const [profilePicDetails, setProfilePicDetails] = useState(null)
     const [loading, SetLoading] = useState(false)
+
+    const nameInputRef = useRef(null)
+    const userNameInputRef = useRef(null)
+    const emailInputRef = useRef(null)
+    const passwordInputRef = useRef(null)
+    const confPasswordInputRef = useRef(null)
 
     const chooseFile = () => {
         let options = {
@@ -114,6 +120,7 @@ const SinupScreen = (props) => {
                 </View>
                 <CustomInput
                     label='Name'
+                    ref={nameInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your name'
                     autoCapitalize='none'
@@ -131,8 +138,10 @@ const SinupScreen = (props) => {
                             setName(value);
                         }
                     }
+                    onSubmitEditing={()=>userNameInputRef.current.focus()}
                 />
                 <CustomInput
+                ref={userNameInputRef}
                     label='Username'
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your username'
@@ -151,9 +160,11 @@ const SinupScreen = (props) => {
                             setUsername(value);
                         }
                     }
+                    onSubmitEditing={()=>emailInputRef.current.focus()}
                 />
                 <CustomInput
                     label='Email'
+                    ref={emailInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder=' Please enter your email'
                     autoCapitalize='none'
@@ -173,10 +184,12 @@ const SinupScreen = (props) => {
                         }
                     }
                     errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+                    onSubmitEditing={()=>passwordInputRef.current.focus()}
                 />
 
                 <CustomInput
                     label='Password'
+                    ref={passwordInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -209,9 +222,11 @@ const SinupScreen = (props) => {
                         />
                       </TouchableOpacity>
                         }
+                        onSubmitEditing={()=>confPasswordInputRef.current.focus()}
                 />
                 <CustomInput
                     label='Confirm Password'
+                    ref={confPasswordInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -236,6 +251,7 @@ const SinupScreen = (props) => {
                                 size={24}
                                 color='#3DB2FF'
                             /></TouchableOpacity>}
+                            onSubmitEditing={registerUser}
                 />
                 <View style={{ alignItems: 'center' }}>
                     <CustomButton

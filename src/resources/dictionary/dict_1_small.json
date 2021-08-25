@@ -1,0 +1,337 @@
+[
+    {
+        "_id": "27733",
+        "homonym_number": 1,
+        "lexicalUnit": "단어",
+        "partOfSpeech": "명사",
+        "vocabularyLevel": "고급",
+        "semanticCategory": "자연 > 지형",
+        "Lemma": {
+            "writtenForm": "가"
+        },
+        "WordForm": [
+            {
+                "type": "발음",
+                "pronunciation": "가ː",
+                "sound": "https://dicmedia.korean.go.kr/multimedia/naver/2016/20000/17000/27733_ga-.wav"
+            }
+        ],
+        "Sense": [
+            {
+                "_id": "1",
+                "definition": "어떤 장소나 물건의 둘레나 끝부분.",
+                "SenseExample": [
+                    {
+                        "_id": "1",
+                        "type": "구",
+                        "example_1": "가를 꾸미다."
+                    },
+                    {
+                        "_id": "2",
+                        "type": "구",
+                        "example_1": "가를 장식하다."
+                    },
+                    {
+                        "_id": "3",
+                        "type": "구",
+                        "example_1": "가에 걸치다."
+                    },
+                    {
+                        "_id": "4",
+                        "type": "구",
+                        "example_1": "가에 달다."
+                    },
+                    {
+                        "_id": "5",
+                        "type": "구",
+                        "example_1": "가에 달라붙다."
+                    },
+                    {
+                        "_id": "6",
+                        "type": "구",
+                        "example_1": "가에 세우다."
+                    },
+                    {
+                        "_id": "7",
+                        "type": "구",
+                        "example_1": "가에 앉다."
+                    },
+                    {
+                        "_id": "8",
+                        "type": "문장",
+                        "example_1": "공원의 중앙에는 잔디밭이 있고 가에는 울타리가 둘러쳐져 있었다."
+                    },
+                    {
+                        "_id": "9",
+                        "type": "문장",
+                        "example_1": "민준이는 금방이라도 일어날 듯이 의자 가에 엉덩이만 살짝 걸치고 앉았다."
+                    },
+                    {
+                        "_id": "10",
+                        "type": "대화",
+                        "example_1": "차는 어디에 주차했어요?",
+                        "example_2": "저기 운동장 가에 세워 뒀어요."
+                    }
+                ],
+                "Equivalent": [
+                    {
+                        "language": "몽골어",
+                        "lemma": "зах, ирмэг",
+                        "definition": "ямар нэгэн газар буюу эд зүйлийн зах болон төгсгөл хэсэг."
+                    },
+                    {
+                        "language": "베트남어",
+                        "lemma": "viền, mép, bờ ",
+                        "definition": "Phần cuối cùng hoặc chu vi của đồ vật hay địa điểm nào đó. "
+                    },
+                    {
+                        "language": "타이어",
+                        "lemma": "ริม, ข้าง, ฝั่ง, ด้าน, ด้านข้าง, ขอบ, ปลาย, รอบ, สุด",
+                        "definition": "บริเวณปลายหรือเส้นรอบวงของสิ่งของหรือสถานที่ใด ๆ"
+                    },
+                    {
+                        "language": "인도네시아어",
+                        "lemma": "batas, pinggir, tepi",
+                        "definition": "bagian lingkar atau ujung dari suatu tempat atau barang"
+                    },
+                    {
+                        "language": "러시아어",
+                        "lemma": "окраина; край; обочина",
+                        "definition": "Окружность или конечная часть какого-либо места или предмета."
+                    },
+                    {
+                        "language": "영어",
+                        "lemma": "edge; verge",
+                        "definition": "The perimeter or outer limits of a place or a thing."
+                    },
+                    {
+                        "language": "일본어",
+                        "lemma": "はし【端】。ふち【縁】。へ【辺】。へん【辺】",
+                        "definition": "ある場所や物の縁または端の部分。"
+                    },
+                    {
+                        "language": "프랑스어",
+                        "lemma": "bord, rebord, bordure, contour",
+                        "definition": "Contour, limite ou extrémité d'un lieu ou un objet."
+                    },
+                    {
+                        "language": "스페인어",
+                        "lemma": "borde, extremo",
+                        "definition": "Parte última o periferia de algo o de algún lugar."
+                    },
+                    {
+                        "language": "아랍어",
+                        "lemma": "طرف حدّ",
+                        "definition": "محيط مكان ما أو شيء ما أو طرف مكان ما أو شيء ما"
+                    },
+                    {
+                        "language": "중국어",
+                        "lemma": "边，边上",
+                        "definition": "某个场所或东西的四周或末端。"
+                    }
+                ]
+            },
+            {
+                "_id": "2",
+                "definition": "‘주변’의 뜻을 나타내는 말.",
+                "annotation": "일부 명사 뒤에 붙여 쓴다.",
+                "SenseExample": [
+                    {
+                        "_id": "1",
+                        "type": "구",
+                        "example_1": "강가."
+                    },
+                    {
+                        "_id": "2",
+                        "type": "구",
+                        "example_1": "길가."
+                    },
+                    {
+                        "_id": "3",
+                        "type": "구",
+                        "example_1": "냇가."
+                    },
+                    {
+                        "_id": "4",
+                        "type": "구",
+                        "example_1": "문가."
+                    },
+                    {
+                        "_id": "5",
+                        "type": "구",
+                        "example_1": "시냇가."
+                    },
+                    {
+                        "_id": "6",
+                        "type": "구",
+                        "example_1": "우물가."
+                    },
+                    {
+                        "_id": "7",
+                        "type": "구",
+                        "example_1": "창가."
+                    },
+                    {
+                        "_id": "8",
+                        "type": "구",
+                        "example_1": "창문가."
+                    },
+                    {
+                        "_id": "9",
+                        "type": "구",
+                        "example_1": "호숫가."
+                    }
+                ],
+                "Equivalent": [
+                    {
+                        "language": "몽골어",
+                        "lemma": "ойр орчим",
+                        "definition": "&quot;ойр орчим, хүрээ&quot; гэсэн утгыг илэрхийлдэг үг."
+                    },
+                    {
+                        "language": "베트남어",
+                        "lemma": "ven ",
+                        "definition": "Từ thể hiện ý nghĩa của &quot;xung quanh&quot;. "
+                    },
+                    {
+                        "language": "타이어",
+                        "lemma": "บริเวณรอบ ๆ...",
+                        "definition": "คำที่ใช้แสดงความหมายของคำว่า &quot;บริเวณรอบๆ&quot;"
+                    },
+                    {
+                        "language": "인도네시아어",
+                        "lemma": "pinggir, sekitar",
+                        "definition": "kata yang menyatakan maksud 'sekitar'"
+                    },
+                    {
+                        "language": "러시아어",
+                        "lemma": "поблизости; возле; около",
+                        "definition": "Выражение, означающее &quot;вблизи&quot;."
+                    },
+                    {
+                        "language": "영어",
+                        "lemma": "by; fringe",
+                        "definition": "The surrounding area of a place."
+                    },
+                    {
+                        "language": "일본어",
+                        "lemma": "はた【端】。きわ【際】。ほとり。へ【辺】。へん【辺】。へり　",
+                        "definition": "「周辺」の意を表す語。"
+                    },
+                    {
+                        "language": "프랑스어",
+                        "lemma": "bord",
+                        "definition": "Terme signifiant &quot;voisinage, proximité&quot;."
+                    },
+                    {
+                        "language": "스페인어",
+                        "lemma": "orilla, borde",
+                        "definition": "Se refiere al “alrededor”."
+                    },
+                    {
+                        "language": "아랍어",
+                        "lemma": "جوار",
+                        "definition": "كلام يدل على معنى الجوار"
+                    },
+                    {
+                        "language": "중국어",
+                        "lemma": "边，岸边",
+                        "definition": "表示“周边，周围”的意思。"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "_id": "72337",
+        "homonym_number": 1,
+        "lexicalUnit": "단어",
+        "partOfSpeech": "접사",
+        "origin": "哥",
+        "vocabularyLevel": "없음",
+        "annotation": "‘성’을 나타내는 대다수 명사 뒤에 붙는다.",
+        "Lemma": {
+            "writtenForm": "-가"
+        },
+        "Sense": [
+            {
+                "_id": "1",
+                "definition": "‘그 성을 가진 사람’의 뜻을 더하는 접미사.",
+                "SenseExample": [
+                    {
+                        "_id":"1",
+                        "type": "구",
+                        "example_1": "김가"
+                    },
+                    {
+                        "_id": "2",
+                        "type": "구",
+                        "example_1": "박가"
+                    },
+                    {
+                        "_id": "3",
+                        "type": "구",
+                        "example_1": "이가"
+                    }
+                ],
+                "Equivalent": [
+                    {
+                        "language": "몽골어",
+                        "lemma": "(Тохирох үг хэллэг байхгүй байна)",
+                        "definition": "‘тийм овогтой хүн’ хэмээх утга нэмдэг дагавар."
+                    },
+                    {
+                        "language": "베트남어",
+                        "lemma": "nhà",
+                        "definition": "Hậu tố thêm nghĩa 'người có họ đó'."
+                    },
+                    {
+                        "language": "타이어",
+                        "lemma": "นามสกุล, ตระกูล",
+                        "definition": "ปัจจัยที่เพิ่มเข้าไปในคำเพื่อให้มีความหมายว่า 'คนที่มีนามสกุลนั้น ๆ'"
+                    },
+                    {
+                        "language": "인도네시아어",
+                        "lemma": "marga",
+                        "definition": "akhirnya yang menambahkan arti &quot;orang yang memiliki nama keluarga tersebut&quot;"
+                    },
+                    {
+                        "language": "러시아어",
+                        "lemma": "(нет эквивалента)",
+                        "definition": "Суффикс, указывающий на человека, являющегося носителем данной фамилии."
+                    },
+                    {
+                        "language": "영어",
+                        "lemma": "-ga",
+                        "definition": "A suffix used to mean a person who has that family name."
+                    },
+                    {
+                        "language": "일본어",
+                        "lemma": "(対訳語無し)",
+                        "definition": "「その姓を持つ人」の意を付加する接尾辞。 "
+                    },
+                    {
+                        "language": "프랑스어",
+                        "lemma": "(Pas d'expression équivalente)",
+                        "definition": "Suffixe signifiant  « personne portant ce nom »."
+                    },
+                    {
+                        "language": "스페인어",
+                        "lemma": "(No hay expresión equivalente)",
+                        "definition": "Sufijo que añade el significado de 'persona cuyo apell_ido es tal'. "
+                    },
+                    {
+                        "language": "아랍어",
+                        "lemma": "(لا يوجد كلمة مرادفة)",
+                        "definition": "اللاحقة التي تضيف معنى &quot;الشخص صاحب هذا اللقب&quot;"
+                    },
+                    {
+                        "language": "중국어",
+                        "lemma": "(无对应词汇)",
+                        "definition": "后缀。指“具有某姓氏的人”。"
+                    }
+                ]
+            }
+        ]
+    }
+]

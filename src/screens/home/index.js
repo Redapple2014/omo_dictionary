@@ -6,15 +6,15 @@ import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import PouchDB from 'pouchdb-react-native';
-import d1 from '../../resources/dictionary/dict_1.json';
-import d2 from '../../resources/dictionary/dict_2.json';
+import d1 from '../../resources/dictionary/dict_1_small.json'
+import d2 from '../../resources/dictionary/dict_2_small.json';
 import axios from 'axios';
 
 //db instance with db_name
 var localDB = new PouchDB('dev');
 
 //document list
-var toinsert = [d1];
+var toinsert = [d1,d2];
 
 //lopping of all json
 toinsert.forEach(function (json) {
@@ -27,7 +27,16 @@ toinsert.forEach(function (json) {
   // })
 
 
-  //insert(json)
+
+
+  localDB.allDocs().then(entries => {
+    if(entries.rows.length==0){
+      insert(json)
+    }
+    else{
+      return
+    }
+  });
 })
 
 
@@ -106,7 +115,12 @@ const HomeScreen = () => {
   useEffect(() => {
 
     //destroy db
-    //localDB.destroy()
+    // try{
+    //   localDB.destroy()
+    // }catch(e){
+    //   console.log(e)
+    // }
+    
 
     getDatafromStorage();
     const keyboardDidShowListener = Keyboard.addListener(
@@ -132,7 +146,7 @@ const HomeScreen = () => {
 
   //fetch data by id
 async function fetchDataById(){
-  const id = '27734'
+  const id = '72336'
   localDB.get(id).then(function (doc) {
    console.log(`data : ${id} `,JSON.stringify(doc))
   }).catch(function (err) {
@@ -150,8 +164,8 @@ async function fetchDataById(){
 
 useEffect(()=>{
 
-  fetchDataById()
-})
+   fetchDataById()
+},[])
 
 
   //render recently rearched data

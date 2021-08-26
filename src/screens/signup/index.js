@@ -98,11 +98,11 @@ const SinupScreen = (props) => {
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
-                {/* <CustomHeader
+                <CustomHeader
                     title='New Account'
                     leftIcon='Cancel'
                     onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-                /> */}
+                />
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: 'center' }}>
@@ -267,7 +267,7 @@ const SinupScreen = (props) => {
 }
 
 SinupScreen.navigationOptions = {
-    headerShown: false
+    headerShown: false,
 }
 
 

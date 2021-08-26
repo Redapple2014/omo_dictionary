@@ -1,3 +1,10 @@
 {
-    
+        "translation":{
+                "createAccountTitleText": "계정 만들기",
+                "haveAccountTitleText": "나는 이미 계정을 갖고있다",
+                "loginButtonText": "Log In",
+                "forgetPasswordText": "비밀번호 분실",
+                "createYourAccountText": "계정 만들기",
+                "FlashcardPageText": "플래시카드 페이지"
+        }
 }

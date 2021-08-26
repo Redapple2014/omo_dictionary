@@ -17,3 +17,4 @@ export const NAVIGATION_SIGNUP_SCREEN_PATH = 'SignupScreen';
 export const NAVIGATION_LOGIN_SCREEN_PATH = 'LoginScreen';
 export const NAVIGATION_FORGET_PASSWORD_SCREEN_PATH = 'ForgetPasswordScreen';
 
+export const NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH = 'ChangePasswordScreen';

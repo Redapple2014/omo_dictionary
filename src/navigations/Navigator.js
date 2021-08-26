@@ -15,7 +15,7 @@ import ProfileScreen from '../screens/profile';
 import LoginScreen from '../screens/login';
 import SignupScreen from '../screens/signup';
 import ForgetPasswordScreen from '../screens/forgetpassword';
-
+import ChangePasswordScreen from '../screens/changepassword';
 
 
 import {
@@ -37,7 +37,20 @@ import {
   NAVIGATION_LOGIN_SCREEN_PATH,
   NAVIGATION_FORGET_PASSWORD_SCREEN_PATH,
 
+
+  NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH
+
 } from './Routes';
+
+
+const shouldTabBarVisible = (navigation) => {
+  console.log(navigation.route.state.index)
+  try {
+    return navigation.route.state.index < 1;
+  } catch (e) {
+    return true;
+  }
+};
 
 const HomeStack = createStackNavigator(
   {
@@ -62,6 +75,7 @@ const HomeStack = createStackNavigator(
 const FlashcardsStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_SCREEN_PATH]: FlashcardScreen,
+    [NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH]:ChangePasswordScreen,
   },
   {
     initialRouteName: NAVIGATION_FLASHCARD_SCREEN_PATH,
@@ -153,15 +167,16 @@ export const MainAppNavigator = createBottomTabNavigator(
     },
     [NAVIGATION_PROFILE_STACK_PATH]: {
       screen: ProfileStack,
-      navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => {
+      navigationOptions:({navigation,route}) => 
+      ({
+               tabBarIcon: ({ focused, tintColor }) => {
           return <MIcon name="account-outline" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
-        tabBarVisible: true
+        tabBarVisible: navigation.state.index == 1 ? false : true
       })
+    }
     },
 
-  },
   {
     tabBarOptions: {
       showLabel: false,

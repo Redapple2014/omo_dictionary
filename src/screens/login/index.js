@@ -15,6 +15,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {
   NAVIGATION_PROFILE_SCREEN_PATH
 } from '../../navigations/Routes';
+import { useTranslation } from 'react-i18next';
+
 
 const LoginScreen = (props) => {
   const [email, setEmail] = useState('');
@@ -23,7 +25,8 @@ const LoginScreen = (props) => {
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
   const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
 
-
+  const { t, i18n } = useTranslation();
+ 
   const emailInputRef = useRef(null)
   const passwordInputRef = useRef(null)
   
@@ -60,13 +63,13 @@ const LoginScreen = (props) => {
           barStyle="light-content"
           backgroundColor={Constants.appColors.PRIMARY_COLOR}
         />
-        {/* <CustomHeader
+        <CustomHeader
           title="Login"
           leftIcon="Cancel"
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
-        /> */}
+        />
       </View>
       <CustomInput
         label="Username"
@@ -163,7 +166,7 @@ const LoginScreen = (props) => {
             marginBottom: 8,
             borderRadius: 10,
           }}
-          title={`${Constants.loginButtonText}`}
+          title={`${t("loginButtonText")}`}
           titleStyle={{fontSize: 14, fontWeight: 'bold'}}
           onPress={userLogin}
         />

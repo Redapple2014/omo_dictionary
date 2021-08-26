@@ -9,6 +9,7 @@ import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json'
 import d2 from '../../resources/dictionary/dict_2_small.json';
 import axios from 'axios';
+import * as RNLocalize from 'react-native-localize';
 
 //db instance with db_name
 var localDB = new PouchDB('dev');
@@ -66,7 +67,6 @@ const HomeScreen = () => {
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
 
   const inputEl = useRef(null)
-
 
   //delete recently searched data
   const removeItemValue = async function (key) {
@@ -164,7 +164,7 @@ async function fetchDataById(){
 
 useEffect(()=>{
 
-   fetchDataById()
+   //fetchDataById()
 },[])
 
 

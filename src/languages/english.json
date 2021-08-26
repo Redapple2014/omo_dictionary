@@ -1,3 +1,10 @@
 {
-    
+    "translation":{
+        "createAccountTitleText": "Create an Account",
+        "haveAccountTitleText": "I Already Have an Account",
+        "loginButtonText": "Log In",
+        "forgetPasswordText": "Forget Password",
+        "createYourAccountText": "Create Your Account",
+        "FlashcardPageText":"Flashcard page"
+    }
 }

@@ -21,5 +21,4 @@ module.exports = {
   loginButtonText: 'Log In',
   forgetPasswordText: 'Forget Password',
   createYourAccountText: 'Create Your Account',
-
 };

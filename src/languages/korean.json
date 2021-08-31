@@ -25,6 +25,7 @@
                 "NewAccountTitle":"새 계정",
                 "CancelText":"취소",
                 "EmailInvalidText":"이메일 ID가 잘못되었습니다.",
-                "PasswordInvalidText":"비밀번호가 잘못되었습니다"
+                "PasswordInvalidText":"비밀번호가 잘못되었습니다",
+                "NoRecentDataAvalibleText":"최근 검색 데이터가 없습니다"
         }
 }

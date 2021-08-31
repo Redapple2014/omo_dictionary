@@ -25,6 +25,7 @@
         "NewAccountTitle":"New Account",
         "CancelText":"Cancel",
         "EmailInvalidText":"Email Id is invalid",
-        "PasswordInvalidText":"Password is invalid"
+        "PasswordInvalidText":"Password is invalid",
+        "NoRecentDataAvalibleText":"No recent search data avalible"
     }
 }

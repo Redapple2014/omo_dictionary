@@ -17,7 +17,7 @@ const FlashcardScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
-                    title='Flashcard'
+                    title={`${t("FlashcardPageTitle")}`}
                 />
             </View>
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>

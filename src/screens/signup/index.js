@@ -15,6 +15,7 @@ import auth from '@react-native-firebase/auth';
 import {
     NAVIGATION_LOGIN_SCREEN_PATH
 } from '../../navigations/Routes';
+import { useTranslation } from 'react-i18next';
 
 const SinupScreen = (props) => {
     const [name, setName] = useState('');
@@ -28,7 +29,7 @@ const SinupScreen = (props) => {
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
     const [profilePicDetails, setProfilePicDetails] = useState(null)
     const [loading, SetLoading] = useState(false)
-
+    const { t,i18n } = useTranslation();
     const nameInputRef = useRef(null)
     const userNameInputRef = useRef(null)
     const emailInputRef = useRef(null)
@@ -99,8 +100,8 @@ const SinupScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
-                    title='New Account'
-                    leftIcon='Cancel'
+                    title={`${t("NewAccountTitle")}`}
+                    leftIcon={`${t("CancelText")}`}
                     onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
                 />
             </View>
@@ -119,10 +120,10 @@ const SinupScreen = (props) => {
                     </TouchableOpacity>
                 </View>
                 <CustomInput
-                    label='Name'
+                    label={`${t("NameText")}`}
                     ref={nameInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder=' Please enter your name'
+                    placeholder={`${t("EnterNamePlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -142,9 +143,9 @@ const SinupScreen = (props) => {
                 />
                 <CustomInput
                 ref={userNameInputRef}
-                    label='Username'
+                    label={`${t("UsernameText")}`}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder=' Please enter your username'
+                    placeholder={` ${t("EnterUsernamePlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -163,10 +164,10 @@ const SinupScreen = (props) => {
                     onSubmitEditing={()=>emailInputRef.current.focus()}
                 />
                 <CustomInput
-                    label='Email'
+                    label={`${t("EmailText")}`}
                     ref={emailInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder=' Please enter your email'
+                    placeholder={` ${t("EnterEmailPlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -183,12 +184,12 @@ const SinupScreen = (props) => {
                             setIsEmailErrorMsg(Verify.varifyEmail(value));
                         }
                     }
-                    errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+                    errorMessage={email && !isEmailErrorMsg ? `${t("EmailInvalidText")}` : ''}
                     onSubmitEditing={()=>passwordInputRef.current.focus()}
                 />
 
                 <CustomInput
-                    label='Password'
+                    label={`${t("PasswordText")}`}
                     ref={passwordInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
@@ -199,7 +200,7 @@ const SinupScreen = (props) => {
                     RightIconContainerStyle={{ marginLeft: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
                     placeholderFontSize={10}
-                    placeholder="Enter Password"
+                    placeholder={` ${t("EnterPasswordText")}`}
                     secureTextEntry={isSecurePassword ? isSecurePassword : false}
                     value={password}
                     onChangeText={value => {
@@ -208,24 +209,24 @@ const SinupScreen = (props) => {
                     }}
                     errorStyle={{ color: Constants.appColors.PRIMARY_COLOR }}
                     containerStyle={{ height: 50, marginTop: 52 }}
-                    errorMessage={password && !isPasswordErrorMsg ? 'Password is invalid' : ''}
+                    errorMessage={password && !isPasswordErrorMsg ? `${t("PasswordInvalidText")}` : ''}
                     onSubmitEditing={() => console.log('submit log in')}
-                    rightIcon={
+                    rightIcon={ password.length>0 &&
                         <TouchableOpacity
-                        onPress={() => setIsSecurePassword(!isSecurePassword)}>
-                        <Icon
-                          name={
-                            password && isSecurePassword ? 'eye' : 'eye-closed'
-                          }
-                          size={22}
-                          color='#3DB2FF'
-                        />
-                      </TouchableOpacity>
-                        }
+                          onPress={() => setIsSecurePassword(!isSecurePassword)}>
+                          <Icon
+                            name={
+                               isSecurePassword ? 'eye-closed' : 'eye'
+                            }
+                            size={isSecurePassword ? 22:23}
+                            color='#3DB2FF'
+                          />
+                        </TouchableOpacity>
+                      }
                         onSubmitEditing={()=>confPasswordInputRef.current.focus()}
                 />
                 <CustomInput
-                    label='Confirm Password'
+                    label={`${t("ConfirmPasswordText")}`}
                     ref={confPasswordInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
@@ -236,7 +237,7 @@ const SinupScreen = (props) => {
                     RightIconContainerStyle={{ marginLeft: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
                     placeholderFontSize={10}
-                    placeholder="Re-enter Password"
+                    placeholder={` ${t("ReenterPasswordText")}`}
                     secureTextEntry={isSecureConPassword ? isSecureConPassword : false}
                     value={confirmPassword}
                     onChangeText={value => {
@@ -244,11 +245,11 @@ const SinupScreen = (props) => {
                     }}
                     containerStyle={{ height: 50, marginTop: 52, marginBottom: 42 }}
                     onSubmitEditing={() => console.log('submit log in')}
-                    rightIcon={
+                    rightIcon={ confirmPassword.length>0 &&
                         <TouchableOpacity onPress={() => setIsSecureConPassword(!isSecureConPassword)}>
                             <Icon
-                                name={confirmPassword && isSecureConPassword ? 'eye' : 'eye-closed'}
-                                size={24}
+                                name={ isSecureConPassword ? 'eye-closed' : 'eye'}
+                                size={isSecureConPassword ? 22:23}
                                 color='#3DB2FF'
                             /></TouchableOpacity>}
                             onSubmitEditing={registerUser}
@@ -256,7 +257,7 @@ const SinupScreen = (props) => {
                 <View style={{ alignItems: 'center' }}>
                     <CustomButton
                         style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.BUTTON_COLOR, marginBottom: 8, borderRadius: 10 }}
-                        title={`${Constants.createYourAccountText}`}
+                        title={`${t("createYourAccountText")}`}
                         titleStyle={{ fontSize: 14, fontWeight: 'bold' }}
                         onPress={registerUser}
                     />

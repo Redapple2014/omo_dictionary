@@ -143,14 +143,14 @@ const LoginScreen = (props) => {
           password && !isPasswordErrorMsg ? 'Password is invalid' : ''
         }
         onSubmitEditing={() => console.log('submit log in')}
-        rightIcon={
+        rightIcon={ password.length>0 &&
           <TouchableOpacity
             onPress={() => setIsSecurePassword(!isSecurePassword)}>
             <Icon
               name={
-                password && isSecurePassword ? 'eye' : 'eye-closed'
+                 isSecurePassword ? 'eye-closed' : 'eye'
               }
-              size={22}
+              size={isSecurePassword ? 22:23}
               color='#3DB2FF'
             />
           </TouchableOpacity>

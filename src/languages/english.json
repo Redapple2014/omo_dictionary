@@ -1,10 +1,30 @@
 {
     "translation":{
-        "createAccountTitleText": "Create an Account",
+        "createAccountTitleText": "Create An Account",
         "haveAccountTitleText": "I Already Have an Account",
         "loginButtonText": "Log In",
         "forgetPasswordText": "Forget Password",
         "createYourAccountText": "Create Your Account",
-        "FlashcardPageText":"Flashcard page"
+        "FlashcardPageText":"Flashcard page",
+        "SearchBarPlaceholderText": "Search in Korean or English",
+        "RecentlySearchedText":"Recently Searched",
+        "ClearHistoryText":"Clear History",
+        "FlashcardPageTitle": "Flashcard",
+        "FlashcardListPageTitle": "Flashcard List",
+        "ProfileText":"Profile",
+        "ReenterPasswordText":"Re-enter Password",
+        "EnterPasswordText":"Enter Password",
+        "PasswordText":"Password",
+        "ConfirmPasswordText":"Confirm Password",
+        "EmailText":"Email",
+        "EnterEmailPlaceHolder":"Please enter your email",
+        "EnterNamePlaceHolder":"Please enter your name",
+        "EnterUsernamePlaceHolder":"Please enter your username",
+        "NameText":"Name",
+        "UsernameText":"Username",
+        "NewAccountTitle":"New Account",
+        "CancelText":"Cancel",
+        "EmailInvalidText":"Email Id is invalid",
+        "PasswordInvalidText":"Password is invalid"
     }
 }

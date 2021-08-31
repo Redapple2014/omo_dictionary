@@ -12,11 +12,13 @@ import {
     NAVIGATION_LOGIN_SCREEN_PATH,
 } from '../../navigations/Routes';
 import EIcons from 'react-native-vector-icons/Entypo';
+import { useTranslation } from 'react-i18next';
 
 const ProfileScreen = (props) => {
     const x = props.navigation.getParam('userdata', 'nothing sent');
     const [userData, setUserdata] = useState({})
     const [profilePicDetails, setProfilePicDetails] = useState(null)
+    const { t,i18n } = useTranslation();
     function onCreateAccountButtonPress() {
         props.navigation.navigate(NAVIGATION_SIGNUP_SCREEN_PATH);
     };
@@ -69,7 +71,7 @@ const ProfileScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
-                    title='Profile'
+                    title={`${t("ProfileText")}`}
                     rightIcon={auth().currentUser?.uid ? 'Log Out' : ''}
                     onPressrightIcon={OnLogOutPress}
                 />
@@ -96,13 +98,13 @@ const ProfileScreen = (props) => {
                     <View style={{ paddingVertical: 16, alignItems: 'center' }}>
                         <CustomButton
                             style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.PRIMARY_COLOR, marginBottom: 8, borderRadius: 10 }}
-                            title={`${Constants.createAccountTitleText}`}
+                            title={`${t("createAccountTitleText")}`}
                             titleStyle={{ fontSize: 14, fontWeight: 'bold' }}
                             onPress={onCreateAccountButtonPress}
                         />
                         <CustomButton
                             style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
-                            title={`${Constants.haveAccountTitleText}`}
+                            title={`${t("haveAccountTitleText")}`}
                             titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
                             onPress={onHaveAccountButtonPress}
                         />

@@ -9,14 +9,14 @@ import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import auth from '@react-native-firebase/auth';
-
+import { useTranslation } from 'react-i18next';
 
 const ForgetPasswordScreen = (props) => {
   const [email, setEmail] = useState('');
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
 
   const emailInputRef = useRef(null)
-
+  const { t,i18n } = useTranslation();
   const forgetPasswordPress = () => {
 
     if (email != '' && Verify.varifyEmail(email)) {

@@ -5,6 +5,26 @@
                 "loginButtonText": "Log In",
                 "forgetPasswordText": "비밀번호 분실",
                 "createYourAccountText": "계정 만들기",
-                "FlashcardPageText": "플래시카드 페이지"
+                "FlashcardPageText": "플래시카드 페이지",
+                "SearchBarPlaceholderText": "한국어 또는 영어로 검색",
+                "RecentlySearchedText":"최근 검색",
+                "ClearHistoryText":"기록 지우기",
+                "FlashcardPageTitle": "플래시 카드",
+                "FlashcardListPageTitle":"플래시 카드 목록",
+                "ProfileText":"프로필",
+                "ReenterPasswordText":"비밀번호를 다시 입력하세요",
+                "EnterPasswordText":"암호를 입력",
+                "PasswordText":"비밀번호",
+                "ConfirmPasswordText":"비밀번호 확인",
+                "EmailText":"이메일",
+                "EnterEmailPlaceHolder":"이메일을 입력하세요",
+                "EnterNamePlaceHolder":"당신의 이름을 입력하세요",
+                "EnterUsernamePlaceHolder":"사용자 이름을 입력하세요.",
+                "NameText":"이름",
+                "UsernameText":"사용자 이름",
+                "NewAccountTitle":"새 계정",
+                "CancelText":"취소",
+                "EmailInvalidText":"이메일 ID가 잘못되었습니다.",
+                "PasswordInvalidText":"비밀번호가 잘못되었습니다"
         }
 }

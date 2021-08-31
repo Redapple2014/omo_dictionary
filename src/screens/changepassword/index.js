@@ -8,6 +8,7 @@ import Verify from '../../utills/Validation';
 import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
+import { useTranslation } from 'react-i18next';
 
 const ChangePasswordScreen = (props) => {
     const [oldPassword, setOldPassword] = useState('');
@@ -16,6 +17,7 @@ const ChangePasswordScreen = (props) => {
     const [isSecureOldPassword, setIsSecureOldPassword] = useState(true);
     const [isSecureNewPassword, setIsSecureNewPassword] = useState(true);
     const [isSecureConfirmPassword, setIsSecureConfirmPassword] = useState(true);
+    const { t,i18n } = useTranslation();
 
     return (
         <View style={{ flex: 1 }}>

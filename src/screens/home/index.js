@@ -8,8 +8,7 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json'
 import d2 from '../../resources/dictionary/dict_2_small.json';
-import axios from 'axios';
-import * as RNLocalize from 'react-native-localize';
+import { useTranslation } from 'react-i18next';
 
 //db instance with db_name
 var localDB = new PouchDB('dev');
@@ -65,7 +64,7 @@ const HomeScreen = () => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [reacientlySearchedData, setReacientlySearchedData] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
-
+  const { t,i18n } = useTranslation();
   const inputEl = useRef(null)
 
   //delete recently searched data
@@ -210,18 +209,18 @@ useEffect(()=>{
           inputContainerStyle={{ backgroundColor: Constants.appColors.WHITE, height: 48, borderRadius: 10, top: -1 }}
           containerStyle={{ padding: 0, margin: 0, borderRadius: 18, height: 45, width: '95%', top: isKeyboardVisible ? Sizes.WINDOW_HEIGHT * 0.01 : searchText.length > 0 ? Sizes.WINDOW_HEIGHT * 0.01 : Sizes.WINDOW_HEIGHT * 0.3, position: 'absolute', alignSelf: 'center' }}
           inputStyle={{ color: 'black' }}
-          placeholder='Search in Korean or English'
+          placeholder={`${t("SearchBarPlaceholderText")}`}
           onSubmitEditing={onSearchSubmit}
         />
       </TouchableWithoutFeedback>
       {
         isKeyboardVisible && reacientlySearchedData.length != 0 ? <>
           <View style={{ marginVertical: 8, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8 }}>
-            <Text style={{ fontWeight: 'bold', }}>Recently Searched</Text>
+            <Text style={{ fontWeight: 'bold', }}>{`${t("RecentlySearchedText")}`}</Text>
             <TouchableOpacity onPress={() =>
               removeItemValue('search_data')
             }>
-              <Text style={{ fontWeight: '400', textDecorationLine: 'underline' }}>Clear History</Text>
+              <Text style={{ fontWeight: '400', textDecorationLine: 'underline' }}>{`${t("ClearHistoryText")}`}</Text>
             </TouchableOpacity>
           </View>
           {renderRecentSearchData()}

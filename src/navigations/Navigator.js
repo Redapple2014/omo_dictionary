@@ -16,13 +16,15 @@ import LoginScreen from '../screens/login';
 import SignupScreen from '../screens/signup';
 import ForgetPasswordScreen from '../screens/forgetpassword';
 import ChangePasswordScreen from '../screens/changepassword';
-
+import SearchResultScreen from '../screens/searchresult';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
 
   NAVIGATION_HOME_STACK_PATH,
   NAVIGATION_HOME_SCREEN_PATH,
+  NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
+
 
   NAVIGATION_FLASHCARD_LIST_STACK_PATH,
   NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
@@ -55,6 +57,7 @@ const shouldTabBarVisible = (navigation) => {
 const HomeStack = createStackNavigator(
   {
     [NAVIGATION_HOME_SCREEN_PATH]: HomeScreen,
+    [NAVIGATION_SEARCH_RESULT_SCREEN_PATH]:SearchResultScreen
   },
   {
     initialRouteName: NAVIGATION_HOME_SCREEN_PATH,

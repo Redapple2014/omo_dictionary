@@ -26,6 +26,7 @@
         "CancelText":"Cancel",
         "EmailInvalidText":"Email Id is invalid",
         "PasswordInvalidText":"Password is invalid",
-        "NoRecentDataAvalibleText":"No recent search data avalible"
+        "NoRecentDataAvalibleText":"No recent search data avalible",
+        "NodataFoundText":"No data found"
     }
 }

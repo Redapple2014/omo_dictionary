@@ -20,7 +20,9 @@ import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
 import { useTranslation } from 'react-i18next';
-
+import {
+  NAVIGATION_SEARCH_RESULT_SCREEN_PATH
+} from '../../navigations/Routes';
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -48,32 +50,7 @@ toinsert.forEach(function (json) {
   });
 });
 
-localDB
-  .createIndex({
-    index: {
-      fields: ['vocabularyLevel'],
-    },
-  })
-  .then(function (result) {
-    console.log(' created index origin successfully');
-    // handle result
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
 
-localDB
-  .find({
-    selector: {vocabularyLevel: {$eq: '고급'}},
-    fields: ['_id', 'vocabularyLevel'],
-  })
-  .then(function (result) {
-    // handle result
-    console.log('result==', result);
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
 
 //insert function
 async function insert(json) {
@@ -82,6 +59,19 @@ async function insert(json) {
     .bulkDocs(json)
     .then(function (result) {
       console.log('Row inserted Successfully');
+      localDB
+  .createIndex({
+    index: {
+      fields: ["Lemma.writtenForm"],
+    },
+  })
+  .then(function (result) {
+    console.log('created index origin successfully');
+    // handle result
+  })
+  .catch(function (err) {
+    console.log(err);
+  });
     })
     .catch(function (err) {
       console.log(
@@ -89,20 +79,15 @@ async function insert(json) {
       );
     });
 
-  //single document insert
-  // try {
-  //   var response = await localDB.put(json);
-  // } catch (err) {
-  //   console.log(err);
-  // }
 }
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
   const [searchText, setSearchText] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [reacientlySearchedData, setReacientlySearchedData] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
+  const [searchedData,setSearchdata] = useState([])
   const { t, i18n } = useTranslation();
   const inputEl = useRef(null);
 
@@ -151,6 +136,29 @@ const HomeScreen = () => {
     }
   }
 
+  function SearchResult(){
+    /*
+    Lemma.writtenForm,
+    origin,
+    partOfSpeech
+    WordForm.sound
+
+    */
+    localDB
+  .find({
+    selector: {"Lemma.writtenForm": {$eq: searchText}},
+    fields: ['_id', 'vocabularyLevel','Lemma','origin','partOfSpeech'],
+  })
+  .then(function (result) {
+    // handle result
+    setSearchdata(result.docs)
+    console.log('result==',JSON.stringify(result.docs));
+  })
+  .catch(function (err) {
+    console.log(err);
+  });
+  }
+
   useEffect(() => {
     //destroy db
     // try{
@@ -179,29 +187,6 @@ const HomeScreen = () => {
     };
   }, []);
 
-  //fetch data by id
-  async function fetchDataById() {
-    const id = '72336';
-    localDB
-      .get(id)
-      .then(function (doc) {
-        console.log(`data : ${id} `, JSON.stringify(doc));
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-
-    // get all documents
-    // localDB.allDocs().then(function (result) {
-    //   console.log(JSON.stringify('************ ',result))
-    //   }).catch(function (err) {
-    //     console.log(err);
-    //   });
-  }
-
-  useEffect(() => {
-    //fetchDataById()
-  }, []);
 
   //render recently rearched data
   function renderRecentSearchData() {
@@ -239,6 +224,44 @@ const HomeScreen = () => {
       />
     );
   }
+
+
+    //render recently rearched data
+    function renderSearchData() {
+      return (
+        <FlatList
+          keyboardShouldPersistTaps={'handled'}
+          renderItem={({item, index}) => (
+            <TouchableOpacity key={index} onPress={() => props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH)}>
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  flexDirection: 'row',
+                  height: 45,
+                  borderBottomWidth: 0.5,
+                  borderColor: Constants.appColors.LIGHTGRAY,
+                  alignItems: 'center',
+                  paddingHorizontal: 8,
+                  borderWidth: 0.5,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Constants.appColors.BLACK,
+                    paddingLeft: 12,
+                  }}>
+                  {item.Lemma.writtenForm}{` (${item.partOfSpeech})`}
+                </Text>
+              </View>
+              </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          data={searchedData}
+          numColumns={1}
+          showsVerticalScrollIndicator={false}
+        />
+      );
+    }
 
   return (
     <View style={{flex: 1}}>
@@ -280,7 +303,7 @@ const HomeScreen = () => {
           ref={inputEl}
           lightTheme
           value={searchText}
-          onChangeText={(value) => setSearchText(value)}
+          onChangeText={(value) => {setSearchText(value);SearchResult()}}
           inputContainerStyle={{
             backgroundColor: Constants.appColors.WHITE,
             height: 48,
@@ -306,7 +329,8 @@ const HomeScreen = () => {
           onSubmitEditing={onSearchSubmit}
         />
       </TouchableWithoutFeedback>
-      {isKeyboardVisible && reacientlySearchedData.length != 0 ? (
+
+      {isKeyboardVisible && searchText.length == 0 && reacientlySearchedData.length != 0 ? (
         <>
           <View
             style={{
@@ -337,6 +361,26 @@ const HomeScreen = () => {
       ) : (
         <></>
       )}
+
+
+
+
+{ searchText.length > 0 && searchedData.length != 0 ? (
+        <>
+          {renderSearchData()}
+        </>
+      ) : searchedData.length == 0 && searchText.length>0 ? (
+      <View
+      style={{
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text style={{paddingTop: 16}}>{`${t("NodataFoundText")}`}</Text>
+    </View>):(
+        <></>
+      )
+      }
     </View>
   );
 };

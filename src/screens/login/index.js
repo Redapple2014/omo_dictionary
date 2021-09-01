@@ -12,6 +12,7 @@ import {NAVIGATION_FORGET_PASSWORD_SCREEN_PATH} from '../../navigations/Routes';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import {
   NAVIGATION_PROFILE_SCREEN_PATH
 } from '../../navigations/Routes';

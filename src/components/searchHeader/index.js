@@ -33,7 +33,7 @@ const SearchHeader = (props) => {
         <TouchableOpacity onPress={()=>console.log('plus press')}>
         <EIcons name="plus" size={23} color={Constants.appColors.WHITE}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>console.log('sound press')}>
+        <TouchableOpacity onPress={props.onSoundPlay}>
         <AntDesign name="sound" size={23} color={Constants.appColors.WHITE}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>console.log('up press')}>

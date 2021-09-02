@@ -24,7 +24,7 @@ const ForgetPasswordScreen = (props) => {
         props.navigation.dispatch(NavigationActions.back())
       }).catch(e => alert('Fail to sent mail'))
     } else {
-      alert('Enter a valid Email')
+      alert(`${t("EmailInvalidText")}`)
     }
   }
 
@@ -33,13 +33,13 @@ const ForgetPasswordScreen = (props) => {
       <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
         <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
         <CustomHeader
-          title='Password'
-          leftIcon='Cancel'
+          title={`${t("PasswordText")}`}
+          leftIcon={`${t("CancelText")}`}
           onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
         />
       </View>
       <CustomInput
-        label="Email"
+        label={`${t("EmailText")}`}
         ref={emailInputRef}
         labelStyle={{
           fontSize: 14,
@@ -48,7 +48,7 @@ const ForgetPasswordScreen = (props) => {
           fontWeight: '400',
           marginLeft:4
         }}
-        placeholder=" Please enter your email"
+        placeholder={` ${t("EnterEmailPlaceHolder")}`}
         autoCapitalize="none"
         returnKeyType="next"
         autoCorrect={false}
@@ -69,7 +69,7 @@ const ForgetPasswordScreen = (props) => {
           setEmail(value);
           setIsEmailErrorMsg(Verify.varifyEmail(value));
         }}
-        errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+        errorMessage={email && !isEmailErrorMsg ? `${t("EmailInvalidText")}` : ''}
         onSubmitEditing={forgetPasswordPress}
       />
       <View style={{ paddingVertical: 56, alignItems: 'center' }}>
@@ -81,7 +81,7 @@ const ForgetPasswordScreen = (props) => {
             marginBottom: 8,
             borderRadius: 10,
           }}
-          title='Send Email'
+          title={`${t("SendEmailText")}`}
           titleStyle={{ fontSize: 14, fontWeight: 'bold' }}
           onPress={forgetPasswordPress}
         />

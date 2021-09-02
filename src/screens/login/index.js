@@ -37,10 +37,10 @@ const LoginScreen = (props) => {
 
   const userLogin = () => {
     if (email.length == 0 || password.length == 0) {
-      alert('Enter details to signin')
+      alert(`${t("SigninAlertText")}`)
   } 
   else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
-      alert('Enter a valid email/password')
+    alert(`${t("SignupValidationText")}`)
   }
   else {
       auth()
@@ -65,15 +65,15 @@ const LoginScreen = (props) => {
           backgroundColor={Constants.appColors.PRIMARY_COLOR}
         />
         <CustomHeader
-          title="Login"
-          leftIcon="Cancel"
+          title={`${t("LoginText")}`}
+          leftIcon={`${t("CancelText")}`}
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
         />
       </View>
       <CustomInput
-        label="Username"
+        label={`${t("UsernameText")}`}
         ref={emailInputRef}
         labelStyle={{
           fontSize: 14,
@@ -82,7 +82,7 @@ const LoginScreen = (props) => {
           fontWeight: '400',
           marginLeft:4
         }}
-        placeholder=" Please enter username or email"
+        placeholder={` ${t("EnterUsernamePlaceHolder")}`}
         autoCapitalize="none"
         returnKeyType="next"
         autoCorrect={false}
@@ -103,11 +103,11 @@ const LoginScreen = (props) => {
           setEmail(value);
           setIsEmailErrorMsg(Verify.varifyEmail(value));
         }}
-        errorMessage={email && !isEmailErrorMsg ? 'Email Id is invalid' : ''}
+        errorMessage={email && !isEmailErrorMsg ? `${t("EmailInvalidText")}` : ''}
         onSubmitEditing={()=>passwordInputRef.current.focus()}
       />
       <CustomInput
-        label="Password"
+        label={`${t("PasswordText")}`}
         ref={passwordInputRef}
         labelStyle={{
           fontSize: 14,
@@ -131,7 +131,7 @@ const LoginScreen = (props) => {
         RightIconContainerStyle={{marginLeft: 16}}
         placeholderTextColor={Constants.appColors.LIGHTGRAY}
         placeholderFontSize={10}
-        placeholder="Enter Password"
+        placeholder={` ${t("EnterPasswordText")}`}
         secureTextEntry={isSecurePassword ? isSecurePassword : false}
         value={password}
         onChangeText={(value) => {
@@ -141,7 +141,7 @@ const LoginScreen = (props) => {
         errorStyle={{color: Constants.appColors.PRIMARY_COLOR}}
         containerStyle={{height: 50, marginVertical: 48}}
         errorMessage={
-          password && !isPasswordErrorMsg ? 'Password is invalid' : ''
+          password && !isPasswordErrorMsg ? `${t("PasswordInvalidText")}` : ''
         }
         onSubmitEditing={() => console.log('submit log in')}
         rightIcon={ password.length>0 &&
@@ -180,7 +180,7 @@ const LoginScreen = (props) => {
             borderColor: Constants.appColors.DARKGRAY,
             borderRadius: 10,
           }}
-          title={`${Constants.forgetPasswordText}`}
+          title={`${t("forgetPasswordText")}`}
           titleStyle={{
             fontSize: 14,
             color: Constants.appColors.DARKGRAY,

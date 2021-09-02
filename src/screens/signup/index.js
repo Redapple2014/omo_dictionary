@@ -71,12 +71,12 @@ const SinupScreen = (props) => {
 
     const registerUser = () => {
         if (email.length == 0 || password.length == 0 || name.length == 0 || username == 0) {
-            alert('Enter details to signup!')
+            alert(`${t("SignupAlertText")}`)
         } else if (password != confirmPassword) {
-            alert('Password mismatch')
+            alert(`${t("PasswordMismatchText")}`)
         }
         else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
-            alert('Enter a valid email/password')
+            alert(`${t("SignupValidationText")}`)
         }
         else {
             SetLoading(true)

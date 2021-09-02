@@ -27,6 +27,13 @@
         "EmailInvalidText":"Email Id is invalid",
         "PasswordInvalidText":"Password is invalid",
         "NoRecentDataAvalibleText":"No recent search data avalible",
-        "NodataFoundText":"No data found"
+        "NodataFoundText":"No data found",
+        "SearchText":"Search",
+        "LoginText":"Login",
+        "SigninAlertText":"Enter details to signin",
+        "SendEmailText":"Send Email",
+        "SignupAlertText":"Enter details to signup",
+        "PasswordMismatchText":"Password mismatch",
+        "SignupValidationText":"Enter a valid email/password"
     }
 }

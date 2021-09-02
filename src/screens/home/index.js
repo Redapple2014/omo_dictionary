@@ -159,6 +159,45 @@ const HomeScreen = (props) => {
   });
   }
 
+
+/*test */
+
+
+  //fetch data by id
+  async function fetchDataById(){
+    // const id = '27733'
+    // localDB.get(id).then(function (doc) {
+    //  console.log(`data : ${id} `,JSON.stringify(doc))
+    // }).catch(function (err) {
+    //   console.log(err);
+    // });
+  
+  // get all documents
+    // localDB.allDocs().then(function (result) {
+    //   console.log(JSON.stringify('************ ',result))
+    //   }).catch(function (err) {
+    //     console.log(err);
+    //   });
+
+      localDB.allDocs({
+        include_docs: true,
+        attachments: true
+      }, function(err, response) {
+        if (err) { return console.log(err); }
+        // handle result
+        console.log(response.rows[0].doc._id)
+      });
+  }
+  
+  
+  useEffect(()=>{
+  
+    //fetchDataById()
+  },[])
+
+
+/* */
+
   useEffect(() => {
     //destroy db
     // try{

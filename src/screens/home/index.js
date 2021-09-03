@@ -24,6 +24,8 @@ import {
   NAVIGATION_SEARCH_RESULT_SCREEN_PATH
 } from '../../navigations/Routes';
 
+const languageMonitor = require('language-monitor');
+ 
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -49,6 +51,8 @@ toinsert.forEach(function (json) {
     }
   });
 });
+
+
 
 
 
@@ -144,9 +148,13 @@ const HomeScreen = (props) => {
     WordForm.sound
 
     */
+
+console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
+
+
     localDB
   .find({
-    selector: {"Lemma.writtenForm": {$eq: searchText}},
+    selector: {"Lemma.writtenForm": {$regex: `^${searchText}$`}},
     fields: ['_id', 'vocabularyLevel','Lemma','origin','partOfSpeech'],
   })
   .then(function (result) {
@@ -161,7 +169,6 @@ const HomeScreen = (props) => {
 
 
 /*test */
-
 
   //fetch data by id
   async function fetchDataById(){

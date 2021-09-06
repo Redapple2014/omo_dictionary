@@ -1684,7 +1684,7 @@ const SearchResultScreen = (props) => {
                     }
                 </View>
                 
-                <View key={`${i+id}`} style={{ marginHorizontal: 16}}>
+                <View key={`${i+data?.id}`} style={{ marginHorizontal: 16}}>
                 {
                         renderSenseExample(data?.SenseExample)
                  

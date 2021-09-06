@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Platform,
@@ -15,7 +15,7 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
@@ -25,7 +25,7 @@ import {
 } from '../../navigations/Routes';
 
 const languageMonitor = require('language-monitor');
- 
+
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -52,10 +52,6 @@ toinsert.forEach(function (json) {
   });
 });
 
-
-
-
-
 //insert function
 async function insert(json) {
   //bulk data insert
@@ -64,18 +60,18 @@ async function insert(json) {
     .then(function (result) {
       console.log('Row inserted Successfully');
       localDB
-  .createIndex({
-    index: {
-      fields: ["Lemma.writtenForm"],
-    },
-  })
-  .then(function (result) {
-    console.log('created index origin successfully');
-    // handle result
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
+        .createIndex({
+          index: {
+            fields: ["Lemma.writtenForm"],
+          },
+        })
+        .then(function (result) {
+          console.log('created index origin successfully');
+          // handle result
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
     })
     .catch(function (err) {
       console.log(
@@ -91,7 +87,7 @@ const HomeScreen = (props) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [reacientlySearchedData, setReacientlySearchedData] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
-  const [searchedData,setSearchdata] = useState([])
+  const [searchedData, setSearchdata] = useState([])
   const { t, i18n } = useTranslation();
   const inputEl = useRef(null);
 
@@ -140,7 +136,15 @@ const HomeScreen = (props) => {
     }
   }
 
-  function SearchResult(){
+
+
+  const isKoreanWord = () => {
+    const re = /[\u3131-\uD79D]/ugi
+    const match = searchText.match(re);
+    return match ? match.length === searchText.length : false;
+  }
+
+  function SearchResult() {
     /*
     Lemma.writtenForm,
     origin,
@@ -149,61 +153,62 @@ const HomeScreen = (props) => {
 
     */
 
-console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
-
+    // console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
+    // const match = searchText.match(/[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g);
+    console.log(isKoreanWord())
 
     localDB
-  .find({
-    selector: {"Lemma.writtenForm": {$regex: `^${searchText}$`}},
-    fields: ['_id', 'vocabularyLevel','Lemma','origin','partOfSpeech'],
-  })
-  .then(function (result) {
-    // handle result
-    setSearchdata(result.docs)
-    console.log('result==',JSON.stringify(result.docs));
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
+      .find({
+        selector: { "Lemma.writtenForm": { $regex: `${searchText}$` } },
+        fields: ['_id', 'vocabularyLevel', 'Lemma', 'origin', 'partOfSpeech'],
+      })
+      .then(function (result) {
+        // handle result
+        setSearchdata(result.docs)
+        console.log('result==', JSON.stringify(result.docs));
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   }
 
 
-/*test */
+  /*test */
 
   //fetch data by id
-  async function fetchDataById(){
+  async function fetchDataById() {
     // const id = '27733'
     // localDB.get(id).then(function (doc) {
     //  console.log(`data : ${id} `,JSON.stringify(doc))
     // }).catch(function (err) {
     //   console.log(err);
     // });
-  
-  // get all documents
+
+    // get all documents
     // localDB.allDocs().then(function (result) {
     //   console.log(JSON.stringify('************ ',result))
     //   }).catch(function (err) {
     //     console.log(err);
     //   });
 
-      localDB.allDocs({
-        include_docs: true,
-        attachments: true
-      }, function(err, response) {
-        if (err) { return console.log(err); }
-        // handle result
-        console.log(response.rows[0].doc._id)
-      });
+    localDB.allDocs({
+      include_docs: true,
+      attachments: true
+    }, function (err, response) {
+      if (err) { return console.log(err); }
+      // handle result
+      console.log(response.rows)
+    });
   }
-  
-  
-  useEffect(()=>{
-  
+
+
+  useEffect(() => {
+
     //fetchDataById()
-  },[])
+  }, [])
 
 
-/* */
+  /* */
 
   useEffect(() => {
     //destroy db
@@ -239,7 +244,7 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
             <View
               style={{
@@ -272,45 +277,45 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
   }
 
 
-    //render recently rearched data
-    function renderSearchData() {
-      return (
-        <FlatList
-          keyboardShouldPersistTaps={'handled'}
-          renderItem={({item, index}) => (
-            <TouchableOpacity key={index} onPress={() => props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH)}>
-              <View
+  //render recently rearched data
+  function renderSearchData() {
+    return (
+      <FlatList
+        keyboardShouldPersistTaps={'handled'}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity key={index} onPress={() => props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH)}>
+            <View
+              style={{
+                backgroundColor: 'white',
+                flexDirection: 'row',
+                height: 45,
+                borderBottomWidth: 0.5,
+                borderColor: Constants.appColors.LIGHTGRAY,
+                alignItems: 'center',
+                paddingHorizontal: 8,
+                borderWidth: 0.5,
+              }}>
+              <Text
                 style={{
-                  backgroundColor: 'white',
-                  flexDirection: 'row',
-                  height: 45,
-                  borderBottomWidth: 0.5,
-                  borderColor: Constants.appColors.LIGHTGRAY,
-                  alignItems: 'center',
-                  paddingHorizontal: 8,
-                  borderWidth: 0.5,
+                  fontSize: 16,
+                  color: Constants.appColors.BLACK,
+                  paddingLeft: 12,
                 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: Constants.appColors.BLACK,
-                    paddingLeft: 12,
-                  }}>
-                  {item.Lemma.writtenForm}{` (${item.partOfSpeech})`}
-                </Text>
-              </View>
-              </TouchableOpacity>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          data={searchedData}
-          numColumns={1}
-          showsVerticalScrollIndicator={false}
-        />
-      );
-    }
+                {item.Lemma.writtenForm}{` (${item.partOfSpeech})`}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+        data={searchedData}
+        numColumns={1}
+        showsVerticalScrollIndicator={false}
+      />
+    );
+  }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -336,10 +341,10 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
         {isKeyboardVisible || searchText.length > 0 ? (
           <></>
         ) : (
-          <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
+          <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
             <Image
               source={require('../../assets/logo/omo-logo_1.png')}
-              style={{width: 300, height: 100, resizeMode: 'contain'}}
+              style={{ width: 300, height: 100, resizeMode: 'contain' }}
             />
           </View>
         )}
@@ -349,7 +354,7 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
           ref={inputEl}
           lightTheme
           value={searchText}
-          onChangeText={(value) => {setSearchText(value);SearchResult()}}
+          onChangeText={(value) => { setSearchText(value); SearchResult() }}
           inputContainerStyle={{
             backgroundColor: Constants.appColors.WHITE,
             height: 48,
@@ -365,12 +370,12 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
             top: isKeyboardVisible
               ? Sizes.WINDOW_HEIGHT * 0.01
               : searchText.length > 0
-              ? Sizes.WINDOW_HEIGHT * 0.01
-              : Sizes.WINDOW_HEIGHT * 0.3,
+                ? Sizes.WINDOW_HEIGHT * 0.01
+                : Sizes.WINDOW_HEIGHT * 0.3,
             position: 'absolute',
             alignSelf: 'center',
           }}
-          inputStyle={{color: 'black'}}
+          inputStyle={{ color: 'black' }}
           placeholder={`${t("SearchBarPlaceholderText")}`}
           onSubmitEditing={onSearchSubmit}
         />
@@ -385,10 +390,10 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
               justifyContent: 'space-between',
               paddingHorizontal: 8,
             }}>
-            <Text style={{fontWeight: 'bold'}}>{`${t("RecentlySearchedText")}`}</Text>
+            <Text style={{ fontWeight: 'bold' }}>{`${t("RecentlySearchedText")}`}</Text>
             <TouchableOpacity onPress={() => removeItemValue('search_data')}>
               <Text
-                style={{fontWeight: '400', textDecorationLine: 'underline'}}>
+                style={{ fontWeight: '400', textDecorationLine: 'underline' }}>
                 {`${t("ClearHistoryText")}`}
               </Text>
             </TouchableOpacity>
@@ -402,7 +407,7 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text style={{paddingTop: 16}}>{reacientlySearchedStatus}</Text>
+          <Text style={{ paddingTop: 16 }}>{reacientlySearchedStatus}</Text>
         </View>
       ) : (
         <></>
@@ -411,19 +416,19 @@ console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
 
 
 
-{ searchText.length > 0 && searchedData.length != 0 ? (
+      {searchText.length > 0 && searchedData.length != 0 ? (
         <>
           {renderSearchData()}
         </>
-      ) : searchedData.length == 0 && searchText.length>0 ? (
-      <View
-      style={{
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text style={{paddingTop: 16}}>{`${t("NodataFoundText")}`}</Text>
-    </View>):(
+      ) : searchedData.length == 0 && searchText.length > 0 ? (
+        <View
+          style={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{ paddingTop: 16 }}>{`${t("NodataFoundText")}`}</Text>
+        </View>) : (
         <></>
       )
       }

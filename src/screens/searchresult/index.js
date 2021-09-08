@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StatusBar, Platform, TouchableOpacity, ScrollView,NativeModules, NativeEventEmitter } from 'react-native';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -1639,6 +1639,19 @@ const SearchResultScreen = (props) => {
 
     const data = props.navigation.getParam('searchResultData', 'nothing sent');
 
+   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
+   ee.addListener('tts-start', () => {});
+   ee.addListener('tts-finish', () => {});
+    ee.addListener('tts-cancel', () => {});
+
+
+
+    const isKoreanWord = (text) => {
+        const re = /[\u3131-\uD79D]/g;
+        const match = text.match(re);
+        return match ? match.length === text.length : false;
+      };
+
 
     console.log("searchResultData : ", data)
 
@@ -1690,7 +1703,7 @@ const SearchResultScreen = (props) => {
                     )
                 }
                 else {
-                    return (<></>)
+                    return (<Text> No Data</Text>)
                 }
             }
             else if (type == 3) {
@@ -1737,7 +1750,7 @@ const SearchResultScreen = (props) => {
                     }
                     onSoundPlay={() => {
                         try {
-                            // AudioPlayer.prepare(data.WordForm[0].sound, () => AudioPlayer.play());
+                             Tts.setDefaultLanguage('ko-KR');
                             Tts.speak(data?.Lemma?.writtenForm)
                         } catch (e) {
                             //console.log(`cannot play the sound file`, e)

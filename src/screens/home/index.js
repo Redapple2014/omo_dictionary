@@ -231,7 +231,7 @@ const HomeScreen = (props) => {
           return console.log(err);
         }
         // handle result
-        console.log(response.rows);
+        //console.log(response.rows);
       },
     );
   }
@@ -415,6 +415,7 @@ const HomeScreen = (props) => {
                 borderRadius: 18,
                 height: 45,
                 width: '95%',
+                marginTop: Sizes.statusBarHeight,
                 top: isKeyboardVisible
                   ? Sizes.WINDOW_HEIGHT * 0.01
                   : searchText.length > 0

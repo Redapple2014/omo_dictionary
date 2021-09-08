@@ -4,7 +4,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height'
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const statusBarHeight = Platform.OS == "ios" ? getStatusBarHeight() : 10;
+const statusBarHeight = Platform.OS == "ios" ? getStatusBarHeight() : 0;
 
 export default {
   WINDOW_WIDTH: screenWidth,

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>781062724797-0k7svt3a5ouq3chirurhcdqg7tbsagmh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.781062724797-0k7svt3a5ouq3chirurhcdqg7tbsagmh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA5fYA7oM9B7XZwu6fs9PbxwuLkwb9X4Rc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>781062724797</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.omokorean</string>
+	<key>PROJECT_ID</key>
+	<string>omo-korean</string>
+	<key>STORAGE_BUCKET</key>
+	<string>omo-korean.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:781062724797:ios:c54f6d4f0fc1b036a56bd4</string>
+</dict>
+</plist>

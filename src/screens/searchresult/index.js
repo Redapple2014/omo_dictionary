@@ -6,7 +6,7 @@ import Sizes from '../../utills/Size';
 import SearchHeader from "../../components/searchHeader";
 import { NavigationActions } from 'react-navigation';
 import { useTranslation } from 'react-i18next';
-import AudioPlayer from 'react-native-play-audio';
+// import AudioPlayer from 'react-native-play-audio';
 import { sub } from 'react-native-reanimated';
 import Toast from 'react-native-simple-toast';
 // const data = {
@@ -1736,7 +1736,7 @@ const SearchResultScreen = (props) => {
                     }
                     onSoundPlay={() => {
                         try {
-                            AudioPlayer.prepare(data.WordForm[0].sound, () => AudioPlayer.play());
+                            // AudioPlayer.prepare(data.WordForm[0].sound, () => AudioPlayer.play());
                         } catch (e) {
                             //console.log(`cannot play the sound file`, e)
                             Toast.show('No Audio File Found', Toast.SHORT);

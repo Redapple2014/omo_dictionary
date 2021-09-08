@@ -8,7 +8,6 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  ScrollView,
   TouchableWithoutFeedback,
   ActivityIndicator,
   StyleSheet
@@ -21,11 +20,20 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
-import d3 from '../../resources/dictionary/dict_3_small.json';
+// import d3 from '../../resources/dictionary/dict_3_small.json';
+// import d4 from '../../resources/dictionary/dict_4_small.json';
+// import d5 from '../../resources/dictionary/dict_5_small.json';
+// import d6 from '../../resources/dictionary/dict_6_small.json';
+// import d7 from '../../resources/dictionary/dict_7_small.json';
+// import d8 from '../../resources/dictionary/dict_8_small.json';
+// import d9 from '../../resources/dictionary/dict_9_small.json';
+// import d10 from '../../resources/dictionary/dict_10_small.json';
+// import d11 from '../../resources/dictionary/dict_11_small.json';
+
 import { useTranslation } from 'react-i18next';
 import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
 
-const languageMonitor = require('language-monitor');
+// const languageMonitor = require('language-monitor');
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -44,31 +52,42 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
 
   //document list
-  var toinsert = [d3];
+  // var toinsert = [d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11];
+   var toinsert = [d1,d2];
 
   //lopping of all json
   async function dataLoop() {
     toinsert.forEach(function (json) {
-      //iterate each json and get each document
+
+
+      // iterate each json and get each document
+      // localDB.allDocs().then((entries) => {
+      //   console.log(entries.rows.length)
+      //   if (entries.rows.length == 0) {
+      //     json.forEach(function (element, index) {
+      //       console.log(index)
+      //       insert(element)
+      //     })
+      //   } else {
+      //     setLoading(false)
+      //     return;
+      //   }
+      // });
+
+
+// insert bulk docs
       localDB.allDocs().then((entries) => {
         console.log(entries.rows.length)
         if (entries.rows.length == 0) {
-          try {
-            localDB.destroy()
-          } catch (e) {
-            console.log(e)
-          }
-          json.forEach(function (element, index) {
-            element["_id"] = `${element.id}`
-            delete element["id"]
-            //console.log(index, '***************', element)
-            insert(element)
-          })
+          insert(json);
         } else {
           setLoading(false)
           return;
         }
       });
+
+
+
     });
   }
 
@@ -77,7 +96,7 @@ const HomeScreen = (props) => {
     //bulk data insert
 
     await localDB
-      .put(json)
+      .bulkDocs(json)
       .then(function (result) {
         console.log('Row inserted Successfully');
         localDB
@@ -219,8 +238,13 @@ const HomeScreen = (props) => {
 
 
   useEffect(() => {
-    //fetchDataById()
     dataLoop()
+    // try {
+    //   localDB.destroy()
+    //   setLoading(false)
+    // } catch (e) {
+    //   console.log(e)
+    // }
   }, []);
   /* */
 

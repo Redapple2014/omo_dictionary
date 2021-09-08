@@ -8,6 +8,7 @@ import { NavigationActions } from 'react-navigation';
 import { useTranslation } from 'react-i18next';
 // import AudioPlayer from 'react-native-play-audio';
 import { sub } from 'react-native-reanimated';
+import Tts from 'react-native-tts';
 import Toast from 'react-native-simple-toast';
 // const data = {
 //     "_id": "64523",
@@ -1737,6 +1738,7 @@ const SearchResultScreen = (props) => {
                     onSoundPlay={() => {
                         try {
                             // AudioPlayer.prepare(data.WordForm[0].sound, () => AudioPlayer.play());
+                            Tts.speak(data?.Lemma?.writtenForm)
                         } catch (e) {
                             //console.log(`cannot play the sound file`, e)
                             Toast.show('No Audio File Found', Toast.SHORT);

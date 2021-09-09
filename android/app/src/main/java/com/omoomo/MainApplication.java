@@ -29,10 +29,16 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
+
           @SuppressWarnings("UnnecessaryLocalVariable")
+
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          // MainApplication.getPackages()
+long size = 999L * 1024L * 1024L; // 50 MB
+com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
+
           return packages;
         }
 

@@ -20,15 +20,13 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
-// import d3 from '../../resources/dictionary/dict_3_small.json';
-// import d4 from '../../resources/dictionary/dict_4_small.json';
-// import d5 from '../../resources/dictionary/dict_5_small.json';
-// import d6 from '../../resources/dictionary/dict_6_small.json';
-// import d7 from '../../resources/dictionary/dict_7_small.json';
+import d3 from '../../resources/dictionary/dict_3_small.json';
+import d4 from '../../resources/dictionary/dict_4_small.json';
+import d5 from '../../resources/dictionary/dict_5_small.json';
+import d6 from '../../resources/dictionary/dict_6_small.json';
+import d7 from '../../resources/dictionary/dict_7_small.json';
 // import d8 from '../../resources/dictionary/dict_8_small.json';
-// import d9 from '../../resources/dictionary/dict_9_small.json';
-// import d10 from '../../resources/dictionary/dict_10_small.json';
-// import d11 from '../../resources/dictionary/dict_11_small.json';
+//import d9 from '../../resources/dictionary/dict_9_small.json';
 
 import { useTranslation } from 'react-i18next';
 import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
@@ -52,8 +50,8 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
 
   //document list
-  // var toinsert = [d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11];
-   var toinsert = [d1,d2];
+  var toinsert = [d1,d2,d3,d4,d5,d6,d7];
+  //  var toinsert = [d1];
 
   //lopping of all json
   async function dataLoop() {
@@ -91,6 +89,25 @@ const HomeScreen = (props) => {
     });
   }
 
+
+  async function indexDB(){
+    await localDB
+    .createIndex({
+      index: {
+        fields: ['Lemma.writtenForm'],
+      },
+    })
+    .then(function (result) {
+      setLoading(false)
+      console.log('created index successfully');
+      // handle result
+    })
+    .catch(function (err) {
+      setLoading(false)
+      console.log(err);
+    });
+  }
+
   //insert function
   async function insert(json) {
     //bulk data insert
@@ -99,21 +116,7 @@ const HomeScreen = (props) => {
       .bulkDocs(json)
       .then(function (result) {
         console.log('Row inserted Successfully');
-        localDB
-          .createIndex({
-            index: {
-              fields: ['Lemma.writtenForm'],
-            },
-          })
-          .then(function (result) {
-            setLoading(false)
-            console.log('created index origin successfully');
-            // handle result
-          })
-          .catch(function (err) {
-            setLoading(false)
-            console.log(err);
-          });
+        indexDB()
       })
       .catch(function (err) {
         setLoading(false)
@@ -239,9 +242,13 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     dataLoop()
+
+
+    // destroy db
     // try {
     //   localDB.destroy()
     //   setLoading(false)
+    //   console.log('done')
     // } catch (e) {
     //   console.log(e)
     // }
@@ -249,8 +256,6 @@ const HomeScreen = (props) => {
   /* */
 
   useEffect(() => {
-    // destroy db
-
 
     getDatafromStorage();
     const keyboardDidShowListener = Keyboard.addListener(
@@ -420,7 +425,7 @@ const HomeScreen = (props) => {
                   ? Sizes.WINDOW_HEIGHT * 0.01
                   : searchText.length > 0
                     ? Sizes.WINDOW_HEIGHT * 0.01
-                    : Sizes.WINDOW_HEIGHT * 0.3,
+                    : Sizes.WINDOW_HEIGHT * 0.29,
                 position: 'absolute',
                 alignSelf: 'center',
               }}

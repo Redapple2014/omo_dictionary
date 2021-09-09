@@ -33,6 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
 
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          long size = 400L * 1024L * 1024L; // 400 MB
+          com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           // MainApplication.getPackages()

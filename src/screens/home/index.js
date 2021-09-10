@@ -51,7 +51,7 @@ const HomeScreen = (props) => {
 
   //document list
   // var allJsons = [d1, d2, d3, d4, d5, d6, d7];
-  var allJsons = [d1, d2, d3, d4];
+  var allJsons = [d1];
 
   //lopping of all json
   async function dataLoop() {
@@ -69,19 +69,23 @@ const HomeScreen = (props) => {
     //   }
     // });
 
-    // insert bulk docs
-    console.log('start inserting data ...');
-    let entries = await localDB.allDocs();
-    console.log('number of rows ', entries.rows.length);
-    if (entries.rows.length == 0) {
-      await indexDB();
-      for (const json of allJsons) {
-        await insert(json);
+    try {
+      // insert bulk docs
+      console.log('start inserting data ...');
+      let entries = await localDB.allDocs();
+      console.log('number of rows ', entries.rows.length);
+      if (entries.rows.length == 0) {
+        for (let json of allJsons) {
+          await insert(json.splice(0, 1000));
+          json = null;
+        }
+        setLoading(false);
+      } else {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    } else {
-      setLoading(false);
-      return;
+    } catch (error) {
+      console.log('error===', error);
     }
 
     // console.log(entries.rows.length);
@@ -128,6 +132,7 @@ const HomeScreen = (props) => {
         console.log('Row inserted Successfully');
       })
       .catch(function (err) {
+        console.log('err=======', err);
         setLoading(false);
         console.log(
           'Unable to insert into DB. Error: ' + err.name + ' - ' + err.message,
@@ -151,6 +156,7 @@ const HomeScreen = (props) => {
   function getDatafromStorage() {
     AsyncStorage.getItem('search_data')
       .then((req) => {
+        console.log('req', req);
         if (!req) {
           setReacientlySearchedStatus(`${t('NoRecentDataAvalibleText')}`);
           //console.log('no data found on recent search')
@@ -174,7 +180,7 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage();
       setSearchText(searchText);
-      searchResult();
+      searchResult(searchText);
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -187,38 +193,31 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  function searchResult() {
-    /*
-    Lemma.writtenForm,
-    origin,
-    partOfSpeech
-    WordForm.sound
-
-    */
-
-    // console.log('languageMonitor : ',languageMonitor(searchText)[0]?.code);
-    // const match = searchText.match(/[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g);
-    //console.log(isKoreanWord(text));
+  function searchResult(text) {
+    // reset the search result
+    setSearchdata([]);
+    if (text.length == 0) {
+      return;
+    }
 
     localDB
       .find({
         selector: {
-          'Lemma.writtenForm': {$regex: `${searchText.toLowerCase()}`},
+          'Lemma.writtenForm': {$regex: `${text.toLowerCase()}`},
         },
-        //fields: [],
+        limit: 20,
+        // fields: ['Lemma.writtenForm'],
       })
       .then(function (result) {
         // handle result
         setSearchdata(result.docs);
-        //console.log('result==', JSON.stringify(result.docs));
       })
       .catch(function (err) {
         console.log(err);
       });
   }
 
-  /*test */
-
+  /* fro testing*/
   //fetch data by id
   async function fetchDataById() {
     // const id = '27733'
@@ -322,7 +321,7 @@ const HomeScreen = (props) => {
     );
   }
 
-  //render recently rearched data
+  //render recently searched data
   function renderSearchData() {
     return (
       <FlatList
@@ -420,7 +419,7 @@ const HomeScreen = (props) => {
               value={searchText}
               onChangeText={(value) => {
                 setSearchText(value);
-                searchResult();
+                searchResult(value);
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.WHITE,

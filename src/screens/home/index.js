@@ -176,6 +176,7 @@ const HomeScreen = (props) => {
         if (from === 'search_data') {
           setReacientlySearchedData(JSON.parse(req));
         } else {
+          
           setReacientlyViewedDataSet(JSON.parse(req))
         }
 
@@ -377,10 +378,12 @@ const HomeScreen = (props) => {
       <FlatList
         keyboardShouldPersistTaps={'handled'}
         renderItem={({ item, index }) => (
-          <TouchableOpacity key={index} onPress={() =>
+          <TouchableOpacity key={index} onPress={() => {
+            
             props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
               searchResultData: item,
             })
+          }
           }>
             <View
               style={{
@@ -391,7 +394,7 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <View style={{position:'absolute',zIndex:3,right:16,top:8}}>
+              <View style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                 <TouchableOpacity onPress={() => {
                   try {
                     Tts.setDefaultLanguage('ko-KR');
@@ -432,10 +435,12 @@ const HomeScreen = (props) => {
       <FlatList
         keyboardShouldPersistTaps={'handled'}
         renderItem={({ item, index }) => (
-          <TouchableOpacity key={index} onPress={() =>
+          <TouchableOpacity key={index} onPress={() =>{
+            storeRecentlyViewedData(item);
             props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
               searchResultData: item,
             })
+          }
           }>
             <View
               style={{
@@ -446,7 +451,7 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <View style={{position:'absolute',zIndex:3,right:16,top:8}}>
+              <View style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                 <TouchableOpacity onPress={() => {
                   try {
                     Tts.setDefaultLanguage('ko-KR');
@@ -634,7 +639,7 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 100}}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{ paddingTop: 100 }}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

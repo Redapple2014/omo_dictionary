@@ -50,8 +50,8 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
 
   //document list
-  var toinsert = [d1,d2,d3,d4,d5,d6,d7];
-  //  var toinsert = [d1];
+  // var toinsert = [d1,d2,d3,d4,d5,d6,d7];
+   var toinsert = [d1];
 
   //lopping of all json
   async function dataLoop() {
@@ -241,7 +241,7 @@ const HomeScreen = (props) => {
 
 
   useEffect(() => {
-    dataLoop()
+    //dataLoop()
 
 
     // destroy db

@@ -20,11 +20,11 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import PouchDB from 'pouchdb-react-native';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
-import d3 from '../../resources/dictionary/dict_3_small.json';
-import d4 from '../../resources/dictionary/dict_4_small.json';
-import d5 from '../../resources/dictionary/dict_5_small.json';
-import d6 from '../../resources/dictionary/dict_6_small.json';
-import d7 from '../../resources/dictionary/dict_7_small.json';
+// import d3 from '../../resources/dictionary/dict_3_small.json';
+// import d4 from '../../resources/dictionary/dict_4_small.json';
+// import d5 from '../../resources/dictionary/dict_5_small.json';
+// import d6 from '../../resources/dictionary/dict_6_small.json';
+// import d7 from '../../resources/dictionary/dict_7_small.json';
 // import d8 from '../../resources/dictionary/dict_8_small.json';
 //import d9 from '../../resources/dictionary/dict_9_small.json';
 
@@ -50,8 +50,7 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
 
   //document list
-  var allJsons = [d1, d2, d3, d4, d5, d6, d7];
-  // var allJsons = [d1];
+  var allJsons = [d1];
 
   //lopping of all json
   async function dataLoop() {
@@ -76,7 +75,7 @@ const HomeScreen = (props) => {
       console.log('number of rows ', entries.rows.length);
       if (entries.rows.length == 0) {
         for (let json of allJsons) {
-          await insert(json.splice(0, 1000));
+          await insert(json.splice(0, 5000));
           json = null;
         }
         setLoading(false);
@@ -497,7 +496,7 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 16}}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{paddingTop: 100}}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

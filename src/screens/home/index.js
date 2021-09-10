@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Platform,
@@ -16,8 +16,11 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
+import Tts from 'react-native-tts';
 import d1 from '../../resources/dictionary/dict_1_small.json';
 import d2 from '../../resources/dictionary/dict_2_small.json';
 import d3 from '../../resources/dictionary/dict_3_small.json';
@@ -28,8 +31,8 @@ import d7 from '../../resources/dictionary/dict_7_small.json';
 // import d8 from '../../resources/dictionary/dict_8_small.json';
 //import d9 from '../../resources/dictionary/dict_9_small.json';
 
-import {useTranslation} from 'react-i18next';
-import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
+import { useTranslation } from 'react-i18next';
+import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
 
 // const languageMonitor = require('language-monitor');
 
@@ -40,12 +43,14 @@ var localDB = new PouchDB('dev');
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
+  const MAX_NUMBER_OF_RECENT_VIEWED_DATA = 10;
   const [searchText, setSearchText] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [reacientlySearchedData, setReacientlySearchedData] = useState([]);
+  const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isLoading, setLoading] = useState(true);
   const inputEl = useRef(null);
 
@@ -144,8 +149,15 @@ const HomeScreen = (props) => {
   const removeItemValue = async function (key) {
     try {
       await AsyncStorage.removeItem(key);
-      setReacientlySearchedData([]);
-      console.log('cleared');
+      if (key === 'recent_data') {
+        setReacientlyViewedDataSet([])
+        console.log('cleared v');
+      } else {
+        setReacientlySearchedData([]);
+        console.log('cleared s');
+      }
+
+
       return true;
     } catch (exception) {
       return false;
@@ -153,8 +165,8 @@ const HomeScreen = (props) => {
   };
 
   //retrive recently searched data
-  function getDatafromStorage() {
-    AsyncStorage.getItem('search_data')
+  function getDatafromStorage(from) {
+    AsyncStorage.getItem(from)
       .then((req) => {
         console.log('req', req);
         if (!req) {
@@ -162,7 +174,12 @@ const HomeScreen = (props) => {
           //console.log('no data found on recent search')
           return;
         }
-        setReacientlySearchedData(JSON.parse(req));
+        if (from === 'search_data') {
+          setReacientlySearchedData(JSON.parse(req));
+        } else {
+          setReacientlyViewedDataSet(JSON.parse(req))
+        }
+
         //console.log(JSON.parse(req))
       })
       .catch((error) => console.log('error!'));
@@ -178,9 +195,26 @@ const HomeScreen = (props) => {
         'search_data',
         JSON.stringify([searchText, ...reacientlySearchedData]),
       );
-      getDatafromStorage();
+      getDatafromStorage('search_data');
       setSearchText(searchText);
       searchResult(searchText);
+    } else {
+      console.log('search text input is empty');
+      setSearchText('');
+    }
+  }
+
+  //store reciently viewed data
+  function storeRecentlyViewedData(newData) {
+    if (newData) {
+      if (reacientlyViewedDataSet.length > MAX_NUMBER_OF_RECENT_VIEWED_DATA) {
+        reacientlyViewedDataSet.splice(MAX_NUMBER_OF_RECENT_VIEWED_DATA, 1);
+      }
+      AsyncStorage.setItem(
+        'recent_data',
+        JSON.stringify([newData, ...reacientlyViewedDataSet]),
+      );
+      getDatafromStorage('recent_data');
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -203,7 +237,7 @@ const HomeScreen = (props) => {
     localDB
       .find({
         selector: {
-          'Lemma.writtenForm': {$regex: `${text.toLowerCase()}`},
+          'Lemma.writtenForm': { $regex: `${text.toLowerCase()}` },
         },
         limit: 20,
         // fields: ['Lemma.writtenForm'],
@@ -264,7 +298,8 @@ const HomeScreen = (props) => {
   /* */
 
   useEffect(() => {
-    getDatafromStorage();
+    getDatafromStorage('search_data');
+    getDatafromStorage('recent_data');
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
@@ -284,12 +319,27 @@ const HomeScreen = (props) => {
     };
   }, []);
 
-  //render recently rearched data
+  function renderEquivalent(dataSet) {
+    let arr = dataSet
+    if (arr != 'undefined') {
+      return arr.map((data, i) => {
+        if (data.language == '몽골어') {
+          return (<View key={`${i + data?.lemma}`}><Text style={{ color: Constants.appColors.BLACK, fontSize: 18, }}>{`${data?.lemma}`}</Text></View>
+          )
+        }
+      })
+    }
+    else {
+      return (<></>)
+    }
+  }
+
+  //render recently searched data
   function renderRecentSearchData() {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
             <View
               style={{
@@ -321,40 +371,106 @@ const HomeScreen = (props) => {
     );
   }
 
-  //render recently searched data
+  //render recently viewed data list
+  function renderRecentViewData() {
+
+    return (
+      <FlatList
+        keyboardShouldPersistTaps={'handled'}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity key={index} onPress={() =>
+            props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+              searchResultData: item,
+            })
+          }>
+            <View
+              style={{
+                backgroundColor: 'white',
+                borderBottomWidth: 0.5,
+                borderColor: Constants.appColors.LIGHTGRAY,
+                paddingVertical: 4,
+                paddingHorizontal: 8,
+                borderWidth: 0.5,
+              }}>
+              <View style={{position:'absolute',zIndex:3,right:16,top:8}}>
+                <TouchableOpacity onPress={() => {
+                  try {
+                    Tts.setDefaultLanguage('ko-KR');
+                    Tts.speak(item?.Lemma?.writtenForm)
+                  } catch (e) {
+                    //console.log(`cannot play the sound file`, e)
+                    Toast.show('No Audio File Found', Toast.SHORT);
+                  }
+                }}>
+                  <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
+
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.TextStyle}>
+                {item.Lemma.writtenForm}
+                {`(${item?.origin})`}
+              </Text>
+              <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
+
+              <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
+                {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
+              </View>
+
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+        data={reacientlyViewedDataSet}
+        numColumns={1}
+        showsVerticalScrollIndicator={false}
+      />
+    );
+  }
+
+  //render recently searched data list
   function renderSearchData() {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => {
-              console.log(item['_id']);
-              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                searchResultData: item,
-              });
-            }}>
+        renderItem={({ item, index }) => (
+          <TouchableOpacity key={index} onPress={() =>
+            props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+              searchResultData: item,
+            })
+          }>
             <View
               style={{
                 backgroundColor: 'white',
-                flexDirection: 'row',
-                height: 45,
                 borderBottomWidth: 0.5,
                 borderColor: Constants.appColors.LIGHTGRAY,
-                alignItems: 'center',
+                paddingVertical: 4,
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Constants.appColors.BLACK,
-                  paddingLeft: 12,
+              <View style={{position:'absolute',zIndex:3,right:16,top:8}}>
+                <TouchableOpacity onPress={() => {
+                  try {
+                    Tts.setDefaultLanguage('ko-KR');
+                    Tts.speak(item?.Lemma?.writtenForm)
+                  } catch (e) {
+                    //console.log(`cannot play the sound file`, e)
+                    Toast.show('No Audio File Found', Toast.SHORT);
+                  }
                 }}>
+                  <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
+
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.TextStyle}>
                 {item.Lemma.writtenForm}
-                {` (${item.partOfSpeech})`}
+                {`(${item?.origin})`}
               </Text>
+              <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
+
+              <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
+                {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
+              </View>
+
             </View>
           </TouchableOpacity>
         )}
@@ -367,7 +483,7 @@ const HomeScreen = (props) => {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -402,10 +518,10 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
+              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
                 <Image
                   source={require('../../assets/logo/omo-logo_1.png')}
-                  style={{width: 300, height: 100, resizeMode: 'contain'}}
+                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
                 />
               </View>
             )}
@@ -437,20 +553,20 @@ const HomeScreen = (props) => {
                 top: isKeyboardVisible
                   ? Sizes.WINDOW_HEIGHT * 0.01
                   : searchText.length > 0
-                  ? Sizes.WINDOW_HEIGHT * 0.01
-                  : Sizes.WINDOW_HEIGHT * 0.29,
+                    ? Sizes.WINDOW_HEIGHT * 0.01
+                    : Sizes.WINDOW_HEIGHT * 0.29,
                 position: 'absolute',
                 alignSelf: 'center',
               }}
-              inputStyle={{color: 'black'}}
+              inputStyle={{ color: 'black' }}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
             />
           </TouchableWithoutFeedback>
 
           {isKeyboardVisible &&
-          searchText.length == 0 &&
-          reacientlySearchedData.length != 0 ? (
+            searchText.length == 0 &&
+            reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -459,7 +575,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>{`${t(
+                <Text style={{ fontWeight: 'bold' }}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -482,12 +598,34 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 16}}>{reacientlySearchedStatus}</Text>
+              <Text style={{ paddingTop: 16 }}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
-
+          {!isKeyboardVisible && searchText.length == 0 && reacientlyViewedDataSet.length != 0 ? (<><View
+            style={{
+              marginVertical: 8,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 8,
+            }}>
+            <Text style={{ fontWeight: 'bold' }}>{`${t(
+              'RecentlyViewedText',
+            )}`}</Text>
+            <TouchableOpacity
+              onPress={() => removeItemValue('recent_data')}>
+              <Text
+                style={{
+                  fontWeight: '400',
+                  textDecorationLine: 'underline',
+                }}>
+                {`${t('ClearHistoryText')}`}
+              </Text>
+            </TouchableOpacity>
+          </View>{renderRecentViewData()}</>) : (
+            <></>
+          )}
           {searchText.length > 0 && searchedData.length != 0 ? (
             <>{renderSearchData()}</>
           ) : searchedData.length == 0 && searchText.length > 0 ? (
@@ -497,7 +635,7 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 16}}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{ paddingTop: 16 }}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>
@@ -524,4 +662,9 @@ const styles = StyleSheet.create({
     left: Sizes.WINDOW_WIDTH / 2 - 24,
     zIndex: 2,
   },
+  TextStyle: {
+    fontSize: 16,
+    color: Constants.appColors.BLACK,
+    paddingLeft: 12,
+  }
 });

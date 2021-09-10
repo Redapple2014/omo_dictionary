@@ -41,7 +41,7 @@ const SearchResultScreen = (props) => {
     const renderEquivalent = (dataSet) => {
         let arr = dataSet
         if (arr != 'undefined') {
-
+            //console.log("renderSenseExample : ", arr)
             return arr.map((data, i) => {
                 if (data.language == '몽골어'){
                 return (<View key={`${i + data?.lemma}`}><Text style={{ color: Constants.appColors.PRIMARY_COLOR, fontSize: 18 }}>{`${data?.lemma}`}</Text><Text style={{ marginVertical: 4 }}>{`${data?.definition}`}</Text></View>
@@ -58,7 +58,7 @@ const SearchResultScreen = (props) => {
         
         if (dataSet != 'undefined') {
             let arr = dataSet
-            console.log("renderSenseExample : ", arr)
+            
             return arr.map((data, i) => {
                 return (<View key={`${i + data?.example_1}`} style={{ marginVertical: 4, }}><Text style={{ color: Constants.appColors.PRIMARY_COLOR, fontWeight: 'bold', fontSize: 12 }}>{`${data?.example_1}; `}</Text></View>)
             })
@@ -155,7 +155,7 @@ const SearchResultScreen = (props) => {
                     </View>
                     <View style={{ flexDirection: 'row' }} >
                         <Text style={{ paddingRight: 6 }}>{data?.partOfSpeech}</Text>
-                        <Text>{data.vocabularyLevel}</Text>
+                        <Text>{data?.vocabularyLevel}</Text>
                     </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>

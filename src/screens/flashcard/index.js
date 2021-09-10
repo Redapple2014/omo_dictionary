@@ -16,27 +16,38 @@ import DraggableFlatList, {
   } from "react-native-draggable-flatlist";
 
   const NUM_ITEMS = 10;
+const arr = []
+function getColor(i) {
+    const multiplier = 255 / (NUM_ITEMS - 1);
+    const colorVal = i * multiplier;
+    return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
+  }
 
-//   function getColor(i) {
-//     const multiplier = 255 / (NUM_ITEMS - 1);
-//     const colorVal = i * multiplier;
-//     return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-//   }
+  const exampleData = arr.map((d, index) => {
+    const backgroundColor = getColor(index);
+    return {
+      key: `item-${backgroundColor}`,
+      label: String(index),
+      backgroundColor
+    };
+  });
   
-//   const exampleData: Item[] = [...Array(20)].map((d, index) => {
-//     const backgroundColor = getColor(index);
-//     return {
-//       key: `item-${backgroundColor}`,
-//       label: String(index),
-//       backgroundColor
-//     };
-//   });
-  
-//   const Item = {
-//     key: string,
-//     label: string,
-//     backgroundColor: string,
-//   };
+const data = [
+    {
+        key: 1,
+        backgroundColor: '#123456',
+    },
+    {
+        key: 2,
+        backgroundColor: '#1AC456',
+    },
+    {
+        key: 2,
+        backgroundColor: '#1256BC',
+      
+    }
+
+]
 
 
 
@@ -44,7 +55,11 @@ import DraggableFlatList, {
 
 const FlashcardScreen = (props) => {
 
+
+    const [data, setData] = useState(exampleData);
     const { t, i18n } = useTranslation();
+
+    
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
@@ -72,12 +87,35 @@ const FlashcardScreen = (props) => {
             </View>
      </View>
             <View>
-            {/* <DraggableFlatList
+            <DraggableFlatList
         data={data}
-        renderItem={renderItem}
+        renderItem={({item, index}) => (
+            <TouchableOpacity key={index} onPress={() => console.log('press')}>
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  flexDirection: 'row',
+                  height: 45,
+                  borderBottomWidth: 0.5,
+                  borderColor: Constants.appColors.LIGHTGRAY,
+                  alignItems: 'center',
+                  paddingHorizontal: 8,
+                  borderWidth: 0.5,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: item.backgroundColor,
+                    paddingLeft: 12,
+                  }}>
+                  {item.key}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
         keyExtractor={(item, index) => `draggable-item-${item.key}`}
         onDragEnd={({ data }) => setData(data)}
-      /> */}
+      />
             </View>
         </View>
     )

@@ -16,6 +16,8 @@ target 'OmoOmo' do
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
 
+  pod 'RNSqlite2', :path => '../node_modules/react-native-sqlite-2'
+
   target 'OmoOmoTests' do
     inherit! :complete
     # Pods for testing

@@ -17,6 +17,8 @@ import SignupScreen from '../screens/signup';
 import ForgetPasswordScreen from '../screens/forgetpassword';
 import ChangePasswordScreen from '../screens/changepassword';
 import SearchResultScreen from '../screens/searchresult';
+import NewCardScreen from '../screens/newcard';
+import DisplayCardScreen from '../screens/displaycard';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
@@ -25,9 +27,10 @@ import {
   NAVIGATION_HOME_SCREEN_PATH,
   NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
 
-
   NAVIGATION_FLASHCARD_LIST_STACK_PATH,
   NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
+  NAVIGATION_NEW_CARD_SCREEN_PATH,
+  NAVIGATION_DISPLAY_CARD_SCREEN_PATH,
 
   NAVIGATION_PROFILE_STACK_PATH,
   NAVIGATION_PROFILE_SCREEN_PATH,
@@ -78,7 +81,10 @@ const HomeStack = createStackNavigator(
 const FlashcardsStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_SCREEN_PATH]: FlashcardScreen,
+    [NAVIGATION_NEW_CARD_SCREEN_PATH]: NewCardScreen,
+    [NAVIGATION_DISPLAY_CARD_SCREEN_PATH]: DisplayCardScreen,
     [NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH]:ChangePasswordScreen,
+    
   },
   {
     initialRouteName: NAVIGATION_FLASHCARD_SCREEN_PATH,

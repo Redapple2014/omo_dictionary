@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, Platform, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -8,114 +8,330 @@ import {
     NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH
 } from '../../navigations/Routes';
 import { useTranslation } from 'react-i18next';
-import Icon from "react-native-vector-icons/Ionicons";
 import EIcons from "react-native-vector-icons/Entypo";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import DraggableFlatList, {
-    RenderItemParams,
-  } from "react-native-draggable-flatlist";
+import FA5Icons from 'react-native-vector-icons/FontAwesome5';
+import MIcons from 'react-native-vector-icons/MaterialIcons';
+import DraggableFlatList from 'react-native-draggable-dynamic-flatlist';
+import Dialog from "react-native-dialog";
+import {
+    NAVIGATION_NEW_CARD_SCREEN_PATH,
+    NAVIGATION_DISPLAY_CARD_SCREEN_PATH
+} from '../../navigations/Routes';
+import Toast from 'react-native-simple-toast';
+import { CheckBox } from 'react-native-elements';
+import PouchDB from 'pouchdb-react-native';
 
-  const NUM_ITEMS = 10;
-const arr = []
-function getColor(i) {
-    const multiplier = 255 / (NUM_ITEMS - 1);
-    const colorVal = i * multiplier;
-    return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-  }
+PouchDB.plugin(require('pouchdb-find'));
 
-  const exampleData = arr.map((d, index) => {
-    const backgroundColor = getColor(index);
-    return {
-      key: `item-${backgroundColor}`,
-      label: String(index),
-      backgroundColor
-    };
-  });
-  
-const data = [
-    {
-        key: 1,
-        backgroundColor: '#123456',
-    },
-    {
-        key: 2,
-        backgroundColor: '#1AC456',
-    },
-    {
-        key: 2,
-        backgroundColor: '#1256BC',
-      
-    }
+//db instance with db_name
+var localDB = new PouchDB('flashcard');
 
-]
+// const data = [
+//     {
+//         key: 1,
+//         backgroundColor: '#123456',
+//     },
+//     {
+//         key: 2,
+//         backgroundColor: '#1AC456',
+//     },
+//     {
+//         key: 3,
+//         backgroundColor: '#1256BC',
+//     },
+//     {
+//         key: 4,
+//         backgroundColor: '#12fdBC',
+//     },
+//     {
+//         key: 5,
+//         backgroundColor: '#1876BC',
+//     }
 
-
-
+// ]
 
 
 const FlashcardScreen = (props) => {
 
 
-    const [data, setData] = useState(exampleData);
+    const [myData, setData] = useState([]);
     const { t, i18n } = useTranslation();
+    const [editMode, setEditMode] = useState(false)
+    const [visible, setVisible] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('')
+    const [items, setItems] = useState([]);
 
-    
+
+    //insert data
+    async function insert() {
+        localDB
+            .find({
+                selector: {
+                    'name': { $eq: `${newCategoryName}` },
+                },
+                limit: 20,
+            })
+            .then(function (result) {
+
+               // console.log(result.docs)
+                if (result.docs.length > 0) {
+                    Toast.show('Category already exist', Toast.SHORT)
+                } else {
+                    insertData()
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+
+
+    async function insertData() {
+        const json = {
+            "category": "flashcard",
+            "name": newCategoryName,
+            "type": newCategoryName,
+            "items": []
+        }
+        await localDB
+            .post(json)
+            .then(function (result) { console.log('Row inserted Successfully');
+            })
+            .catch(function (err) {
+                console.log('err=======', err);
+                //setLoading(false);
+                console.log(
+                    'Unable to insert into DB. Error: ' + err.name + ' - ' + err.message,
+                );
+            });
+        fetchData()
+    }
+
+    //fetch function
+    async function fetchData() {
+        localDB.allDocs(
+            {
+                include_docs: true,
+                attachments: true,
+            },
+            function (err, response) {
+                if (err) {
+                    return console.log(err);
+                }
+                // handle result
+                setData(response.rows);
+               // console.log("fetched data ", response.rows)
+                return response.rows;
+
+            },
+        );
+    }
+
+    //dalete data
+    async function deleteData() {
+
+        items.map((item) => {
+            localDB.get(item).then(function (doc) {
+                localDB.remove(doc["_id"], doc["_rev"], function (err) {
+                    if (err) {
+                        return console.log(err);
+                    } else {
+                        console.log("Document deleted successfully");
+                        fetchData()
+                    }
+                });
+            }).catch(function (err) {
+                console.log(err);
+            });
+        })
+        setItems([])
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+
+    const renderItem = ({ item, index, move, moveEnd, isActive }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => !editMode && props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH)
+                }
+                onLongPress={move}
+                onPressOut={moveEnd}>
+                <View key ={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View
+                        style={{
+                            width: editMode ? Sizes.WINDOW_WIDTH - 48 : Sizes.WINDOW_WIDTH,
+                            backgroundColor: isActive ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.WHITE,
+                            alignItems: 'center',
+                            paddingVertical: 8,
+                            flexDirection: 'row',
+                            borderBottomWidth: 0.5,
+                            borderBottomColor: Constants.appColors.LIGHTGRAY
+                        }}>
+                        {
+                            editMode &&
+                            <View style={{ position: 'absolute', left: 0 }}>
+                                <CheckBox
+                                    checkedColor={Constants.appColors.PRIMARY_COLOR}
+                                    containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, zIndex: 4 }}
+                                    size={20}
+                                    title=""
+                                    checkedIcon="check-square"
+                                    uncheckedIcon="square"
+                                    checked={isChecked(item?.id)}
+                                    onPress={() => toggleChecked(item?.id)}
+                                />
+                            </View>
+                        }
+                        <View>
+                        <Text style={{
+                            fontWeight: '700',
+                            color: Constants.appColors.BLACK,
+                            fontSize: 20,
+                            paddingLeft: editMode ? 48 : 28
+                        }}>{item?.doc?.name}</Text>
+                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.items.length} cards</Text>
+                        </View>  
+                    </View>
+                    <View style={{ marginLeft: 12 }}>
+                        <MIcons name="view-headline" size={22} color={Constants.appColors.PRIMARY_COLOR} />
+                    </View>
+                    {
+                        !editMode && <View style={{position:'absolute',right:16}}><AntDesign name='right' color={Constants.appColors.PRIMARY_COLOR} size={20}/></View>
+                    }
+                </View>
+
+            </TouchableOpacity>
+        )
+    }
+
+    const showDialog = () => {
+        setVisible(true);
+    };
+
+    const handleCancel = () => {
+        setNewCategoryName('')
+        setVisible(false);
+    };
+
+    const handleDelete = () => {
+        if (items.length == 0) {
+            Toast.show('Selet a item to delete', Toast.SHORT);
+        } else {
+            deleteData()
+        }
+    }
+
+    const handleSave = () => {
+
+        if (newCategoryName.length > 0) {
+            console.log('name : ', newCategoryName)
+            setVisible(false);
+            // handle the new category here by inserting it into the DB
+            setNewCategoryName('')
+            insert()
+        } else {
+            Toast.show('Input can not be empty', Toast.SHORT);
+        }
+    };
+
+    const isChecked = (itemId) => {
+        try {
+            const isThere = items.includes(itemId);
+            return isThere;
+        } catch (e) {
+            console.log(e)
+        }
+    };
+
+    const toggleChecked = (itemId) => {
+        const x = [itemId, ...items]
+
+        if (isChecked(itemId)) {
+            setItems(items.filter((id) => id !== itemId))
+        } else {
+            setItems(x)
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
-                <View style={{ width: 100, left: 2, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={props.onPressleftIcon}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>{`${t("FlashcardPageTitle")}`}</Text>
+                    {
+                        editMode && <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
+                            <TouchableOpacity onPress={() => { console.log('edit cancel'); setEditMode(!editMode) }}>
+                                <Text style={{ fontSize: 20, color: 'white' }}>Cancel</Text>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: .3 }}>
-                    <TouchableOpacity onPress={() => console.log('plus press')}>
-                        <EIcons name="plus" size={23} color={Constants.appColors.WHITE} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('plus press')}>
-                        <AntDesign name="sound" size={23} color={Constants.appColors.WHITE} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => console.log('up press')}>
-                        <EIcons name="arrow-bold-up" size={23} color={Constants.appColors.WHITE} />
-                    </TouchableOpacity>
+                    }
+                    <Text style={[styles.textStyle]}>{`${t("FlashcardPageTitle")}`}</Text>
+                    <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 0 }}>
+                        {
+                            !editMode ? <>
+                                <TouchableOpacity onPress={showDialog}>
+                                    <FA5Icons name="folder-plus" size={23} color={Constants.appColors.WHITE} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_NEW_CARD_SCREEN_PATH)}>
+                                    <View style={{ marginHorizontal: 12 }}>
+                                        <MIcons name="insert-drive-file" size={23} color={Constants.appColors.WHITE} />
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                    console.log('edit press')
+                                    setEditMode(!editMode)
+                                }}>
+                                    <MIcons name="edit" size={23} color={Constants.appColors.WHITE} />
+                                </TouchableOpacity></>
+                                :
+                                <>
+                                    <TouchableOpacity onPress={handleDelete}>
+                                        <View style={{ marginHorizontal: 12 }}>
+                                            <MIcons name="delete" size={23} color={Constants.appColors.WHITE} />
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        console.log('save press')
+                                    }}>
+                                        <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
+                                    </TouchableOpacity>
+                                </>
+                        }
+                    </View>
                 </View>
             </View>
-     </View>
-            <View>
-            <DraggableFlatList
-        data={data}
-        renderItem={({item, index}) => (
-            <TouchableOpacity key={index} onPress={() => console.log('press')}>
-              <View
-                style={{
-                  backgroundColor: 'white',
-                  flexDirection: 'row',
-                  height: 45,
-                  borderBottomWidth: 0.5,
-                  borderColor: Constants.appColors.LIGHTGRAY,
-                  alignItems: 'center',
-                  paddingHorizontal: 8,
-                  borderWidth: 0.5,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: item.backgroundColor,
-                    paddingLeft: 12,
-                  }}>
-                  {item.key}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        keyExtractor={(item, index) => `draggable-item-${item.key}`}
-        onDragEnd={({ data }) => setData(data)}
-      />
+            <View style={{ flex: 1 }}>
+                {
+                    editMode ?
+                        <DraggableFlatList
+                            data={myData}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                            scrollPercent={5}
+                            onMoveEnd={({ data }) => setData(data)}
+                        />
+                        :
+                        <FlatList
+                            data={myData}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                        />
+                }
+                {
+                    myData.length == 0 && <Text style={{ position: 'absolute', top: Sizes.WINDOW_HEIGHT * .35 - 32, left: Sizes.WINDOW_WIDTH / 2 - 64 }}>No Flash Card Found</Text>
+                }
+                {visible &&
+                    <Dialog.Container visible={visible}>
+                        <Dialog.Title>Please enter a new category name</Dialog.Title>
+                        <Dialog.Input value={newCategoryName} onChangeText={(v) => setNewCategoryName(v)} />
+                        <Dialog.Button label="Cancel" onPress={handleCancel} />
+                        <Dialog.Button label="Save" onPress={handleSave} />
+                    </Dialog.Container>
+                }
             </View>
         </View>
     )
@@ -133,7 +349,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Constants.appColors.PRIMARY_COLOR,
         padding: 6,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 8,
         flexDirection: 'row'

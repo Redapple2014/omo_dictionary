@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     padding: 6,
     justifyContent: 'center',
     alignItems: 'center',
-paddingVertical:8
+    paddingVertical:8
   },
   textStyle: {
     color: Constants.appColors.WHITE,

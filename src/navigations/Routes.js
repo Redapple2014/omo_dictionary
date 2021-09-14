@@ -5,6 +5,8 @@ export const NAVIGATION_HOME_SCREEN_PATH = 'HomeScreen';
 
 export const NAVIGATION_FLASHCARD_STACK_PATH = 'FlashCards';
 export const NAVIGATION_FLASHCARD_SCREEN_PATH = 'FlashcardScreen';
+export const NAVIGATION_NEW_CARD_SCREEN_PATH = 'NewCardScreen';
+export const NAVIGATION_DISPLAY_CARD_SCREEN_PATH = 'DisplayCardScreen';
 
 export const NAVIGATION_FLASHCARD_LIST_STACK_PATH = 'FlashCardList';
 export const NAVIGATION_FLASHCARD_LIST_SCREEN_PATH = 'FlashcardListScreen';

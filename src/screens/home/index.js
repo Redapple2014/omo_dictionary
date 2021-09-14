@@ -130,7 +130,7 @@ const HomeScreen = (props) => {
   //insert function
   async function insert(json) {
     //bulk data insert
-    await localDB
+    localDB
       .bulkDocs(json)
       .then(function (result) {
         console.log('Row inserted Successfully');
@@ -167,7 +167,6 @@ const HomeScreen = (props) => {
   function getDatafromStorage(from) {
     AsyncStorage.getItem(from)
       .then((req) => {
-        console.log('req', req);
         if (!req) {
           setReacientlySearchedStatus(`${t('NoRecentDataAvalibleText')}`);
           //console.log('no data found on recent search')
@@ -176,7 +175,7 @@ const HomeScreen = (props) => {
         if (from === 'search_data') {
           setReacientlySearchedData(JSON.parse(req));
         } else {
-          
+          console.log('req', req);
           setReacientlyViewedDataSet(JSON.parse(req))
         }
 
@@ -410,7 +409,7 @@ const HomeScreen = (props) => {
               </View>
               <Text style={styles.TextStyle}>
                 {item.Lemma.writtenForm}
-                {`(${item?.origin})`}
+                {item?.origin && `(${item?.origin})`}
               </Text>
               <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
 
@@ -466,8 +465,8 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
-                {item.Lemma.writtenForm}
-                {`(${item?.origin})`}
+                {item?.Lemma?.writtenForm}
+                {item?.origin && `(${item?.origin})`}
               </Text>
               <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
 

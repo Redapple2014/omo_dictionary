@@ -4,6 +4,8 @@
                 "haveAccountTitleText": "나는 이미 계정을 갖고있다",
                 "loginButtonText": "로그인",
                 "forgetPasswordText": "비밀번호 분실",
+                "NewCardText":"새 카드",
+                "DoneText":"완료",
                 "createYourAccountText": "계정 만들기",
                 "FlashcardPageText": "플래시카드 페이지",
                 "SearchBarPlaceholderText": "한국어 또는 영어로 검색",

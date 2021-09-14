@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar } from 'react-native';
+import { View, Text, StatusBar,LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createAppContainer } from 'react-navigation';
 
@@ -12,6 +12,8 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 
 const AppContainer = createAppContainer(MainAppNavigator);
+
+LogBox.ignoreLogs(['Animated: ...']);
 
 
 const App = () => {

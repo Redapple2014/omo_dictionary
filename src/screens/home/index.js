@@ -344,6 +344,7 @@ const HomeScreen = (props) => {
       return regex.test(text.name);
     });
     console.log('result', result);
+    setSearchdata(result);
 
     // localDB
     //   .find({
@@ -575,10 +576,16 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              storeRecentlyViewedData(item);
-              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                searchResultData: item,
-              });
+                localDB.get(item._id).then(function (doc) {
+                  storeRecentlyViewedData(item);
+                  console.log(`data : ${id} `,JSON.stringify(doc))
+                  props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+                    searchResultData: doc,
+                  });
+                }).catch(function (err) {
+                  console.log(err);
+                });
+             
             }}>
             <View
               style={{
@@ -630,8 +637,8 @@ const HomeScreen = (props) => {
                 <Text style={{fontSize: 17, marginTop: 2}}>{`${
                   index + 1
                 } `}</Text>
-                {item?.Sense[0]?.Equivalent &&
-                  renderEquivalent(item?.Sense[0]?.Equivalent)}
+                {/* {item?.Sense[0]?.Equivalent &&
+                  renderEquivalent(item?.Sense[0]?.Equivalent)} */}
               </View>
             </View>
           </TouchableOpacity>

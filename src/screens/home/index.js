@@ -19,30 +19,18 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
-// import PouchDB from 'pouchdb-react-native';
+import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
 import indexFile from '../../resources/dictionary/summary_json.json';
-// import d1 from '../../resources/dictionary/dict_1_small.json';
-// import d2 from '../../resources/dictionary/dict_2_small.json';
-// import d3 from '../../resources/dictionary/dict_3_small.json';
-// import d4 from '../../resources/dictionary/dict_4_small.json';
-// import d5 from '../../resources/dictionary/dict_5_small.json';
-// import d6 from '../../resources/dictionary/dict_6_small.json';
-// import d7 from '../../resources/dictionary/dict_7_small.json';
-// import d8 from '../../resources/dictionary/dict_8_small.json';
-// import d9 from '../../resources/dictionary/dict_9_small.json';
 
 import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
+import SQLite from 'react-native-sqlite-2';
+import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 
-// // const languageMonitor = require('language-monitor');
-// PouchDB.plugin(require('pouchdb-find'));
-// PouchDB.plugin(require('pouchdb-adapter-cordova-sqlite'));
-
-import PouchDB from './pounchdb';
+const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
+PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
-
-console.log('localDB===', localDB.adapter);
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -55,65 +43,182 @@ const HomeScreen = (props) => {
   const [searchedData, setSearchdata] = useState([]);
   const {t, i18n} = useTranslation();
   const [isLoading, setLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
 
-  //document list
-  var allJsons = [indexFile];
+
+  async function loadFile(index) {
+    if (index == 1) {
+      import('../../resources/dictionary/1.json')
+        .then(({default: data}) => {
+          console.log('aaa================', data.length);
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(2)
+          })().catch(e => console.log("Caught: " + e));
+          
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }
+    else if (index == 2) {
+      import('../../resources/dictionary/2.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(3)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }
+    else if (index == 3) {
+      import('../../resources/dictionary/4.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(4)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 4) {
+      import('../../resources/dictionary/4.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(5)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 5) {
+      import('../../resources/dictionary/5.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(6)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 6) {
+      import('../../resources/dictionary/6.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(7)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 7) {
+      import('../../resources/dictionary/7.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(8)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 8) {
+      import('../../resources/dictionary/8.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(9)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 9) {
+      import('../../resources/dictionary/9.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(10)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 10) {
+      import('../../resources/dictionary/10.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(11)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 11) {
+      import('../../resources/dictionary/11.json')
+        .then(({default: data}) => {
+          insertJsonFile(index, data);
+          (async () => {
+            await insertJsonFile(index, data);
+            AsyncStorage.setItem('inserted_data', 'inserted')
+            setLoading(false);
+          })().catch(e => console.log("Caught: " + e));
+          
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }  
+  }
+
+  async function insertJsonFile(fileIndex, json) {
+    let index = 0;
+    while (json.length > 0){
+      let data = json.splice(0,200)
+      await insert(data);
+      console.log(fileIndex, index);
+      index++;
+    }
+   
+  }
 
   //lopping of all json
-  async function dataLoop() {
-    // iterate each json and get each document
-    // localDB.allDocs().then((entries) => {
-    //   console.log(entries.rows.length)
-    //   if (entries.rows.length == 0) {
-    //     json.forEach(function (element, index) {
-    //       console.log(index)
-    //       insert(element)
-    //     })
-    //   } else {
-    //     setLoading(false)
-    //     return;
-    //   }
-    // });
+  async function loadAllJsons() {
 
-    try {
-      // insert bulk docs
-      console.log('start inserting data ...');
-      let entries = await localDB.allDocs();
-      console.log('number of rows ', entries.rows.length);
-      if (entries.rows.length == 0) {
-        for (let json of allJsons) {
-          await insert(json);
-          json = null;
-        }
-        setLoading(false);
-      } else {
-        setLoading(false);
-        return;
+    AsyncStorage.getItem('inserted_data')
+    .then((flag) => {
+      console.log('inserted_data', flag);
+      if (!flag) {
+        setLoadingText('Insert data ...');
+        loadFile(1);
       }
-    } catch (error) {
-      console.log('error===', error);
-    }
+      else{
+        setLoading(false);
+      }
+    })
+    .catch((error) => console.log('error!'));
 
-    // console.log(entries.rows.length);
-    // localDB.allDocs().then((entries) => {
-    //   console.log(entries.rows.length);
-    //   if (entries.rows.length == 0) {
-    //     for (const json of allJsons) {
-    //       await insert(json);
-    //     }
-    //     // allJsons.forEach(function (json) {
-    //     //   await insert(json);
-    //     // });
-    //   } else {
-    //     setLoading(false);
-    //     return;
-    //   }
-    // });
   }
 
   async function indexDB() {
-    console.log('start indexDB...');
+    console.log('create Index...');
+    setLoadingText('Create Index ...');
     await localDB
       .createIndex({
         index: {
@@ -134,7 +239,7 @@ const HomeScreen = (props) => {
   async function insert(json) {
     //bulk data insert
     await localDB
-      .bulkDocs(json)
+      .bulkDocs(json) //bulkDocs
       .then(function (result) {
         console.log('Row inserted Successfully');
       })
@@ -235,22 +340,28 @@ const HomeScreen = (props) => {
       return;
     }
 
-    localDB
-      .find({
-        selector: {
-          name: {$eq: `${text.toLowerCase()}`},
-        },
-        limit: 20,
-        // fields: ['Lemma.writtenForm'],
-      })
-      .then(function (result) {
-        // handle result
-        console.log('done===', result.docs.length);
-        setSearchdata(result.docs);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+    var regex = new RegExp('^' + text + '+', 'i');
+    var result = indexFile.filter(function (text) {
+      return regex.test(text.name);
+    });
+    console.log('result', result);
+
+    // localDB
+    //   .find({
+    //     selector: {
+    //       name: {$eq: `${text.toLowerCase()}`},
+    //     },
+    //     limit: 20,
+    //     // fields: ['Lemma.writtenForm'],
+    //   })
+    //   .then(function (result) {
+    //     // handle result
+    //     console.log('done===', result.docs.length);
+    //     setSearchdata(result.docs);
+    //   })
+    //   .catch(function (err) {
+    //     console.log(err);
+    //   });
   }
 
   /* fro testing*/
@@ -286,7 +397,7 @@ const HomeScreen = (props) => {
   }
 
   useEffect(() => {
-    dataLoop();
+    loadAllJsons();
 
     // destroy db
     // try {
@@ -552,6 +663,7 @@ const HomeScreen = (props) => {
             size="large"
             color={Constants.appColors.PRIMARY_COLOR}
           />
+          <Text>{loadingText}</Text>
         </View>
       ) : (
         <>

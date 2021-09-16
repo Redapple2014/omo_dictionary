@@ -51,7 +51,6 @@ const HomeScreen = (props) => {
     if (index == 1) {
       import('../../resources/dictionary/1.json')
         .then(({default: data}) => {
-          console.log('aaa================', data.length);
           (async () => {
             await insertJsonFile(index, data);
             loadFile(2)
@@ -203,7 +202,6 @@ const HomeScreen = (props) => {
 
     AsyncStorage.getItem('inserted_data')
     .then((flag) => {
-      console.log('inserted_data', flag);
       if (!flag) {
         setLoadingText('Insert data ...');
         loadFile(1);
@@ -285,7 +283,6 @@ const HomeScreen = (props) => {
           setReacientlyViewedDataSet(JSON.parse(req));
         }
 
-        //console.log(JSON.parse(req))
       })
       .catch((error) => console.log('error!'));
   }
@@ -576,15 +573,16 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-                localDB.get(item._id).then(function (doc) {
-                  storeRecentlyViewedData(item);
-                  console.log(`data : ${id} `,JSON.stringify(doc))
-                  props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                    searchResultData: doc,
-                  });
-                }).catch(function (err) {
-                  console.log(err);
+              const id = item._id;
+              localDB.get(id).then(function (doc) {
+                storeRecentlyViewedData(item);
+                console.log(`data : ${id} `,JSON.stringify(doc))
+                props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+                  searchResultData: doc,
                 });
+              }).catch(function (err) {
+                console.log(err);
+              });
              
             }}>
             <View

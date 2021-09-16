@@ -553,8 +553,8 @@ const HomeScreen = (props) => {
                 <Text style={{fontSize: 17, marginTop: 2}}>{`${
                   index + 1
                 } `}</Text>
-                {item?.Sense[0]?.Equivalent &&
-                  renderEquivalent(item?.Sense[0]?.Equivalent)}
+                {/* {item?.Sense[0]?.Equivalent &&
+                  renderEquivalent(item?.Sense[0]?.Equivalent)} */}
               </View>
             </View>
           </TouchableOpacity>

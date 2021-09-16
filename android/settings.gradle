@@ -1,4 +1,6 @@
 rootProject.name = 'OmoOmo'
+include ':react-native-sqlite-2'
+project(':react-native-sqlite-2').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sqlite-2/android')
 include ':react-native-tts'
 project(':react-native-tts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-tts/android')
 include ':react-native-i18n'

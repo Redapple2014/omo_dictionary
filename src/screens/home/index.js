@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Platform,
@@ -16,30 +16,21 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
-import AntDesign from "react-native-vector-icons/AntDesign";
+import {getStatusBarHeight} from 'react-native-status-bar-height';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import d1 from '../../resources/dictionary/dict_1_small.json';
-import d2 from '../../resources/dictionary/dict_2_small.json';
-// import d3 from '../../resources/dictionary/dict_3_small.json';
-// import d4 from '../../resources/dictionary/dict_4_small.json';
-// import d5 from '../../resources/dictionary/dict_5_small.json';
-// import d6 from '../../resources/dictionary/dict_6_small.json';
-// import d7 from '../../resources/dictionary/dict_7_small.json';
-// import d8 from '../../resources/dictionary/dict_8_small.json';
-//import d9 from '../../resources/dictionary/dict_9_small.json';
+import indexFile from '../../resources/dictionary/summary_json.json';
 
-import { useTranslation } from 'react-i18next';
-import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
+import {useTranslation} from 'react-i18next';
+import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
+import SQLite from 'react-native-sqlite-2';
+import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 
-// const languageMonitor = require('language-monitor');
-
-PouchDB.plugin(require('pouchdb-find'));
-
-//db instance with db_name
-var localDB = new PouchDB('dev');
+const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
+PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
+const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -50,71 +41,188 @@ const HomeScreen = (props) => {
   const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const { t, i18n } = useTranslation();
+  const {t, i18n} = useTranslation();
   const [isLoading, setLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
 
-  //document list
-  var allJsons = [d1];
+
+  async function loadFile(index) {
+    if (index == 1) {
+      import('../../resources/dictionary/1.json')
+        .then(({default: data}) => {
+          console.log('aaa================', data.length);
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(2)
+          })().catch(e => console.log("Caught: " + e));
+          
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }
+    else if (index == 2) {
+      import('../../resources/dictionary/2.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(3)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }
+    else if (index == 3) {
+      import('../../resources/dictionary/4.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(4)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 4) {
+      import('../../resources/dictionary/4.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(5)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 5) {
+      import('../../resources/dictionary/5.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(6)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 6) {
+      import('../../resources/dictionary/6.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(7)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 7) {
+      import('../../resources/dictionary/7.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(8)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 8) {
+      import('../../resources/dictionary/8.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(9)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 9) {
+      import('../../resources/dictionary/9.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(10)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 10) {
+      import('../../resources/dictionary/10.json')
+        .then(({default: data}) => {
+          (async () => {
+            await insertJsonFile(index, data);
+            loadFile(11)
+          })().catch(e => console.log("Caught: " + e));
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    } 
+    else if (index == 11) {
+      import('../../resources/dictionary/11.json')
+        .then(({default: data}) => {
+          insertJsonFile(index, data);
+          (async () => {
+            await insertJsonFile(index, data);
+            AsyncStorage.setItem('inserted_data', 'inserted')
+            setLoading(false);
+          })().catch(e => console.log("Caught: " + e));
+          
+        })
+        .catch((error) => {
+          console.log('error====', error);
+        });
+    }  
+  }
+
+  async function insertJsonFile(fileIndex, json) {
+    let index = 0;
+    while (json.length > 0){
+      let data = json.splice(0,200)
+      await insert(data);
+      console.log(fileIndex, index);
+      index++;
+    }
+   
+  }
 
   //lopping of all json
-  async function dataLoop() {
-    // iterate each json and get each document
-    // localDB.allDocs().then((entries) => {
-    //   console.log(entries.rows.length)
-    //   if (entries.rows.length == 0) {
-    //     json.forEach(function (element, index) {
-    //       console.log(index)
-    //       insert(element)
-    //     })
-    //   } else {
-    //     setLoading(false)
-    //     return;
-    //   }
-    // });
+  async function loadAllJsons() {
 
-    try {
-      // insert bulk docs
-      console.log('start inserting data ...');
-      let entries = await localDB.allDocs();
-      console.log('number of rows ', entries.rows.length);
-      if (entries.rows.length == 0) {
-        for (let json of allJsons) {
-          await insert(json.splice(0, 5000));
-          json = null;
-        }
-        setLoading(false);
-      } else {
-        setLoading(false);
-        return;
+    AsyncStorage.getItem('inserted_data')
+    .then((flag) => {
+      console.log('inserted_data', flag);
+      if (!flag) {
+        setLoadingText('Insert data ...');
+        loadFile(1);
       }
-    } catch (error) {
-      console.log('error===', error);
-    }
+      else{
+        setLoading(false);
+      }
+    })
+    .catch((error) => console.log('error!'));
 
-    // console.log(entries.rows.length);
-    // localDB.allDocs().then((entries) => {
-    //   console.log(entries.rows.length);
-    //   if (entries.rows.length == 0) {
-    //     for (const json of allJsons) {
-    //       await insert(json);
-    //     }
-    //     // allJsons.forEach(function (json) {
-    //     //   await insert(json);
-    //     // });
-    //   } else {
-    //     setLoading(false);
-    //     return;
-    //   }
-    // });
   }
 
   async function indexDB() {
-    console.log('start indexDB...');
+    console.log('create Index...');
+    setLoadingText('Create Index ...');
     await localDB
       .createIndex({
         index: {
-          fields: ['Lemma.writtenForm'],
+          fields: ['name'],
         },
       })
       .then(function (result) {
@@ -130,8 +238,13 @@ const HomeScreen = (props) => {
   //insert function
   async function insert(json) {
     //bulk data insert
+<<<<<<< HEAD
     localDB
       .bulkDocs(json)
+=======
+    await localDB
+      .bulkDocs(json) //bulkDocs
+>>>>>>> try-sqlite-adapter
       .then(function (result) {
         console.log('Row inserted Successfully');
       })
@@ -149,13 +262,12 @@ const HomeScreen = (props) => {
     try {
       await AsyncStorage.removeItem(key);
       if (key === 'recent_data') {
-        setReacientlyViewedDataSet([])
+        setReacientlyViewedDataSet([]);
         console.log('cleared v');
       } else {
         setReacientlySearchedData([]);
         console.log('cleared s');
       }
-
 
       return true;
     } catch (exception) {
@@ -175,8 +287,12 @@ const HomeScreen = (props) => {
         if (from === 'search_data') {
           setReacientlySearchedData(JSON.parse(req));
         } else {
+<<<<<<< HEAD
           console.log('req', req);
           setReacientlyViewedDataSet(JSON.parse(req))
+=======
+          setReacientlyViewedDataSet(JSON.parse(req));
+>>>>>>> try-sqlite-adapter
         }
 
         //console.log(JSON.parse(req))
@@ -233,21 +349,28 @@ const HomeScreen = (props) => {
       return;
     }
 
-    localDB
-      .find({
-        selector: {
-          'Lemma.writtenForm': { $regex: `${text.toLowerCase()}` },
-        },
-        limit: 20,
-        // fields: ['Lemma.writtenForm'],
-      })
-      .then(function (result) {
-        // handle result
-        setSearchdata(result.docs);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+    var regex = new RegExp('^' + text + '+', 'i');
+    var result = indexFile.filter(function (text) {
+      return regex.test(text.name);
+    });
+    console.log('result', result);
+
+    // localDB
+    //   .find({
+    //     selector: {
+    //       name: {$eq: `${text.toLowerCase()}`},
+    //     },
+    //     limit: 20,
+    //     // fields: ['Lemma.writtenForm'],
+    //   })
+    //   .then(function (result) {
+    //     // handle result
+    //     console.log('done===', result.docs.length);
+    //     setSearchdata(result.docs);
+    //   })
+    //   .catch(function (err) {
+    //     console.log(err);
+    //   });
   }
 
   /* fro testing*/
@@ -283,7 +406,7 @@ const HomeScreen = (props) => {
   }
 
   useEffect(() => {
-    dataLoop();
+    loadAllJsons();
 
     // destroy db
     // try {
@@ -319,17 +442,23 @@ const HomeScreen = (props) => {
   }, []);
 
   function renderEquivalent(dataSet) {
-    let arr = dataSet
+    let arr = dataSet;
     if (arr != 'undefined') {
       return arr.map((data, i) => {
         if (data.language == '몽골어') {
-          return (<View key={`${i + data?.lemma}`}><Text style={{ color: Constants.appColors.BLACK, fontSize: 18, }}>{`${data?.lemma}`}</Text></View>
-          )
+          return (
+            <View key={`${i + data?.lemma}`}>
+              <Text
+                style={{
+                  color: Constants.appColors.BLACK,
+                  fontSize: 18,
+                }}>{`${data?.lemma}`}</Text>
+            </View>
+          );
         }
-      })
-    }
-    else {
-      return (<></>)
+      });
+    } else {
+      return <></>;
     }
   }
 
@@ -338,7 +467,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
             <View
               style={{
@@ -372,18 +501,17 @@ const HomeScreen = (props) => {
 
   //render recently viewed data list
   function renderRecentViewData() {
-
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity key={index} onPress={() => {
-            
-            props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-              searchResultData: item,
-            })
-          }
-          }>
+        renderItem={({item, index}) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => {
+              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+                searchResultData: item,
+              });
+            }}>
             <View
               style={{
                 backgroundColor: 'white',
@@ -393,30 +521,55 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <View style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
-                <TouchableOpacity onPress={() => {
-                  try {
-                    Tts.setDefaultLanguage('ko-KR');
-                    Tts.speak(item?.Lemma?.writtenForm)
-                  } catch (e) {
-                    //console.log(`cannot play the sound file`, e)
-                    Toast.show('No Audio File Found', Toast.SHORT);
-                  }
-                }}>
-                  <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
-
+              <View
+                style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    try {
+                      Tts.setDefaultLanguage('ko-KR');
+                      Tts.speak(item?.Lemma?.writtenForm);
+                    } catch (e) {
+                      //console.log(`cannot play the sound file`, e)
+                      Toast.show('No Audio File Found', Toast.SHORT);
+                    }
+                  }}>
+                  <AntDesign
+                    name="sound"
+                    size={19}
+                    color={Constants.appColors.BLACK}
+                  />
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
+<<<<<<< HEAD
                 {item.Lemma.writtenForm}
                 {item?.origin && `(${item?.origin})`}
+=======
+                {item.name}
+                {`(${item?.origin})`}
+>>>>>>> try-sqlite-adapter
               </Text>
-              <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
+              <Text
+                style={[
+                  styles.TextStyle,
+                  {color: Constants.appColors.GRAY, fontSize: 12},
+                ]}>
+                {item?.partOfSpeech}
+              </Text>
 
-              <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
-                {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
+              <View
+                key={index}
+                style={{
+                  marginHorizontal: 4,
+                  flexDirection: 'row',
+                  paddingLeft: 12,
+                }}>
+                <Text style={{fontSize: 17, marginTop: 2}}>{`${
+                  index + 1
+                } `}</Text>
+                {item?.Sense[0]?.Equivalent &&
+                  renderEquivalent(item?.Sense[0]?.Equivalent)}
               </View>
-
             </View>
           </TouchableOpacity>
         )}
@@ -433,14 +586,15 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity key={index} onPress={() =>{
-            storeRecentlyViewedData(item);
-            props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-              searchResultData: item,
-            })
-          }
-          }>
+        renderItem={({item, index}) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => {
+              storeRecentlyViewedData(item);
+              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+                searchResultData: item,
+              });
+            }}>
             <View
               style={{
                 backgroundColor: 'white',
@@ -450,30 +604,55 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <View style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
-                <TouchableOpacity onPress={() => {
-                  try {
-                    Tts.setDefaultLanguage('ko-KR');
-                    Tts.speak(item?.Lemma?.writtenForm)
-                  } catch (e) {
-                    //console.log(`cannot play the sound file`, e)
-                    Toast.show('No Audio File Found', Toast.SHORT);
-                  }
-                }}>
-                  <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
-
+              <View
+                style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    try {
+                      Tts.setDefaultLanguage('ko-KR');
+                      Tts.speak(item?.Lemma?.writtenForm);
+                    } catch (e) {
+                      //console.log(`cannot play the sound file`, e)
+                      Toast.show('No Audio File Found', Toast.SHORT);
+                    }
+                  }}>
+                  <AntDesign
+                    name="sound"
+                    size={19}
+                    color={Constants.appColors.BLACK}
+                  />
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
+<<<<<<< HEAD
                 {item?.Lemma?.writtenForm}
                 {item?.origin && `(${item?.origin})`}
+=======
+                {item.name}
+                {`(${item?.origin})`}
+>>>>>>> try-sqlite-adapter
               </Text>
-              <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.partOfSpeech}</Text>
+              <Text
+                style={[
+                  styles.TextStyle,
+                  {color: Constants.appColors.GRAY, fontSize: 12},
+                ]}>
+                {item?.partOfSpeech}
+              </Text>
 
-              <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
-                {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
+              <View
+                key={index}
+                style={{
+                  marginHorizontal: 4,
+                  flexDirection: 'row',
+                  paddingLeft: 12,
+                }}>
+                <Text style={{fontSize: 17, marginTop: 2}}>{`${
+                  index + 1
+                } `}</Text>
+                {item?.Sense[0]?.Equivalent &&
+                  renderEquivalent(item?.Sense[0]?.Equivalent)}
               </View>
-
             </View>
           </TouchableOpacity>
         )}
@@ -486,7 +665,7 @@ const HomeScreen = (props) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -503,6 +682,7 @@ const HomeScreen = (props) => {
             size="large"
             color={Constants.appColors.PRIMARY_COLOR}
           />
+          <Text>{loadingText}</Text>
         </View>
       ) : (
         <>
@@ -521,10 +701,10 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
+              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
                 <Image
                   source={require('../../assets/logo/omo-logo_1.png')}
-                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
+                  style={{width: 300, height: 100, resizeMode: 'contain'}}
                 />
               </View>
             )}
@@ -556,20 +736,20 @@ const HomeScreen = (props) => {
                 top: isKeyboardVisible
                   ? Sizes.WINDOW_HEIGHT * 0.01
                   : searchText.length > 0
-                    ? Sizes.WINDOW_HEIGHT * 0.01
-                    : Sizes.WINDOW_HEIGHT * 0.29,
+                  ? Sizes.WINDOW_HEIGHT * 0.01
+                  : Sizes.WINDOW_HEIGHT * 0.29,
                 position: 'absolute',
                 alignSelf: 'center',
               }}
-              inputStyle={{ color: 'black' }}
+              inputStyle={{color: 'black'}}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
             />
           </TouchableWithoutFeedback>
 
           {isKeyboardVisible &&
-            searchText.length == 0 &&
-            reacientlySearchedData.length != 0 ? (
+          searchText.length == 0 &&
+          reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -578,7 +758,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{`${t(
+                <Text style={{fontWeight: 'bold'}}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -601,32 +781,39 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{ paddingTop: 16 }}>{reacientlySearchedStatus}</Text>
+              <Text style={{paddingTop: 16}}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
-          {!isKeyboardVisible && searchText.length == 0 && reacientlyViewedDataSet.length != 0 ? (<><View
-            style={{
-              marginVertical: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 8,
-            }}>
-            <Text style={{ fontWeight: 'bold' }}>{`${t(
-              'RecentlyViewedText',
-            )}`}</Text>
-            <TouchableOpacity
-              onPress={() => removeItemValue('recent_data')}>
-              <Text
+          {!isKeyboardVisible &&
+          searchText.length == 0 &&
+          reacientlyViewedDataSet.length != 0 ? (
+            <>
+              <View
                 style={{
-                  fontWeight: '400',
-                  textDecorationLine: 'underline',
+                  marginVertical: 8,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 8,
                 }}>
-                {`${t('ClearHistoryText')}`}
-              </Text>
-            </TouchableOpacity>
-          </View>{renderRecentViewData()}</>) : (
+                <Text style={{fontWeight: 'bold'}}>{`${t(
+                  'RecentlyViewedText',
+                )}`}</Text>
+                <TouchableOpacity
+                  onPress={() => removeItemValue('recent_data')}>
+                  <Text
+                    style={{
+                      fontWeight: '400',
+                      textDecorationLine: 'underline',
+                    }}>
+                    {`${t('ClearHistoryText')}`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {renderRecentViewData()}
+            </>
+          ) : (
             <></>
           )}
           {searchText.length > 0 && searchedData.length != 0 ? (
@@ -638,7 +825,7 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{ paddingTop: 100 }}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{paddingTop: 100}}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>
@@ -669,5 +856,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Constants.appColors.BLACK,
     paddingLeft: 12,
-  }
+  },
 });

@@ -238,13 +238,8 @@ const HomeScreen = (props) => {
   //insert function
   async function insert(json) {
     //bulk data insert
-<<<<<<< HEAD
-    localDB
-      .bulkDocs(json)
-=======
     await localDB
-      .bulkDocs(json) //bulkDocs
->>>>>>> try-sqlite-adapter
+      .bulkDocs(json)
       .then(function (result) {
         console.log('Row inserted Successfully');
       })
@@ -287,12 +282,7 @@ const HomeScreen = (props) => {
         if (from === 'search_data') {
           setReacientlySearchedData(JSON.parse(req));
         } else {
-<<<<<<< HEAD
-          console.log('req', req);
-          setReacientlyViewedDataSet(JSON.parse(req))
-=======
           setReacientlyViewedDataSet(JSON.parse(req));
->>>>>>> try-sqlite-adapter
         }
 
         //console.log(JSON.parse(req))
@@ -541,13 +531,8 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
-<<<<<<< HEAD
-                {item.Lemma.writtenForm}
-                {item?.origin && `(${item?.origin})`}
-=======
                 {item.name}
-                {`(${item?.origin})`}
->>>>>>> try-sqlite-adapter
+                {item?.origin && `(${item?.origin})`}
               </Text>
               <Text
                 style={[
@@ -624,13 +609,8 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
-<<<<<<< HEAD
-                {item?.Lemma?.writtenForm}
-                {item?.origin && `(${item?.origin})`}
-=======
                 {item.name}
-                {`(${item?.origin})`}
->>>>>>> try-sqlite-adapter
+                {item?.origin && `(${item?.origin})`}
               </Text>
               <Text
                 style={[

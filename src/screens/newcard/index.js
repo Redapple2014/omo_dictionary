@@ -24,7 +24,7 @@ const NewCardScreen = (props) => {
 
     const pathFrom = props.navigation.getParam('path', '');
 
-    console.log('path data : ',pathFrom)
+    // console.log('path data : ',pathFrom)
 
     const [isOverlayActive, setOverlayActive] = useState(false);
     const [isPoPOverlayActive, setPopOverlayActive] = useState(false);
@@ -102,8 +102,9 @@ const NewCardScreen = (props) => {
         }
     }
 
+
     const handleDone = () => {
-        console.log('CAT: ',category)
+        //console.log('CAT: ',category)
         if (koreanHandWord.length > 0 && partOfSpeech.length > 0 && hanja.length > 0 && englishHandWord.length > 0 && definitionsInputs.length > 0 && examplesInputs.length > 0) {
            if(category !== 'Please select a category'){
             if (definitionsInputs[0].value.length>0 && examplesInputs[0].value.length>0 ) {
@@ -124,10 +125,10 @@ const NewCardScreen = (props) => {
                     localDB.put(newObj).then((response)=>{
                         console.log('responcen : ',response)
                         goBack()
-                    }).catch((e)=>console.log('EROR: ',e))
+                    }).catch((e)=>console.log('ERORor: ',e))
 
                 }).catch(function (err) {
-                    console.log('EROR: ',err);
+                    console.log('EROR : ',err);
                 });
 
             } else {
@@ -338,16 +339,13 @@ const NewCardScreen = (props) => {
                 </TouchableOpacity>
             </ScrollView>
         </View>
-    )
-}
+    )};
 
 NewCardScreen.navigationOptions = {
-    headerShown: false,
-}
-
+  headerShown: false,
+};
 
 export default NewCardScreen;
-
 
 const styles = StyleSheet.create({
     inputContainer: {

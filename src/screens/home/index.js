@@ -347,7 +347,7 @@ const HomeScreen = (props) => {
     console.log('result', ids);
     setIDS(ids)
        localDB.get(ids).then(function (doc) {
-     console.log(`data : ${id} `,JSON.stringify(doc))
+     console.log(`data ******* : ${id} `,JSON.stringify(doc))
     }).catch(function (err) {
       console.log(err);
     });

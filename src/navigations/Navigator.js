@@ -19,6 +19,7 @@ import ChangePasswordScreen from '../screens/changepassword';
 import SearchResultScreen from '../screens/searchresult';
 import NewCardScreen from '../screens/newcard';
 import DisplayCardScreen from '../screens/displaycard';
+import ViewFlashcardDataScreen from '../screens/viewflashcard';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
@@ -31,6 +32,7 @@ import {
   NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
   NAVIGATION_NEW_CARD_SCREEN_PATH,
   NAVIGATION_DISPLAY_CARD_SCREEN_PATH,
+  NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH,
 
   NAVIGATION_PROFILE_STACK_PATH,
   NAVIGATION_PROFILE_SCREEN_PATH,
@@ -83,6 +85,7 @@ const FlashcardsStack = createStackNavigator(
     [NAVIGATION_FLASHCARD_SCREEN_PATH]: FlashcardScreen,
     [NAVIGATION_NEW_CARD_SCREEN_PATH]: NewCardScreen,
     [NAVIGATION_DISPLAY_CARD_SCREEN_PATH]: DisplayCardScreen,
+    [NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH]: ViewFlashcardDataScreen,
     [NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH]:ChangePasswordScreen,
     
   },

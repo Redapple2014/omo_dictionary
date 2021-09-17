@@ -21,6 +21,7 @@ import {
 import Toast from 'react-native-simple-toast';
 import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
+import { NavigationEvents } from 'react-navigation';
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -73,7 +74,6 @@ const FlashcardScreen = (props) => {
                 limit: 20,
             })
             .then(function (result) {
-
                // console.log(result.docs)
                 if (result.docs.length > 0) {
                     Toast.show('Category already exist', Toast.SHORT)
@@ -92,7 +92,7 @@ const FlashcardScreen = (props) => {
             "category": "flashcard",
             "name": newCategoryName,
             "type": newCategoryName,
-            "items": []
+            "cards": []
         }
         await localDB
             .post(json)
@@ -148,15 +148,10 @@ const FlashcardScreen = (props) => {
         setItems([])
     }
 
-    useEffect(() => {
-        fetchData()
-    }, [])
-
-
     const renderItem = ({ item, index, move, moveEnd, isActive }) => {
         return (
             <TouchableOpacity
-                onPress={() => !editMode && props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH)
+                onPress={() => !editMode && props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH,{data:item})
                 }
                 onLongPress={move}
                 onPressOut={moveEnd}>
@@ -193,7 +188,7 @@ const FlashcardScreen = (props) => {
                             fontSize: 20,
                             paddingLeft: editMode ? 48 : 28
                         }}>{item?.doc?.name}</Text>
-                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.items.length} cards</Text>
+                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} cards</Text>
                         </View>  
                     </View>
                     <View style={{ marginLeft: 12 }}>
@@ -230,7 +225,6 @@ const FlashcardScreen = (props) => {
         if (newCategoryName.length > 0) {
             console.log('name : ', newCategoryName)
             setVisible(false);
-            // handle the new category here by inserting it into the DB
             setNewCategoryName('')
             insert()
         } else {
@@ -259,6 +253,7 @@ const FlashcardScreen = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
+            <NavigationEvents onDidFocus={(payload) => fetchData()}/>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
@@ -296,6 +291,7 @@ const FlashcardScreen = (props) => {
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         console.log('save press')
+                                        setEditMode(!editMode)
                                     }}>
                                         <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>

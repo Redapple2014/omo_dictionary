@@ -45,6 +45,7 @@ const HomeScreen = (props) => {
   const [isLoading, setLoading] = useState(true);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
+  const [ids,setIDS]= useState([])
 
 
   async function loadFile(index) {
@@ -287,6 +288,8 @@ const HomeScreen = (props) => {
       .catch((error) => console.log('error!'));
   }
 
+  console.log(reacientlyViewedDataSet)
+
   //search the entered data
   function onSearchSubmit() {
     if (searchText) {
@@ -340,7 +343,14 @@ const HomeScreen = (props) => {
     var result = indexFile.filter(function (text) {
       return regex.test(text.name);
     });
-    console.log('result', result);
+    let ids = result.map((item,index)=>item["_id"])
+    console.log('result', ids);
+    setIDS(ids)
+       localDB.get(ids).then(function (doc) {
+     console.log(`data : ${id} `,JSON.stringify(doc))
+    }).catch(function (err) {
+      console.log(err);
+    });
     setSearchdata(result);
 
     // localDB
@@ -509,7 +519,7 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              <View
+              {item?.Lemma?.writtenForm && <View
                 style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
                 <TouchableOpacity
                   onPress={() => {
@@ -527,7 +537,7 @@ const HomeScreen = (props) => {
                     color={Constants.appColors.BLACK}
                   />
                 </TouchableOpacity>
-              </View>
+              </View>}
               <Text style={styles.TextStyle}>
                 {item.name}
                 {item?.origin && `(${item?.origin})`}

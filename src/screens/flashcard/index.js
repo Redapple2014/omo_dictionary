@@ -291,6 +291,7 @@ const FlashcardScreen = (props) => {
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         console.log('save press')
+                                        setEditMode(!editMode)
                                     }}>
                                         <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>

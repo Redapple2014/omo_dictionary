@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
@@ -13,10 +13,14 @@ import {
     NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH
 } from '../../navigations/Routes';
 import MIcons from 'react-native-vector-icons/MaterialIcons';
+import FIcons from 'react-native-vector-icons/FontAwesome';
 import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
-import {NAVIGATION_NEW_CARD_SCREEN_PATH} from '../../navigations/Routes';
+import { NAVIGATION_NEW_CARD_SCREEN_PATH } from '../../navigations/Routes';
 import { NavigationEvents } from 'react-navigation';
+import CustomPopup from '../../components/popup/CustomPopup';
+import { Button } from 'react-native-elements/dist/buttons/Button';
+
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -28,15 +32,21 @@ const DisplayCardScreen = (props) => {
 
     const data1 = props.navigation.getParam('data', 'nothing sent');
     // console.log("data : ",data1)
-    const [data,setData]= useState(data1?.doc)
+    const [data, setData] = useState(data1?.doc)
     const [editMode, setEditMode] = useState(false);
     const [items, setItems] = useState([]);
     const [leftItems, setLeftItems] = useState(data?.cards)
     const [newSet, setNewSet] = useState([])
-
-    // console.log(JSON.stringify(data))
+    const [isOverlayActive, setOverlayActive] = useState(false);
+    const [myData, setMyData] = useState([]);
+    const [catDetails, setCatDetails] = useState({})
+    const [category, setCategory] = useState('');
+    // console.log('data : ',JSON.stringify(data))
+    // console.log('my data : ',JSON.stringify(myData))
 
     const { t, i18n } = useTranslation();
+
+
 
     const isChecked = (itemId) => {
         try {
@@ -49,10 +59,10 @@ const DisplayCardScreen = (props) => {
 
     const toggleChecked = (itemId, item) => {
         const x = [itemId, ...items]
-        const y = [item,...newSet]
+        const y = [item, ...newSet]
         if (isChecked(itemId)) {
             setItems(items.filter((id) => id !== itemId))
-            setNewSet(newSet.filter((item,index)=>index!==itemId))
+            setNewSet(newSet.filter((item, index) => index !== itemId))
         } else {
             setItems(x)
             setNewSet(y)
@@ -61,31 +71,77 @@ const DisplayCardScreen = (props) => {
 
     const handelDelete = () => {
 
-        const newObj = Object.assign({},data,{"cards":x})
-        console.log(JSON.stringify(newObj))
-                    localDB.put(newObj).then((response)=>{
-                        console.log('responcen : ',response)
-                        localDB.get(newObj["_id"]).then(function (doc) {
-                            setData(doc)
-                            setEditMode(!editMode)
-                        }).catch((e)=>console.log(e))
-                    }).catch((e)=>console.log(e))
-                    
-    }
-
-        //fetch function
-        async function fetchData() {
-            localDB.get(data1?.doc["_id"]).then(function (doc) {
-                console.log(doc)
-                setData(doc)
-            }).catch((e)=>console.log(e))
+        let x = leftItems.filter(i => !newSet.some(j => i.englishHeadWord === j.englishHeadWord))
+        if(newSet.length!=0){
+            const newObj = Object.assign({}, data, { "cards": x })
+            console.log(JSON.stringify(newObj))
+            localDB.put(newObj).then((response) => {
+                console.log('responcen : ', response)
+                localDB.get(newObj["_id"]).then(function (doc) {
+                    setData(doc)
+                    setEditMode(!editMode)
+                }).catch((e) => console.log(e))
+            }).catch((e) => console.log(e))
+        }else{
+            Toast.show('Select an item to delete', Toast.SHORT)
         }
 
-    const x = leftItems.filter(item=>!newSet.includes(item))
+    }
+
+    //fetch function
+    async function fetchData() {
+        localDB.get(data1?.doc["_id"]).then(function (doc) {
+            console.log(doc)
+            setData(doc)
+        }).catch((e) => console.log(e))
+    }
+
+    const moveHandel = () => {
+        if (category) {
+            const x = Object.assign({}, catDetails?.doc, { "cards": [...catDetails?.doc?.cards, ...newSet] })
+            console.log('final : ', JSON.stringify(x))
+            localDB.put(x).then((response) => {
+                console.log('responcen : ', response)
+                localDB.get(x["_id"]).then(function (doc) {
+                    console.log('updated card list data : ', JSON.stringify(doc))
+                    handelDelete()
+                    setOverlayActive(!isOverlayActive)
+                }).catch((e) => console.log(e))
+            }).catch((e) => console.log(e))
+            
+        } else {
+            Toast.show('Select category a to move', Toast.SHORT)
+        }
+
+    }
+
+    //fetch function
+    async function fetchCatData() {
+        localDB.allDocs(
+            {
+                include_docs: true,
+                attachments: true,
+            },
+            function (err, response) {
+                if (err) {
+                    return console.log(err);
+                }
+                const y = response.rows.filter(item => item.id != data["_id"])
+                // console.log("filtered data : ", JSON.stringify(y))
+                // setMyData(response.rows);
+                setMyData(y);
+                return y;
+            },
+        );
+    }
+
+    useEffect(() => {
+        fetchCatData()
+    }, [])
 
     return (
         <View style={{ flex: 1 }}>
-            <NavigationEvents onDidFocus={(payload) => {fetchData()}}/>
+            <NavigationEvents onDidFocus={(payload) => { fetchData() }} />
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
@@ -99,7 +155,7 @@ const DisplayCardScreen = (props) => {
                         {
                             !editMode ? <>
 
-                                <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_NEW_CARD_SCREEN_PATH,{path:data1})}>
+                                <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_NEW_CARD_SCREEN_PATH, { path: data1 })}>
                                     <View style={{ marginHorizontal: 12 }}>
                                         <MIcons name="insert-drive-file" size={23} color={Constants.appColors.WHITE} />
                                     </View>
@@ -118,6 +174,13 @@ const DisplayCardScreen = (props) => {
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
+                                        console.log('Move')
+                                        setOverlayActive(!isOverlayActive)
+                                        //setEditMode(!editMode)
+                                    }}>
+                                        <FIcons name="share" size={24} color={Constants.appColors.WHITE} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
                                         console.log('save press')
                                         setEditMode(!editMode)
                                     }}>
@@ -127,13 +190,50 @@ const DisplayCardScreen = (props) => {
                         }
                     </View>
                 </View>
-
+                {newSet.length > 0 &&
+                    <CustomPopup
+                        visible={isOverlayActive}
+                        onRequestClose={() => setOverlayActive(!isOverlayActive)}
+                        transparent={true}
+                        animationType='fade'
+                        modalContainerStyle={{
+                            height: Sizes.WINDOW_HEIGHT, backgroundColor: 'white',
+                            width: '100%',
+                            maxHeight: Sizes.WINDOW_HEIGHT * .5
+                        }}
+                    >
+                        <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
+                            <Text style={{ fontSize: 16, marginBottom: 12 }}>Select Category</Text>
+                            <FlatList
+                                keyboardShouldPersistTaps={'handled'}
+                                renderItem={({ item, index }) => (
+                                    <TouchableOpacity onPress={() => {
+                                        setCategory(item?.doc?.name);
+                                        setCatDetails(item);
+                                    }}>
+                                        <View style={{ borderWidth: .5, backgroundColor: item?.doc?.name == category ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.TRANSPARENT }}>
+                                            <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8, color: item?.doc?.name == category ? Constants.appColors.WHITE : Constants.appColors.BLACK }}>{item?.doc?.name}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                                keyExtractor={(item, index) => index.toString()}
+                                data={myData}
+                                numColumns={1}
+                                showsVerticalScrollIndicator={false}
+                            />
+                            <TouchableOpacity onPress={moveHandel}>
+                                <View style={{ borderWidth: .8, height: 45, justifyContent: 'center' }}>
+                                    <Text style={{ textAlign: "center", fontWeight: 'bold', fontSize: 20 }}>MOVE</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </CustomPopup>}
             </View>
             <View style={{ flex: 1 }}>
                 <FlatList
                     keyboardShouldPersistTaps={'handled'}
                     renderItem={({ item, index }) => (
-                        <TouchableOpacity onPress={() => { !editMode && props.navigation.navigate(NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH,{item}) }}>
+                        <TouchableOpacity onPress={() => { !editMode && props.navigation.navigate(NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH, { item }) }}>
                             <View
                                 style={{
                                     backgroundColor: 'white',
@@ -195,6 +295,9 @@ const DisplayCardScreen = (props) => {
                     numColumns={1}
                     showsVerticalScrollIndicator={false}
                 />
+                {
+                    data?.cards.length == 0 && <Text style={{ position: 'absolute', top: Sizes.WINDOW_HEIGHT * .35 - 32, left: Sizes.WINDOW_WIDTH / 2 - 48 }}>No Card Found</Text>
+                }
             </View>
         </View>
     )

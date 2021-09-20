@@ -37,6 +37,17 @@
         "SendEmailText":"Send Email",
         "SignupAlertText":"Enter details to signup",
         "PasswordMismatchText":"Password mismatch",
-        "SignupValidationText":"Enter a valid email/password"
+        "SignupValidationText":"Enter a valid email/password",
+        "DisplaylanguageText":"Display Language",
+        "DictionaryText":"Dictionary",
+        "FlashcardsText":"Flashcards",
+        "SendFeedbackText":"Send Feedback",
+        "RateOnTheAppStoreText":"Rate on The App Store",
+        "RateOnThePlayStoreText":"Rate on The Play Store",
+        "ShareWithFriendsText":"Share With Friends",
+        "AboutOmoKoreanText":"About OMO Korean",
+        "ResetToDefaultSettingsText":"Reset To Default Settings",
+        "ProText":"Access More Features with OMO Pro",
+        "ProTagText":"Falshcard manager, testing, translations, syncing and more"
     }
 }

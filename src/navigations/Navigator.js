@@ -20,6 +20,10 @@ import SearchResultScreen from '../screens/searchresult';
 import NewCardScreen from '../screens/newcard';
 import DisplayCardScreen from '../screens/displaycard';
 import ViewFlashcardDataScreen from '../screens/viewflashcard';
+import ChooseLanguageScreen from '../screens/settings/chosselanguage';
+import DictionaryScreen from '../screens/settings/dictionary';
+import FlashcardListsScreen from '../screens/settings/flashcards';
+import FlashcardListRenderScreen from '../screens/settings/flashcardlist';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
@@ -36,6 +40,10 @@ import {
 
   NAVIGATION_PROFILE_STACK_PATH,
   NAVIGATION_PROFILE_SCREEN_PATH,
+  NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH,
+  NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH,
+  NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH,
+  NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH,
 
   NAVIGATION_FLASHCARD_STACK_PATH,
   NAVIGATION_FLASHCARD_SCREEN_PATH,
@@ -131,6 +139,10 @@ const ProfileStack = createStackNavigator(
     [NAVIGATION_LOGIN_SCREEN_PATH]: LoginScreen,
     [NAVIGATION_SIGNUP_SCREEN_PATH]: SignupScreen,
     [NAVIGATION_FORGET_PASSWORD_SCREEN_PATH]: ForgetPasswordScreen,
+    [NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH]: ChooseLanguageScreen,
+    [NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH]:DictionaryScreen,
+    [NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH]:FlashcardListsScreen,
+    [NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH]: FlashcardListRenderScreen,
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,

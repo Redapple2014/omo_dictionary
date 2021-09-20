@@ -9,12 +9,16 @@ export const NAVIGATION_NEW_CARD_SCREEN_PATH = 'NewCardScreen';
 export const NAVIGATION_DISPLAY_CARD_SCREEN_PATH = 'DisplayCardScreen';
 export const NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH = 'ViewFlashcardDataScreen';
 
+
 export const NAVIGATION_FLASHCARD_LIST_STACK_PATH = 'FlashCardList';
 export const NAVIGATION_FLASHCARD_LIST_SCREEN_PATH = 'FlashcardListScreen';
 
 export const NAVIGATION_PROFILE_STACK_PATH = 'Profile';
 export const NAVIGATION_PROFILE_SCREEN_PATH = 'ProfileScreen';
-
+export const NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH = 'ChooseLanguageScreen';
+export const NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH = 'DictionaryScreen';
+export const NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH = 'FlashcardListsScreen';
+export const NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH = 'FlashcardListRenderScreen';
 
 export const NAVIGATION_SIGNUP_SCREEN_PATH = 'SignupScreen';
 export const NAVIGATION_LOGIN_SCREEN_PATH = 'LoginScreen';

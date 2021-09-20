@@ -6,8 +6,6 @@ import Sizes from '../../utills/Size';
 import SearchHeader from "../../components/searchHeader";
 import { NavigationActions } from 'react-navigation';
 import { useTranslation } from 'react-i18next';
-// import AudioPlayer from 'react-native-play-audio';
-import { sub } from 'react-native-reanimated';
 import Tts from 'react-native-tts';
 import Toast from 'react-native-simple-toast';
 
@@ -243,6 +241,7 @@ const SearchResultScreen = (props) => {
                 <SearchHeader
                     title=''
                     leftIcon={`${t("SearchText")}`}
+                    show={true}
                     onPressleftIcon={() =>
                         props.navigation.dispatch(NavigationActions.back())
                     }

@@ -29,20 +29,22 @@ const SearchHeader = (props) => {
           : <></>
       }
       <Text style={styles.textStyle}>{props.title}</Text>
-      <View style={{padding: 6,alignSelf:'flex-end',flexDirection:'row',justifyContent:'space-between',flex:.4}}>
-        <TouchableOpacity onPress={()=>console.log('plus press')}>
-        <EIcons name="plus" size={23} color={Constants.appColors.WHITE}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={props.onSoundPlay}>
-        <AntDesign name="sound" size={23} color={Constants.appColors.WHITE}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>console.log('up press')}>
-        <EIcons name="arrow-bold-up" size={23} color={Constants.appColors.WHITE}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>console.log('down press')}>
-        <EIcons name="arrow-bold-down" size={23} color={Constants.appColors.WHITE}/>
-        </TouchableOpacity>
-      </View>
+      { props.show && 
+        <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: .4 }}>
+          <TouchableOpacity onPress={() => console.log('plus press')}>
+            <EIcons name="plus" size={23} color={Constants.appColors.WHITE} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={props.onSoundPlay}>
+            <AntDesign name="sound" size={23} color={Constants.appColors.WHITE} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => console.log('up press')}>
+            <EIcons name="arrow-bold-up" size={23} color={Constants.appColors.WHITE} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => console.log('down press')}>
+            <EIcons name="arrow-bold-down" size={23} color={Constants.appColors.WHITE} />
+          </TouchableOpacity>
+        </View>
+      }
     </View>
   )
 }
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
-    flexDirection:'row'
+    flexDirection: 'row'
   },
   textStyle: {
     color: Constants.appColors.WHITE,
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginTop: 4,
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
 })

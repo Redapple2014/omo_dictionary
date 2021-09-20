@@ -37,6 +37,17 @@
                 "SendEmailText":"이메일을 보내",
                 "SignupAlertText":"가입하려면 세부정보를 입력하세요.",
                 "PasswordMismatchText":"암호 불일치",
-                "SignupValidationText":"유효한 이메일/비밀번호를 입력하세요"
+                "SignupValidationText":"유효한 이메일/비밀번호를 입력하세요",
+                "DisplaylanguageText":"표시 언어",
+                "DictionaryText":"표시 언어",
+                "FlashcardsText":"사전",
+                "SendFeedbackText":"피드백 보내기",
+                "RateOnTheAppStoreText":"앱 스토어 평가",
+                "RateOnThePlayStoreText":"플레이 스토어 평가",
+                "ShareWithFriendsText":"친구와 공유",
+                "AboutOmoKoreanText":"오모코리아 소개",
+                "ResetToDefaultSettingsText":"기본 설정으로 재설정",
+                "ProText":"OMO Pro로 더 많은 기능에 액세스",
+                "ProTagText":"플래시 카드 관리자, 테스트, 번역, 동기화, 그리고 더"
         }
 }

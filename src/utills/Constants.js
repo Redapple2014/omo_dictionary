@@ -14,7 +14,8 @@ module.exports = {
     HEADER_COLOR: '#ffe9d6',
     MENU_COLOR: '#EF6A43',
     STATUS_MENU: '#ec4646',
-    PRIMARY_COLOR: '#E1223C'
+    PRIMARY_COLOR: '#E1223C',
+    SKY_COLOR:'#3D9CE0'
   },
   createAccountTitleText: 'Create an Account',
   haveAccountTitleText: 'I Already Have an Account',

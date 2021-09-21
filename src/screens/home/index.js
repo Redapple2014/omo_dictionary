@@ -27,10 +27,13 @@ import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
+import {defaultSettings} from '../../utills/userdata';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
+
+var userDB = new PouchDB('usersettings');
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -176,15 +179,23 @@ const HomeScreen = (props) => {
           insertJsonFile(index, data);
           (async () => {
             await insertJsonFile(index, data);
-            AsyncStorage.setItem('inserted_data', 'inserted')
-            setLoading(false);
+            loadFile(12)
+            
           })().catch(e => console.log("Caught: " + e));
           
         })
         .catch((error) => {
           console.log('error====', error);
         });
-    }  
+    }
+    else if(index==12){
+      userDB.post(defaultSettings).then(function (response) {
+        AsyncStorage.setItem('inserted_data', 'inserted')
+      setLoading(false);
+      }).catch(function (err) {
+        console.log(err);
+      });
+    }
   }
 
   async function insertJsonFile(fileIndex, json) {

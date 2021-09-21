@@ -1,5 +1,5 @@
-import React, {useState, useEffect,useRef} from 'react';
-import {View, Text, StatusBar, TouchableOpacity, Platform} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {View, StatusBar, TouchableOpacity, Platform} from 'react-native';
 import CustomHeader from '../../components/header';
 import Icon from 'react-native-vector-icons/Octicons';
 import CustomButton from '../../components/button/CustomButton';

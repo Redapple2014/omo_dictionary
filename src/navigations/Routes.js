@@ -19,6 +19,7 @@ export const NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH = 'ChooseLanguageScreen';
 export const NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH = 'DictionaryScreen';
 export const NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH = 'FlashcardListsScreen';
 export const NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH = 'FlashcardListRenderScreen';
+export const NAVIGATION_EDIT_PROFILE_SCREEN_PATH = 'EditProfileScreen';
 
 export const NAVIGATION_SIGNUP_SCREEN_PATH = 'SignupScreen';
 export const NAVIGATION_LOGIN_SCREEN_PATH = 'LoginScreen';

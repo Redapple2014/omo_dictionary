@@ -9,93 +9,137 @@ import Sizes from '../../../utills/Size'
 import MIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FA5Icons from 'react-native-vector-icons/FontAwesome5';
+import { useTranslation } from 'react-i18next';
+
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
 var localDB = new PouchDB('flashcard');
+var userDB = new PouchDB('usersettings');
+
+import {
+    NAVIGATION_FLASHCARD_SCREEN_PATH
+} from '../../../navigations/Routes';
 
 const FlashcardListRenderScreen = (props) => {
 
+    const userSetting = props.navigation.getParam('userSettings', 'nothing sent');
+    console.log(userSetting)
+    const { t, i18n } = useTranslation();
+    const [userSettings, setUserSettings] = useState(userSetting)
     const [myData, setData] = useState([]);
     const [editMode, setEditMode] = useState(false)
-        //fetch function
-        async function fetchData() {
-            localDB.allDocs(
-                {
-                    include_docs: true,
-                    attachments: true,
-                },
-                function (err, response) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                    // handle result
-                    setData(response.rows);
-                   // console.log("fetched data ", response.rows)
-                    return response.rows;
+    const [categoryName,setCategoryName] = useState(userSetting?.doc?.Flashcard?.defaultFlashcard)
+    const [updated, setUpdated] = useState(false)
     
-                },
-            );
-        }
+    //fetch function
+    async function fetchData() {
+        localDB.allDocs(
+            {
+                include_docs: true,
+                attachments: true,
+            },
+            function (err, response) {
+                if (err) {
+                    setData([]);
+                    return console.log(err);
+                }
+                // handle result
+                setData(response.rows);
+                // console.log("fetched data ", response.rows)
+                return response.rows;
 
-        const renderItem = ({ item, index, move, moveEnd, isActive }) => {
-            return (
-                <TouchableOpacity
-                    onPress={()=>{}}
-                    onLongPress={move}
-                    onPressOut={moveEnd}>
-                    <View key ={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View
-                            style={{
-                                width: editMode ? Sizes.WINDOW_WIDTH - 48 : Sizes.WINDOW_WIDTH,
-                                backgroundColor: isActive ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.WHITE,
-                                alignItems: 'center',
-                                paddingVertical: 8,
-                                flexDirection: 'row',
-                                borderBottomWidth: 0.5,
-                                borderBottomColor: Constants.appColors.LIGHTGRAY
-                            }}>
-                            {
-                                editMode &&
-                                <View style={{ position: 'absolute', left: 0 }}>
-                                    <CheckBox
-                                        checkedColor={Constants.appColors.PRIMARY_COLOR}
-                                        containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, zIndex: 4 }}
-                                        size={20}
-                                        title=""
-                                        checkedIcon="check-square"
-                                        uncheckedIcon="square"
-                                        checked={isChecked(item?.id)}
-                                        onPress={() => toggleChecked(item?.id)}
-                                    />
-                                </View>
-                            }
-                            <View>
+            },
+        );
+    }
+
+    async function fetchUserSettings() {
+        userDB.allDocs(
+            {
+                include_docs: true,
+                attachments: true,
+            },
+            function (err, response) {
+                if (err) {
+                    setUserSettings({})
+                    return console.log(err);
+                }
+
+                // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
+                setUserSettings(response.rows[0])
+                return response.rows[0];
+
+            },
+        );
+    }
+
+    function updateUserSettings() {
+
+        userDB.get(userSettings.id).then(function (doc) {
+            let newObject = {
+                ...doc,
+                "Flashcard": {
+                    ...doc?.Flashcard,
+                    defaultFlashcard: categoryName,
+                }
+            }
+
+            console.log('new obj doc : ', JSON.stringify(newObject))
+            userDB.put(newObject).then((response)=>{
+                console.log('responcen : ',response)
+                //goBack()
+                // fetchUserSettings()
+            }).catch((e)=>
+            console.log('ERORor: ',e))
+        }).catch(function (err) {
+            console.log('EROR : ', err);
+        });
+
+    }
+
+    const renderItem = ({ item, index, move, moveEnd, isActive }) => {
+        console.log(categoryName ,  item.doc.name)
+        return (
+            <TouchableOpacity
+                onPress={() => {setUpdated(true);console.log(item.doc.name);setCategoryName(item.doc.name)}}
+                onLongPress={move}
+                onPressOut={moveEnd}>
+                <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View
+                        style={{
+                            width: editMode ? Sizes.WINDOW_WIDTH - 48 : Sizes.WINDOW_WIDTH,
+                            backgroundColor: isActive ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.WHITE,
+                            alignItems: 'center',
+                            paddingVertical: 8,
+                            flexDirection: 'row',
+                            borderBottomWidth: 0.5,
+                            borderBottomColor: Constants.appColors.LIGHTGRAY
+                        }}>
+
+                        <View>
                             <Text style={{
                                 fontWeight: '700',
                                 color: Constants.appColors.BLACK,
-                                fontSize: 20,
+                                fontSize: 18,
                                 paddingLeft: editMode ? 48 : 28
                             }}>{item?.doc?.name}</Text>
-                            <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} cards</Text>
-                            </View>  
+                            <Text style={{ paddingLeft: editMode ? 48 : 28 }}>{item?.doc?.cards.length} cards</Text>
                         </View>
-                        <View style={{ marginLeft: 12 }}>
-                            <MIcons name="view-headline" size={22} color={Constants.appColors.PRIMARY_COLOR} />
-                        </View>
-                        {/* {
-                            !editMode && <View style={{position:'absolute',right:16}}><AntDesign name='checkcircle' color={Constants.appColors.PRIMARY_COLOR} size={20}/></View>
-                        } */}
                     </View>
-                </TouchableOpacity>
-            )
-        }
+                    {
+                          categoryName ==  item.doc.name && <View style={{position:'absolute',right:16}}><AntDesign name='checkcircle' color={Constants.appColors.PRIMARY_COLOR} size={20}/></View>
+                    }
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
+    updated && updateUserSettings()
 
     return (
-        <View style={{flex:1}}>
-            <NavigationEvents onDidFocus={(payload) => fetchData()}/>
-                        <View style={styles.container}>
+        <View style={{ flex: 1 }}>
+            <NavigationEvents onDidFocus={(payload) => {fetchData();fetchUserSettings()}} />
+            <View style={styles.container}>
                 <View style={{ width: 100, left: 0, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
                         <View style={{ flexDirection: 'row' }}>
@@ -106,12 +150,23 @@ const FlashcardListRenderScreen = (props) => {
                 </View>
                 <Text style={styles.textStyle}>Default Category</Text>
             </View>
-            <View style={{flex:1}}>
-            <FlatList
-                            data={myData}
-                            renderItem={renderItem}
-                            keyExtractor={(item, index) => `draggable-item-${item.key}`}
-                        />
+            <View style={{ flex: 1 }}>
+                {
+                    myData.length > 0 ? <FlatList
+                        data={myData}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => `draggable-item-${item.key}`}
+                    />
+                        : (<>
+                            <Text style={{ textAlign: 'center', marginTop: 24 }}>No Category Found</Text>
+                            <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_FLASHCARD_SCREEN_PATH)}>
+                                <Text style={{ textAlign: 'center', marginTop: 12, }}>Create New</Text>
+                                </TouchableOpacity></>
+                        )
+
+
+                }
+
             </View>
         </View>
     )
@@ -159,11 +214,11 @@ const styles = StyleSheet.create({
         color: Constants.appColors.BLACK,
         width: '67%'
     },
-    itemStyle:{
+    itemStyle: {
         justifyContent: 'center',
-        borderBottomWidth:.5,
-        paddingVertical:8,
-        borderBottomColor:Constants.appColors.LIGHTGRAY
+        borderBottomWidth: .5,
+        paddingVertical: 8,
+        borderBottomColor: Constants.appColors.LIGHTGRAY
     }
 
 });

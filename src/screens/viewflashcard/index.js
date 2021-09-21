@@ -20,7 +20,7 @@ const ViewFlashcardDataScreen = (props) => {
 
 
     const data = props.navigation.getParam('item', 'nothing sent');
-    console.log('mydata: ',data)
+    // console.log('mydata: ',data)
     const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
     ee.addListener('tts-start', () => { });
     ee.addListener('tts-finish', () => { });
@@ -44,7 +44,8 @@ const ViewFlashcardDataScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <SearchHeader
-                    title=''
+                    title=''         
+                    show={true}
                     leftIcon='Back'
                     onPressleftIcon={() =>
                         props.navigation.dispatch(NavigationActions.back())

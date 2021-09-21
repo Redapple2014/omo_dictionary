@@ -185,7 +185,7 @@ const FlashcardScreen = (props) => {
                         <Text style={{
                             fontWeight: '700',
                             color: Constants.appColors.BLACK,
-                            fontSize: 20,
+                            fontSize: 18,
                             paddingLeft: editMode ? 48 : 28
                         }}>{item?.doc?.name}</Text>
                         <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} cards</Text>

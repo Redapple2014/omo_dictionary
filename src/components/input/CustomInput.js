@@ -6,6 +6,7 @@ import Constants from '../../utills/Constants';
 const CustomInput = React.forwardRef((props,ref) => (
     <Input
       ref={ref}
+      disabled={props.disabled}
       label={props.label}
       labelStyle={props.labelStyle}
       inputStyle={props.inputStyle}

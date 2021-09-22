@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "781062724797",
+    "firebase_url": "https://omo-korean-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "omo-korean",
     "storage_bucket": "omo-korean.appspot.com"
   },
@@ -29,6 +30,13 @@
             {
               "client_id": "781062724797-d8ajri8uh1o9c288h0lnocqfgqtjtgt7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "781062724797-0k7svt3a5ouq3chirurhcdqg7tbsagmh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.omokorean"
+              }
             }
           ]
         }

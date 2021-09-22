@@ -94,6 +94,7 @@ const ProfileScreen = (props) => {
                     console.log('no data found on recent search')
                     return
                 }
+                // console.log(JSON.parse(req))
                 setUserdata(JSON.parse(req))
             })
             .catch(error => console.log('error!'));
@@ -106,6 +107,7 @@ const ProfileScreen = (props) => {
     const handelProButton = () => {
         console.log('Upgrage to Pro')
     }
+    const setLanguage = code => i18n.changeLanguage(code);
 
     const handelResetButton = () => {
         // console.log('reset settings')
@@ -131,6 +133,7 @@ const ProfileScreen = (props) => {
                                 console.log('responcen : ', response)
                                 Toast.show('Settings Reset Sucessfully', Toast.SHORT)
                                 fetchUserSettings()
+                                setLanguage('en')
                             }).catch((e) =>
                                 console.log('ERORor: ', e))
                         }).catch(function (err) {
@@ -165,7 +168,7 @@ const ProfileScreen = (props) => {
         } catch (e) {
             console.log(e)
         }
-    },[])
+    })
 
     return (
         <View style={{ flex: 1, }}>

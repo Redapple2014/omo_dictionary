@@ -48,6 +48,13 @@
                 "AboutOmoKoreanText":"오모코리아 소개",
                 "ResetToDefaultSettingsText":"기본 설정으로 재설정",
                 "ProText":"OMO Pro로 더 많은 기능에 액세스",
-                "ProTagText":"플래시 카드 관리자, 테스트, 번역, 동기화, 그리고 더"
+                "ProTagText":"플래시 카드 관리자, 테스트, 번역, 동기화, 그리고 더",
+                "DisplayLanguageText":"표시 언어",
+                "LanguageText":"언어",
+                "DictionaryLanguageText":"사전 언어",
+                "DisplayKoreanDefinitionsText":"한국어 정의를 표시하시겠습니까?",
+                "ShowExampleSentencesByDefaultText":"기본적으로 예문을 표시하시겠습니까?",
+                "DisplayRomajaText":"로마자 표시(로마자 표기법 수정)?",
+                "DisplayExampleSentenceTranslationsText":"예시 문장 번역을 표시하시겠습니까?"
         }
 }

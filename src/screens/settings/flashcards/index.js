@@ -110,11 +110,11 @@ const FlashcardListsScreen = (props) => {
                     <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>Profile</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.textStyle}>Flashcards</Text>
+                <Text style={styles.textStyle}>{`${t("FlashcardsText")}`}</Text>
             </View>
             <View style={{ flex: 1, paddingHorizontal: 12 }}>
                 <View style={{ marginTop: 8, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>

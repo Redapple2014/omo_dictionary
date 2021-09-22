@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Octicons';
@@ -16,6 +16,8 @@ import {
     NAVIGATION_LOGIN_SCREEN_PATH
 } from '../../navigations/Routes';
 import { useTranslation } from 'react-i18next';
+import database from '@react-native-firebase/database';
+import base64 from 'react-native-base64';
 
 const SinupScreen = (props) => {
     const [name, setName] = useState('');
@@ -29,7 +31,7 @@ const SinupScreen = (props) => {
     const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
     const [profilePicDetails, setProfilePicDetails] = useState(null)
     const [loading, SetLoading] = useState(false)
-    const { t,i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const nameInputRef = useRef(null)
     const userNameInputRef = useRef(null)
     const emailInputRef = useRef(null)
@@ -69,6 +71,7 @@ const SinupScreen = (props) => {
         setConfirmPassword('')
     }
 
+
     const registerUser = () => {
         if (email.length == 0 || password.length == 0 || name.length == 0 || username == 0) {
             alert(`${t("SignupAlertText")}`)
@@ -83,15 +86,34 @@ const SinupScreen = (props) => {
             auth()
                 .createUserWithEmailAndPassword(email, password)
                 .then((res) => {
-                    res.user.updateProfile({
+                    const uid = res.user.uid;
+                    const jsonData = {
                         displayName: name,
-                    })
-                    setToDefalult()
-                    console.log('User registered successfully!')
-                    props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH)
+                        username,
+                        email,
+                        password: base64.encode(password),
+                        created_at: new Date().getTime(),
+                        uid
+                    }
+                    console.log(jsonData)
+                    try {
+                        database().ref("users/" + uid)
+                            .set(jsonData)
+                            .then(() => {
+                                SetLoading(false)
+                                setToDefalult()
+                                console.log('User registered successfully!')
+                                props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH)
+                            });
+                    } catch (error) {
+                        console.log("error====>> ", error);
+                    }
+
+
+
                 })
-                .catch(error => alert('Unable to register. Check Your Internet Connection'))
-            console.log('suc')
+                .catch(error => { alert('Email ID already exist'); console.log(error) })
+
         }
     }
 
@@ -122,12 +144,12 @@ const SinupScreen = (props) => {
                 <CustomInput
                     label={`${t("NameText")}`}
                     ref={nameInputRef}
-                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder={`${t("EnterNamePlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
-                    inputContainerStyle={{ margin: 4, fontSize: 12, backgroundColor: 'white', borderRadius: 6, borderWidth: 0}}
+                    inputContainerStyle={{ margin: 4, fontSize: 12, backgroundColor: 'white', borderRadius: 6, borderWidth: 0 }}
                     keyboardType='email-address'
                     leftIconContainerStyle={{ marginRight: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
@@ -139,12 +161,12 @@ const SinupScreen = (props) => {
                             setName(value);
                         }
                     }
-                    onSubmitEditing={()=>userNameInputRef.current.focus()}
+                    onSubmitEditing={() => userNameInputRef.current.focus()}
                 />
                 <CustomInput
-                ref={userNameInputRef}
+                    ref={userNameInputRef}
                     label={`${t("UsernameText")}`}
-                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder={` ${t("EnterUsernamePlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -161,12 +183,12 @@ const SinupScreen = (props) => {
                             setUsername(value);
                         }
                     }
-                    onSubmitEditing={()=>emailInputRef.current.focus()}
+                    onSubmitEditing={() => emailInputRef.current.focus()}
                 />
                 <CustomInput
                     label={`${t("EmailText")}`}
                     ref={emailInputRef}
-                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     placeholder={` ${t("EnterEmailPlaceHolder")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
@@ -185,13 +207,13 @@ const SinupScreen = (props) => {
                         }
                     }
                     errorMessage={email && !isEmailErrorMsg ? `${t("EmailInvalidText")}` : ''}
-                    onSubmitEditing={()=>passwordInputRef.current.focus()}
+                    onSubmitEditing={() => passwordInputRef.current.focus()}
                 />
 
                 <CustomInput
                     label={`${t("PasswordText")}`}
                     ref={passwordInputRef}
-                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -211,24 +233,24 @@ const SinupScreen = (props) => {
                     containerStyle={{ height: 50, marginTop: 52 }}
                     errorMessage={password && !isPasswordErrorMsg ? `${t("PasswordInvalidText")}` : ''}
                     onSubmitEditing={() => console.log('submit log in')}
-                    rightIcon={ password.length>0 &&
+                    rightIcon={password.length > 0 &&
                         <TouchableOpacity
-                          onPress={() => setIsSecurePassword(!isSecurePassword)}>
-                          <Icon
-                            name={
-                               isSecurePassword ? 'eye-closed' : 'eye'
-                            }
-                            size={isSecurePassword ? 22:23}
-                            color='#3DB2FF'
-                          />
+                            onPress={() => setIsSecurePassword(!isSecurePassword)}>
+                            <Icon
+                                name={
+                                    isSecurePassword ? 'eye-closed' : 'eye'
+                                }
+                                size={isSecurePassword ? 22 : 23}
+                                color='#3DB2FF'
+                            />
                         </TouchableOpacity>
-                      }
-                        onSubmitEditing={()=>confPasswordInputRef.current.focus()}
+                    }
+                    onSubmitEditing={() => confPasswordInputRef.current.focus()}
                 />
                 <CustomInput
                     label={`${t("ConfirmPasswordText")}`}
                     ref={confPasswordInputRef}
-                    labelStyle={{ fontSize: 14, marginBottom: 4,marginLeft:4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -245,14 +267,14 @@ const SinupScreen = (props) => {
                     }}
                     containerStyle={{ height: 50, marginTop: 52, marginBottom: 42 }}
                     onSubmitEditing={() => console.log('submit log in')}
-                    rightIcon={ confirmPassword.length>0 &&
+                    rightIcon={confirmPassword.length > 0 &&
                         <TouchableOpacity onPress={() => setIsSecureConPassword(!isSecureConPassword)}>
                             <Icon
-                                name={ isSecureConPassword ? 'eye-closed' : 'eye'}
-                                size={isSecureConPassword ? 22:23}
+                                name={isSecureConPassword ? 'eye-closed' : 'eye'}
+                                size={isSecureConPassword ? 22 : 23}
                                 color='#3DB2FF'
                             /></TouchableOpacity>}
-                            onSubmitEditing={registerUser}
+                    onSubmitEditing={registerUser}
                 />
                 <View style={{ alignItems: 'center' }}>
                     <CustomButton

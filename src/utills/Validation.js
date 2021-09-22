@@ -34,3 +34,33 @@ module.exports = {
     }
   }
 };
+
+
+
+
+
+
+
+
+
+
+                    //     let reference = storage().ref('/users');
+                    //     let task = reference.putFile(profilePicDetails.uri);
+                    //     task.then((res) => {
+                    //         console.log(res)
+                    //         console.log('Image uploaded to the bucket!');
+                    //         // this.setState({ isLoading: false, status: 'Image uploaded successfully' });
+                    //     }).catch((e) => {
+                    //         // status = 'Something went wrong';
+                    //         console.log('uploading image error => ', e);
+                    //         // this.setState({ isLoading: false, status: 'Something went wrong' });
+                    //     });
+                    // const userData = {
+                    //     uid:res.user.uid,
+                    //     displayName:name,
+                    //     username,
+                    //     email,
+                    //     PhotoURL:profilePicDetails.uri,
+                    //     password:base64.encode(password)
+                    // }
+                    // console.log('User data :',userData)

@@ -22,6 +22,14 @@ const ChooseLanguageScreen = (props) => {
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
 
+    const setLanguage = code => {
+        if(from=='profile'){
+            return i18n.changeLanguage(code)
+        }else{
+            return
+        }
+    };
+
     async function fetchUserSettings(){
         userDB.allDocs(
             {
@@ -80,11 +88,11 @@ const ChooseLanguageScreen = (props) => {
                     <TouchableOpacity onPress={()=>{goBack()}}>
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>{from=='profile'? `Profile`:`Dictionary`}</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{from=='profile'? `${t("ProfileText")}`:`${t("DictionaryText")}`}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.textStyle}>{from=='profile'? `Display Language`:`Language`}</Text>
+                <Text style={styles.textStyle}>{from=='profile'? `${t("DisplayLanguageText")}`:`${t("LanguageText")}`}</Text>
             </View>
             <View style={{ flex: 1, marginHorizontal: 12 }}>
                 <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
@@ -95,6 +103,7 @@ const ChooseLanguageScreen = (props) => {
                         <TouchableOpacity onPress={async() => {
                             setLanguageSelected(item)
                             updateUserSettings(item);
+                            setLanguage(item.value)
                         }}>
                             <View style={styles.MenuItems} key={`${item.id}`}>
                                 <Text style={{ marginLeft: 12, fontWeight: 'bold', color: Constants.appColors.BLACK,fontSize:16 }}>{item.label}</Text>

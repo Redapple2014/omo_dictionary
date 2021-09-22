@@ -39,27 +39,27 @@ export const languageList = [
     {
         id: 1,
         label: "English",
-        value: ""
+        value: "en"
     },
     {
         id: 2,
         label: "Chinese(중국인)",
-        value: ""
+        value: "zh"
     },
     {
         id: 3,
         label: "Vietnamese(Tiếng Việt)",
-        value: ""
+        value: "vi"
     },
     {
         id: 4,
         label: "Mongolin(Монгол)",
-        value: ""
+        value: "mn"
     },
     {
         id: 5,
         label: "Japanese(日本)",
-        value: ""
+        value: "ja"
     }
 ]
 

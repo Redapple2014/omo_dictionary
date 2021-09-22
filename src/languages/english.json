@@ -3,7 +3,7 @@
         "createAccountTitleText": "Create An Account",
         "haveAccountTitleText": "I Already Have an Account",
         "loginButtonText": "Log In",
-        "forgetPasswordText": "Forget Password",
+        "forgetPasswordText": "Forgot Password",
         "NewCardText":"New Card",
         "DoneText":"Done",
         "createYourAccountText": "Create Your Account",
@@ -29,13 +29,13 @@
         "CancelText":"Cancel",
         "EmailInvalidText":"Email Id is invalid",
         "PasswordInvalidText":"Password is invalid",
-        "NoRecentDataAvalibleText":"No recent search data avalible",
+        "NoRecentDataAvalibleText":"No recent search data available",
         "NodataFoundText":"No data found",
         "SearchText":"Search",
         "LoginText":"Login",
-        "SigninAlertText":"Enter details to signin",
+        "SigninAlertText":"Enter details to sign in",
         "SendEmailText":"Send Email",
-        "SignupAlertText":"Enter details to signup",
+        "SignupAlertText":"Enter details to sign up",
         "PasswordMismatchText":"Password mismatch",
         "SignupValidationText":"Enter a valid email/password",
         "DisplaylanguageText":"Display Language",
@@ -48,6 +48,19 @@
         "AboutOmoKoreanText":"About OMO Korean",
         "ResetToDefaultSettingsText":"Reset To Default Settings",
         "ProText":"Access More Features with OMO Pro",
-        "ProTagText":"Falshcard manager, testing, translations, syncing and more"
+        "ProTagText":"Falshcards manager, testing, translations, syncing and more",
+
+
+
+
+
+        "DisplayLanguageText":"Display Language",
+        "LanguageText":"Language",
+        "DictionaryLanguageText":"Dictionary language",
+        "DisplayKoreanDefinitionsText":"Display Korean definitions?",
+        "ShowExampleSentencesByDefaultText":"Show example sentences by default?",
+        "DisplayRomajaText":"Display romaja (Revised Romanisation)?",
+        "DisplayExampleSentenceTranslationsText":"Display example sentence translations?"
+
     }
 }

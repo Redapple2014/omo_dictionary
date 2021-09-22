@@ -106,22 +106,22 @@ const DictionaryScreen = (props) => {
                     <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>Profile</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <Text style={[styles.textStyle, { marginLeft: 0 }]}>Dictionary</Text>
+                <Text style={[styles.textStyle, { marginLeft: 0 }]}>{`${t("DictionaryText")}`}</Text>
             </View>
             <View style={{ flex: 1, paddingHorizontal: 12 }}>
                 <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
                     <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH, { "from": "dictionary", userSettings })}>
                         <View style={styles.itemStyle}>
-                            <Text style={styles.textStyle2}>Dictionary language</Text>
+                            <Text style={styles.textStyle2}>{`${t("DictionaryLanguageText")}`}</Text>
                             <View style={styles.MenuItemIconStyle}>{userSettings && <Text>{userSettings?.doc?.Dictionary?.language?.label}</Text>}<AntDesign name='right' color={Constants.appColors.PRIMARY_COLOR} size={18} /></View>
                         </View>
                     </TouchableOpacity>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Display Korean definitions?</Text>
+                        <Text style={styles.textStyle2}>{`${t("DisplayKoreanDefinitionsText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -132,7 +132,7 @@ const DictionaryScreen = (props) => {
                         />
                     </View>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Show example sentences by default?</Text>
+                        <Text style={styles.textStyle2}>{`${t("ShowExampleSentencesByDefaultText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -143,7 +143,7 @@ const DictionaryScreen = (props) => {
                         />
                     </View>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Display romaja (Revised Romanisation)?</Text>
+                        <Text style={styles.textStyle2}>{`${t("DisplayRomajaText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -154,7 +154,7 @@ const DictionaryScreen = (props) => {
                         />
                     </View>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Display example sentence translations?</Text>
+                        <Text style={styles.textStyle2}>{`${t("DisplayExampleSentenceTranslationsText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}

@@ -1,7 +1,7 @@
 import React, {useState, useRef} from 'react';
 import {View, StatusBar, TouchableOpacity, Platform} from 'react-native';
 import CustomHeader from '../../components/header';
-import Icon from 'react-native-vector-icons/Octicons';
+import Icon from 'react-native-vector-icons/Feather';
 import CustomButton from '../../components/button/CustomButton';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -13,11 +13,8 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {
-  NAVIGATION_PROFILE_SCREEN_PATH
-} from '../../navigations/Routes';
-import { useTranslation } from 'react-i18next';
-
+import {NAVIGATION_PROFILE_SCREEN_PATH} from '../../navigations/Routes';
+import {useTranslation} from 'react-i18next';
 
 const LoginScreen = (props) => {
   const [email, setEmail] = useState('');
@@ -26,32 +23,32 @@ const LoginScreen = (props) => {
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
   const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
 
-  const { t, i18n } = useTranslation();
- 
-  const emailInputRef = useRef(null)
-  const passwordInputRef = useRef(null)
-  
+  const {t, i18n} = useTranslation();
+
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+
   function onForgetPasswordPress() {
     props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
   }
 
   const userLogin = () => {
     if (email.length == 0 || password.length == 0) {
-      alert(`${t("SigninAlertText")}`)
-  } 
-  else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
-    alert(`${t("SignupValidationText")}`)
-  }
-  else {
+      alert(`${t('SigninAlertText')}`);
+    } else if (!Verify.varifyPassword(password) || !Verify.varifyEmail(email)) {
+      alert(`${t('SignupValidationText')}`);
+    } else {
       auth()
-      .signInWithEmailAndPassword(email,password)
-      .then((res) => {
-        AsyncStorage.setItem('user_data', JSON.stringify(res.user))
-        props.navigation.navigate(NAVIGATION_PROFILE_SCREEN_PATH,{userdata: res.user })
-      })
-      .catch(error => alert('Fail to login. Check your id & password'))
+        .signInWithEmailAndPassword(email, password)
+        .then((res) => {
+          AsyncStorage.setItem('user_data', JSON.stringify(res.user));
+          props.navigation.navigate(NAVIGATION_PROFILE_SCREEN_PATH, {
+            userdata: res.user,
+          });
+        })
+        .catch((error) => alert('Fail to login. Check your id & password'));
     }
-  }
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -65,24 +62,24 @@ const LoginScreen = (props) => {
           backgroundColor={Constants.appColors.PRIMARY_COLOR}
         />
         <CustomHeader
-          title={`${t("LoginText")}`}
-          leftIcon={`${t("CancelText")}`}
+          title={`${t('LoginText')}`}
+          leftIcon={`${t('CancelText')}`}
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
         />
       </View>
       <CustomInput
-        label={`${t("UsernameText")}`}
+        label={`${t('UsernameText')}`}
         ref={emailInputRef}
         labelStyle={{
           fontSize: 14,
           marginBottom: 4,
           color: Constants.appColors.DARKGRAY,
           fontWeight: '400',
-          marginLeft:4
+          marginLeft: 4,
         }}
-        placeholder={` ${t("EnterUsernamePlaceHolder")}`}
+        placeholder={` ${t('EnterUsernamePlaceHolder')}`}
         autoCapitalize="none"
         returnKeyType="next"
         autoCorrect={false}
@@ -103,18 +100,20 @@ const LoginScreen = (props) => {
           setEmail(value);
           setIsEmailErrorMsg(Verify.varifyEmail(value));
         }}
-        errorMessage={email && !isEmailErrorMsg ? `${t("EmailInvalidText")}` : ''}
-        onSubmitEditing={()=>passwordInputRef.current.focus()}
+        errorMessage={
+          email && !isEmailErrorMsg ? `${t('EmailInvalidText')}` : ''
+        }
+        onSubmitEditing={() => passwordInputRef.current.focus()}
       />
       <CustomInput
-        label={`${t("PasswordText")}`}
+        label={`${t('PasswordText')}`}
         ref={passwordInputRef}
         labelStyle={{
           fontSize: 14,
           marginBottom: 4,
           color: Constants.appColors.DARKGRAY,
           fontWeight: '400',
-          marginLeft:4
+          marginLeft: 4,
         }}
         autoCapitalize="none"
         returnKeyType="next"
@@ -131,7 +130,7 @@ const LoginScreen = (props) => {
         RightIconContainerStyle={{marginLeft: 16}}
         placeholderTextColor={Constants.appColors.LIGHTGRAY}
         placeholderFontSize={10}
-        placeholder={` ${t("EnterPasswordText")}`}
+        placeholder={` ${t('EnterPasswordText')}`}
         secureTextEntry={isSecurePassword ? isSecurePassword : false}
         value={password}
         onChangeText={(value) => {
@@ -141,20 +140,20 @@ const LoginScreen = (props) => {
         errorStyle={{color: Constants.appColors.PRIMARY_COLOR}}
         containerStyle={{height: 50, marginVertical: 48}}
         errorMessage={
-          password && !isPasswordErrorMsg ? `${t("PasswordInvalidText")}` : ''
+          password && !isPasswordErrorMsg ? `${t('PasswordInvalidText')}` : ''
         }
         onSubmitEditing={() => console.log('submit log in')}
-        rightIcon={ password.length>0 &&
-          <TouchableOpacity
-            onPress={() => setIsSecurePassword(!isSecurePassword)}>
-            <Icon
-              name={
-                 isSecurePassword ? 'eye-closed' : 'eye'
-              }
-              size={isSecurePassword ? 22:23}
-              color='#3DB2FF'
-            />
-          </TouchableOpacity>
+        rightIcon={
+          password.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setIsSecurePassword(!isSecurePassword)}>
+              <Icon
+                name={isSecurePassword ? 'eye-off' : 'eye'}
+                size={23}
+                color="#3DB2FF"
+              />
+            </TouchableOpacity>
+          )
         }
         onSubmitEditing={userLogin}
       />
@@ -167,7 +166,7 @@ const LoginScreen = (props) => {
             marginBottom: 8,
             borderRadius: 10,
           }}
-          title={`${t("loginButtonText")}`}
+          title={`${t('loginButtonText')}`}
           titleStyle={{fontSize: 14, fontWeight: 'bold'}}
           onPress={userLogin}
         />
@@ -180,7 +179,7 @@ const LoginScreen = (props) => {
             borderColor: Constants.appColors.DARKGRAY,
             borderRadius: 10,
           }}
-          title={`${t("forgetPasswordText")}`}
+          title={`${t('forgetPasswordText')}`}
           titleStyle={{
             fontSize: 14,
             color: Constants.appColors.DARKGRAY,

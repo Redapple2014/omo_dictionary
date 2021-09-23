@@ -1,5 +1,3 @@
-import { Value } from "react-native-reanimated";
-
 export const userMenu1 = [
     {
         id: 1,
@@ -62,7 +60,6 @@ export const languageList = [
         value: "ja"
     }
 ]
-
 
 export const defaultSettings = {
     DisplayLanguage: {

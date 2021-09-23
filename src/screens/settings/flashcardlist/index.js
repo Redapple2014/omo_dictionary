@@ -98,10 +98,10 @@ const FlashcardListRenderScreen = (props) => {
     }
 
     const renderItem = ({ item, index, move, moveEnd, isActive }) => {
-        console.log(categoryName ,  item.doc.name)
+        // console.log(categoryName ,  item.doc.name)
         return (
             <TouchableOpacity
-                onPress={() => {setUpdated(true);console.log(item.doc.name);setCategoryName(item.doc.name)}}
+                onPress={() => {setUpdated(true);setCategoryName(item.doc.name)}}
                 onLongPress={move}
                 onPressOut={moveEnd}>
                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -123,7 +123,7 @@ const FlashcardListRenderScreen = (props) => {
                                 fontSize: 18,
                                 paddingLeft: editMode ? 48 : 28
                             }}>{item?.doc?.name}</Text>
-                            <Text style={{ paddingLeft: editMode ? 48 : 28 }}>{item?.doc?.cards.length} cards</Text>
+                            <Text style={{ paddingLeft: editMode ? 48 : 28 }}>{item?.doc?.cards.length}{` ${t("CardsText")}`}</Text>
                         </View>
                     </View>
                     {
@@ -144,11 +144,11 @@ const FlashcardListRenderScreen = (props) => {
                     <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
                         <View style={{ flexDirection: 'row' }}>
                             <Icon name='chevron-back-sharp' size={20} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 16, color: 'white' }}>Flashcards</Text>
+                            <Text style={{ fontSize: 16, color: 'white' }}>{`${t("FlashcardsText")}`}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.textStyle}>Default Category</Text>
+                <Text style={styles.textStyle}>{`${t("DefaultCategoryText")}`}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 {
@@ -158,9 +158,9 @@ const FlashcardListRenderScreen = (props) => {
                         keyExtractor={(item, index) => `draggable-item-${item.key}`}
                     />
                         : (<>
-                            <Text style={{ textAlign: 'center', marginTop: 24 }}>No Category Found</Text>
+                            <Text style={{ textAlign: 'center', marginTop: 24 }}>{`${t("NoCategoryFoundText")}`}</Text>
                             <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_FLASHCARD_SCREEN_PATH)}>
-                                <Text style={{ textAlign: 'center', marginTop: 12, }}>Create New</Text>
+                                <Text style={{ textAlign: 'center', marginTop: 12,fontWeight:'bold' }}>{`${t("CreateNewText")}`}</Text>
                                 </TouchableOpacity></>
                         )
 

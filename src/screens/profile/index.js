@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Alert } from 'react-native';
+import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Alert, Share } from 'react-native';
 import CustomButton from "../../components/button/CustomButton";
 import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
@@ -24,10 +24,16 @@ import { NavigationEvents } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 import Icon from "react-native-vector-icons/Ionicons";
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import Dialog from "react-native-dialog";
+import Rate, { AndroidMarket } from 'react-native-rate'
+const pkg = require('../../../package.json');
 PouchDB.plugin(require('pouchdb-find'));
 
 var userDB = new PouchDB('usersettings');
+
+
+const appStoreLink = "App Store Link";
+const playStoreLink = "Play Store Link";
 
 const ProfileScreen = (props) => {
     const x = props.navigation.getParam('userdata', 'nothing sent');
@@ -36,6 +42,10 @@ const ProfileScreen = (props) => {
     const { t, i18n } = useTranslation();
     const [userType, setUserType] = useState(false);
     const [userSettings, setUserSettings] = useState({})
+    const [visible, setVisible] = useState(false);
+    const [feedbackText, setFeedbackText] = useState('')
+    const [rated, setRated] = useState(false)
+
 
     const chooseFile = () => {
         let options = {
@@ -53,7 +63,7 @@ const ProfileScreen = (props) => {
                     'User tapped custom button: ',
                     response.customButton
                 );
-                Alert.alert(response.customButton);
+                //Alert.alert(response.customButton);
             } else {
                 let source = response;
                 setProfilePicDetails(source.assets[0])
@@ -78,7 +88,7 @@ const ProfileScreen = (props) => {
                     return console.log(err);
                 }
 
-                console.log("user settings data ", JSON.stringify(response.rows[0]))
+                //console.log("user settings data ", JSON.stringify(response.rows[0]))
                 setUserSettings(response.rows[0])
                 return response.rows[0];
 
@@ -107,23 +117,23 @@ const ProfileScreen = (props) => {
     const handelProButton = () => {
         console.log('Upgrage to Pro')
     }
+
     const setLanguage = code => i18n.changeLanguage(code);
 
     const handelResetButton = () => {
         // console.log('reset settings')
         Alert.alert(
-            "Reset Settings to Default",
-            "Are you sure you want to reset all of your settings to their default values?",
+            `${t("ResetSettingsDefaultTitleText")}`,
+            `${t("ResetSettingsDefaultDecsText")}`,
             [
                 {
-                    text: "Cancel",
+                    text: `${t("CancelText")}`,
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 {
-                    text: "Reset Settings", onPress: () => {
+                    text: `${t("ResetSettingsText")}`, onPress: () => {
                         userDB.get(userSettings.id).then(function (doc) {
-
                             const newx = {
                                 ...doc,
                                 ...defaultSettings
@@ -131,7 +141,7 @@ const ProfileScreen = (props) => {
                             console.log(newx)
                             userDB.put(newx).then((response) => {
                                 console.log('responcen : ', response)
-                                Toast.show('Settings Reset Sucessfully', Toast.SHORT)
+                                Toast.show(`${t("SettingsResetSucessfullyText")}`, Toast.SHORT)
                                 fetchUserSettings()
                                 setLanguage('en')
                             }).catch((e) =>
@@ -155,7 +165,85 @@ const ProfileScreen = (props) => {
     }
 
     const handelMenu2Items = (item, index) => {
-        console.log('handel Menu2 Items', item.id)
+        if (item.id == 1) {
+            setVisible(true);
+        } else if (item.id == 2) {
+            onRatePress()
+        } else if (item.id == 3) {
+            onShare()
+        } else if (item.id == 4) {
+            Alert.alert(
+                `${t("AboutText")}`,
+                `${pkg.name} - ${pkg.version}`,
+                [
+                    {
+                        text: `${t("OkText")}`,
+                        onPress: () => console.log("ok Pressed"),
+                        style: "ok"
+                    }
+                ])
+        }
+    }
+
+    const handleCancel = () => {
+        setFeedbackText('')
+        setVisible(!visible);
+    };
+
+    const handleSend = () => {
+        if (feedbackText.length > 0) {
+            console.log('name : ', feedbackText)
+            setVisible(!visible);
+            setFeedbackText('')
+        } else {
+            Toast.show(`${t("InputEmptyText")}`, Toast.SHORT);
+        }
+    };
+
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                title: `${t("ShareText")}`,
+                message: `${t("PleaseInstallText")} ${pkg.name},\n${t("AppLinkText")}${Platform.OS == "ios" ? appStoreLink : playStoreLink}`,
+                url: `${Platform.OS == 'ios' ? appStoreLink : playStoreLink}`
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                    console.log('shared via : ', result.activityType)
+                } else {
+                    // shared
+                    console.log('shared')
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+                console.log('dismissed')
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const onRatePress = () => {
+        const options = {
+            AppleAppID: "2193813192",
+            GooglePackageName: pkg.pkgName,
+            OtherAndroidURL: playStoreLink,
+            preferredAndroidMarket: AndroidMarket.Google,
+            preferInApp: false,
+            openAppStoreIfInAppFails: true,
+            fallbackPlatformURL: "gg",
+        }
+        Rate.rate(options, (success, errorMessage) => {
+            if (success) {
+                // this technically only tells us if the user successfully went to the Review Page. Whether they actually did anything, we do not know.
+                setRated(true)
+            }
+            if (errorMessage) {
+                // errorMessage comes from the native code. Useful for debugging, but probably not for users to view
+                console.error(`Example page Rate.rate() error: ${errorMessage}`)
+            }
+        })
     }
 
     const onEditProfile = () => {
@@ -184,7 +272,6 @@ const ProfileScreen = (props) => {
                                 </View>
                             </TouchableOpacity>
                         }
-
                     </View>
                     <Text style={styles.textStyle}>{`${t("ProfileText")}`}</Text>
                 </View>
@@ -206,7 +293,7 @@ const ProfileScreen = (props) => {
                             </TouchableOpacity>
                         </View>
                         <View style={{ paddingVertical: 12, alignItems: 'flex-end' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-evenly' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                                 {
                                     userType ? <View style={styles.userLabelText}><Text style={{ color: Constants.appColors.WHITE, textAlign: 'center' }}>Pro</Text></View> : <View style={[styles.userLabelText, { backgroundColor: Constants.appColors.GRAY }]}><Text style={{ color: Constants.appColors.WHITE, textAlign: 'center' }}>Basic</Text></View>
                                 }
@@ -216,7 +303,7 @@ const ProfileScreen = (props) => {
                             <Text style={{ fontSize: 15 }}>{userData?.email}</Text>
                         </View>
                     </View>
-                    :
+                        :
                         <View style={{ paddingVertical: 16, alignItems: 'center' }}>
                             <CustomButton
                                 style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.PRIMARY_COLOR, marginBottom: 8, borderRadius: 10 }}
@@ -241,7 +328,7 @@ const ProfileScreen = (props) => {
                         </View>
                     </TouchableOpacity>
                 }
-                <View style={[styles.Settings,{marginTop:userType?16:0}]}>
+                <View style={[styles.Settings, { marginTop: userType ? 16 : 0 }]}>
                     <FlatList
                         data={userMenu1}
                         keyboardShouldPersistTaps={'handled'}
@@ -252,7 +339,6 @@ const ProfileScreen = (props) => {
                                     <View style={styles.MenuItemIconStyle}>{userSettings && item.id == 1 && <Text>{userSettings?.doc?.DisplayLanguage?.label}</Text>}<AntDesign name='right' color={Constants.appColors.PRIMARY_COLOR} size={18} /></View>
                                 </View>
                             </TouchableOpacity>
-
                         )}
                         keyExtractor={(item, index) => index.toString()}
                         numColumns={1}
@@ -275,6 +361,14 @@ const ProfileScreen = (props) => {
                         numColumns={1}
                         showsVerticalScrollIndicator={false}
                     />
+                    {visible &&
+                        <Dialog.Container visible={visible}>
+                            <Dialog.Title>{`${t("YourFeedbackText")}`}</Dialog.Title>
+                            <Dialog.Input value={feedbackText} onChangeText={(v) => setFeedbackText(v)} />
+                            <Dialog.Button label={`${t("CancelText")}`} onPress={handleCancel} />
+                            <Dialog.Button label={`${t("SendText")}`} onPress={handleSend} />
+                        </Dialog.Container>
+                    }
                 </View>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <CustomButton

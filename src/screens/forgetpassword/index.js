@@ -22,7 +22,7 @@ const ForgetPasswordScreen = (props) => {
     if (email != '' && Verify.varifyEmail(email)) {
       auth().sendPasswordResetEmail(email).then(() => {
         props.navigation.dispatch(NavigationActions.back())
-      }).catch(e => alert('Fail to sent mail'))
+      }).catch(e => alert(`${t("FailMailText")}`))
     } else {
       alert(`${t("EmailInvalidText")}`)
     }

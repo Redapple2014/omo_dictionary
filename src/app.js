@@ -13,7 +13,7 @@ import { store } from './store/store';
 
 const AppContainer = createAppContainer(MainAppNavigator);
 
-LogBox.ignoreLogs(['Animated: ...']);
+LogBox.ignoreLogs(['Animated: ...','Reanimated 2']);
 
 
 const App = () => {

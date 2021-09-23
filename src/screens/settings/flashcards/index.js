@@ -63,15 +63,15 @@ const FlashcardListsScreen = (props) => {
     const handelResetButton = () => {
         // console.log('reset settings')
         Alert.alert(
-            "Reset Spaced repetition Scores",
-            "Are you ABSOLUTELY sure that you wnat to reset your spaced repetition scores? This will delete your test histories and return all of your card scores to their default values.",
+            `${t("ResetSpacedRepetitionScoresTitleText")}`,
+            `${t("ResetSpacedRepetitionScoresDecsText")}`,
             [
               {
-                text: "Cancel",
+                text: `${t("CancelText")}`,
                 onPress: () => console.log("Cancel Pressed"),
                 style: "cancel"
               },
-              { text: "Reset Scores", onPress: () => console.log("Reset scores Pressed") }
+              { text: `${t("ResetScoresText")}`, onPress: () => console.log("Reset scores Pressed") }
             ])
     }
 
@@ -120,12 +120,12 @@ const FlashcardListsScreen = (props) => {
                 <View style={{ marginTop: 8, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
                     <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH, { userSettings })}>
                         <View style={styles.itemStyle}>
-                            <Text style={styles.textStyle2}>Default Save Category</Text>
+                            <Text style={styles.textStyle2}>{`${t("DefaultSaveCategoryText")}`}</Text>
                             <View style={styles.MenuItemIconStyle}>{userSettings && <Text>{userSettings?.doc?.Flashcard?.defaultFlashcard}</Text>}<AntDesign name='right' color={Constants.appColors.PRIMARY_COLOR} size={18} /></View>
                         </View>
                     </TouchableOpacity>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Change Default Category on Tap-Hold Selection?</Text>
+                        <Text style={styles.textStyle2}>{`${t("ChangeDefaultCategoryText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -137,7 +137,7 @@ const FlashcardListsScreen = (props) => {
                     </View>
 
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Always Prompt for Category on Tap?</Text>
+                        <Text style={styles.textStyle2}>{`${t("AlwaysPromptCategoryText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -150,7 +150,7 @@ const FlashcardListsScreen = (props) => {
                 </View>
                 <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
                     <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>Daily Practice Reminder?</Text>
+                        <Text style={styles.textStyle2}>{`${t("DailyPracticeReminderText")}`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
@@ -161,7 +161,7 @@ const FlashcardListsScreen = (props) => {
                         />
                     </View>
                     <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-                        <Text style={[styles.textStyle2, { zIndex: 4 }]}>Reminder Time</Text>
+                        <Text style={[styles.textStyle2, { zIndex: 4 }]}>{`${t("ReminderTimeText")}`}</Text>
                         <Text style={{ marginRight: 8, fontWeight: 'bold', color: Constants.appColors.BLACK, fontSize: 16 }}>17:00</Text>
                     </View>
                 </View>

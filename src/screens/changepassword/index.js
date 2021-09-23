@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,21 +18,30 @@ const ChangePasswordScreen = (props) => {
     const [isSecureNewPassword, setIsSecureNewPassword] = useState(true);
     const [isSecureConfirmPassword, setIsSecureConfirmPassword] = useState(true);
     const { t,i18n } = useTranslation();
+    const oldPasswordInputRef = useRef(null);
+    const newPasswordInputRef = useRef(null);
+    const confirmPasswordInputRef = useRef(null);
+
+
+    const onSavePress = () => {
+        console.log('save new password pressed')
+    }
 
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
-                    title='Password'
-                    leftIcon='Cancel'
+                    title={`${t("PasswordText")}`}
+                    leftIcon={`${t('CancelText')}`}
                     onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-                    rightIcon='Save'
-                    onPressrightIcon={() => console.log('save button')}
+                    rightIcon={`${t('SaveText')}`}
+                    onPressrightIcon={onSavePress}
                 />
             </View>
             <CustomInput
-                label='Old Password'
+                label={`${t("OldPasswordText")}`}
+                ref={oldPasswordInputRef}
                 labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
@@ -49,7 +58,7 @@ const ChangePasswordScreen = (props) => {
                     setOldPassword(value)
                 }}
                 containerStyle={{ height: 50, marginTop: 8 }}
-                onSubmitEditing={() => console.log('submit log in')}
+                onSubmitEditing={() => newPasswordInputRef.current.focus()}
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureOldPassword(!isSecureOldPassword)}>
                         <Icon
@@ -59,7 +68,8 @@ const ChangePasswordScreen = (props) => {
                         /></TouchableOpacity>}
             />
             <CustomInput
-                label='New Password'
+                label={`${t("NewPasswordText")}`}
+                ref={newPasswordInputRef}
                 labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
@@ -76,7 +86,7 @@ const ChangePasswordScreen = (props) => {
                     setNewPassword(value)
                 }}
                 containerStyle={{ height: 50, marginTop: 32 }}
-                onSubmitEditing={() => console.log('submit log in')}
+                onSubmitEditing={() => confirmPasswordInputRef.current.focus()}
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureNewPassword(!isSecureNewPassword)}>
                         <Icon
@@ -86,7 +96,8 @@ const ChangePasswordScreen = (props) => {
                         /></TouchableOpacity>}
             />
             <CustomInput
-                label='Confirm Password'
+                label={`${t("ConfirmPasswordText")}`}
+                ref={confirmPasswordInputRef}
                 labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
@@ -103,7 +114,7 @@ const ChangePasswordScreen = (props) => {
                     setConfirmPassword(value)
                 }}
                 containerStyle={{ height: 50, marginTop: 32 }}
-                onSubmitEditing={() => console.log('submit log in')}
+                onSubmitEditing={onSavePress}
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureConfirmPassword(!isSecureConfirmPassword)}>
                         <Icon

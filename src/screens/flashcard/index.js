@@ -188,7 +188,7 @@ const FlashcardScreen = (props) => {
                             fontSize: 18,
                             paddingLeft: editMode ? 48 : 28
                         }}>{item?.doc?.name}</Text>
-                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} cards</Text>
+                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} {`${t("CardsText")}`}</Text>
                         </View>  
                     </View>
                     <View style={{ marginLeft: 12 }}>
@@ -228,7 +228,7 @@ const FlashcardScreen = (props) => {
             setNewCategoryName('')
             insert()
         } else {
-            Toast.show('Input can not be empty', Toast.SHORT);
+            Toast.show(`${t("InputEmptyText")}`, Toast.SHORT);
         }
     };
 
@@ -260,7 +260,7 @@ const FlashcardScreen = (props) => {
                     {
                         editMode && <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
                             <TouchableOpacity onPress={() => { console.log('edit cancel'); setEditMode(!editMode) }}>
-                                <Text style={{ fontSize: 20, color: 'white' }}>Cancel</Text>
+                                <Text style={{ fontSize: 20, color: 'white' }}>{`${t("CancelText")}`}</Text>
                             </TouchableOpacity>
                         </View>
                     }
@@ -322,10 +322,10 @@ const FlashcardScreen = (props) => {
                 }
                 {visible &&
                     <Dialog.Container visible={visible}>
-                        <Dialog.Title>Please enter a new category name</Dialog.Title>
+                        <Dialog.Title>{`${t("EnterNewCategoryNameText")}`}</Dialog.Title>
                         <Dialog.Input value={newCategoryName} onChangeText={(v) => setNewCategoryName(v)} />
-                        <Dialog.Button label="Cancel" onPress={handleCancel} />
-                        <Dialog.Button label="Save" onPress={handleSave} />
+                        <Dialog.Button label={`${t("CancelText")}`} onPress={handleCancel} />
+                        <Dialog.Button label={`${t("SaveText")}`} onPress={handleSave} />
                     </Dialog.Container>
                 }
             </View>

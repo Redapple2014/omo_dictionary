@@ -25,7 +25,7 @@ const ViewFlashcardDataScreen = (props) => {
     ee.addListener('tts-start', () => { });
     ee.addListener('tts-finish', () => { });
     ee.addListener('tts-cancel', () => { });
-
+    const { t, i18n } = useTranslation();
     const renderData = () => {
         const arr = data.definition
         const arr2 = data.examples
@@ -46,7 +46,7 @@ const ViewFlashcardDataScreen = (props) => {
                 <SearchHeader
                     title=''         
                     show={true}
-                    leftIcon='Back'
+                    leftIcon={`${t("BackText")}`}
                     onPressleftIcon={() =>
                         props.navigation.dispatch(NavigationActions.back())
                     }
@@ -74,7 +74,7 @@ const ViewFlashcardDataScreen = (props) => {
                 </View>
             </View>
             {data?.definition  && <>
-                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}><Text style={{ fontSize: 16 }}>Definitions</Text></View>
+                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}><Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text></View>
                 <View style={{ backgroundColor: 'white' }}>
                     <ScrollView contentInsetAdjustmentBehavior="automatic" style={{  paddingHorizontal: 12 }}>{data?.definition && renderData()}</ScrollView>
                 </View>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -14,12 +13,12 @@ import {
 } from '../../navigations/Routes';
 import MIcons from 'react-native-vector-icons/MaterialIcons';
 import FIcons from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/AntDesign'
 import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
 import { NAVIGATION_NEW_CARD_SCREEN_PATH } from '../../navigations/Routes';
 import { NavigationEvents } from 'react-navigation';
 import CustomPopup from '../../components/popup/CustomPopup';
-import { Button } from 'react-native-elements/dist/buttons/Button';
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -83,7 +82,7 @@ const DisplayCardScreen = (props) => {
                 }).catch((e) => console.log(e))
             }).catch((e) => console.log(e))
         }else{
-            Toast.show('Select an item to delete', Toast.SHORT)
+            Toast.show(`${t("SelectItemToDeleteText")}`, Toast.SHORT)
         }
 
     }
@@ -110,7 +109,7 @@ const DisplayCardScreen = (props) => {
             }).catch((e) => console.log(e))
             
         } else {
-            Toast.show('Select category a to move', Toast.SHORT)
+            Toast.show(`${t("SelectCategoryToMove")}`, Toast.SHORT)
         }
 
     }
@@ -146,8 +145,8 @@ const DisplayCardScreen = (props) => {
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
                     <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
-                        <TouchableOpacity onPress={() => { console.log('edit cancel'); setEditMode(!editMode); props.navigation.dispatch(NavigationActions.back()) }}>
-                            <Text style={{ fontSize: 20, color: 'white' }}>Back</Text>
+                        <TouchableOpacity onPress={() => { setEditMode(!editMode); props.navigation.dispatch(NavigationActions.back()) }}>
+                            <Text style={{ fontSize: 20, color: 'white' }}>{`${t("BackText")}`}</Text>
                         </TouchableOpacity>
                     </View>
                     <Text style={[styles.textStyle2]}>{data?.name}</Text>
@@ -203,7 +202,13 @@ const DisplayCardScreen = (props) => {
                         }}
                     >
                         <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
-                            <Text style={{ fontSize: 16, marginBottom: 12 }}>Select Category</Text>
+                        <View style={{flexDirection:"row",justifyContent:'space-between'}}>
+                        <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t("SelectCategoryText")}`}</Text>
+                        <TouchableOpacity onPress={() => setOverlayActive(!isOverlayActive)}>
+                            <Icon name='closecircle' size={24} color={Constants.appColors.PRIMARY_COLOR}/>
+                        </TouchableOpacity>
+                        </View>
+                            
                             <FlatList
                                 keyboardShouldPersistTaps={'handled'}
                                 renderItem={({ item, index }) => (
@@ -223,7 +228,7 @@ const DisplayCardScreen = (props) => {
                             />
                             <TouchableOpacity onPress={moveHandel}>
                                 <View style={{ borderWidth: .8, height: 45, justifyContent: 'center' }}>
-                                    <Text style={{ textAlign: "center", fontWeight: 'bold', fontSize: 20 }}>MOVE</Text>
+                                    <Text style={{ textAlign: "center", fontWeight: 'bold', fontSize: 20 }}>{`${t("MoveText")}`}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -267,7 +272,7 @@ const DisplayCardScreen = (props) => {
                                             Tts.speak(item?.speech)
                                         } catch (e) {
                                             console.log(`cannot play the sound file`, e)
-                                            Toast.show('No Audio File Found', Toast.SHORT);
+                                            Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
                                         }
                                     }}>
                                         <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
@@ -296,7 +301,7 @@ const DisplayCardScreen = (props) => {
                     showsVerticalScrollIndicator={false}
                 />
                 {
-                    data?.cards.length == 0 && <Text style={{ position: 'absolute', top: Sizes.WINDOW_HEIGHT * .35 - 32, left: Sizes.WINDOW_WIDTH / 2 - 48 }}>No Card Found</Text>
+                    data?.cards.length == 0 && <Text style={{ position: 'absolute', top: Sizes.WINDOW_HEIGHT * .35 - 32, left: Sizes.WINDOW_WIDTH / 2 - 48 }}>{`${t("NoCardFoundText")}`}</Text>
                 }
             </View>
         </View>

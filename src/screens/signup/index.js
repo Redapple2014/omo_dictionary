@@ -47,6 +47,7 @@ const SinupScreen = (props) => {
     let options = {
       mediaType: 'photo',
     };
+
     launchImageLibrary(options, (response) => {
       console.log('Response = ', response);
 
@@ -140,7 +141,7 @@ const SinupScreen = (props) => {
           }
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={'always'}>
         <View style={{alignItems: 'center'}}>
           <TouchableOpacity onPress={chooseFile}>
             <View

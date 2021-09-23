@@ -128,7 +128,7 @@ const SearchResultScreen = (props) => {
 
 
     const data = props.navigation.getParam('searchResultData', 'nothing sent');
-
+    const { t, i18n } = useTranslation();
     const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
     ee.addListener('tts-start', () => { });
     ee.addListener('tts-finish', () => { });
@@ -143,9 +143,7 @@ const SearchResultScreen = (props) => {
     };
 
 
-    console.log("searchResultData : ", data)
-
-    const { t, i18n } = useTranslation();
+    //console.log("searchResultData : ", data)
 
     const renderEquivalent = (dataSet) => {
         let arr = dataSet
@@ -251,7 +249,7 @@ const SearchResultScreen = (props) => {
                             Tts.speak(data?.L?.w)
                         } catch (e) {
                             //console.log(`cannot play the sound file`, e)
-                            Toast.show('No Audio File Found', Toast.SHORT);
+                            Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
                         }
                     }}
                 />
@@ -268,12 +266,12 @@ const SearchResultScreen = (props) => {
                     </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>
-                    <View style={{ flexDirection: 'row' }}><View style={{ backgroundColor: '#3D9CE0', height: 22, width: '30%', alignItems: 'center', borderRadius: 10 }}><Text style={{ marginRight: 8, textAlign: 'center', color: 'white', marginHorizontal: 8 }}>Applications</Text></View>{data?.w && renderData(1, data?.w)}</View>
-                    <View style={{ marginTop: 8, flexDirection: 'row' }}><View style={{ backgroundColor: '#5ED65C', height: 22, width: '30%', alignItems: 'center', borderRadius: 10 }}><Text style={{ marginRight: 8, textAlign: 'center', color: 'white', marginHorizontal: 8 }}>Derivatives</Text></View>{data?.r && renderData(2, data?.w)}</View>
+                    <View style={{ flexDirection: 'row' }}><View style={{ backgroundColor: '#3D9CE0', height: 22, width: '30%', alignItems: 'center', borderRadius: 10 }}><Text style={{ marginRight: 8, textAlign: 'center', color: 'white', marginHorizontal: 8 }}>{`${t("ApplicationsText")}`}</Text></View>{data?.w && renderData(1, data?.w)}</View>
+                    <View style={{ marginTop: 8, flexDirection: 'row' }}><View style={{ backgroundColor: '#5ED65C', height: 22, width: '30%', alignItems: 'center', borderRadius: 10 }}><Text style={{ marginRight: 8, textAlign: 'center', color: 'white', marginHorizontal: 8 }}>{`${t("DerivativesText")}`}</Text></View>{data?.r && renderData(2, data?.w)}</View>
                 </View>
             </View>
             {data?.S && <>
-                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 4 }}><Text style={{ fontSize: 16 }}>Definitions</Text></View>
+                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 4 }}><Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text></View>
                 <View style={{ backgroundColor: 'white' }}>
                     <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ marginBottom: Sizes.WINDOW_WIDTH * .625, paddingHorizontal: 12 }}><Text>{data?.S && renderData(3, data.S)}</Text></ScrollView>
                 </View>

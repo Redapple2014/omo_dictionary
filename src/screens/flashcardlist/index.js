@@ -15,7 +15,6 @@ const FlashcardListScreen = () => {
                 <CustomHeader
                     title={`${t("FlashcardListPageTitle")}`}
                 />
-                
             </View>
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
             <Text style={{fontSize:30,}}>{`${t("FlashcardListPageTitle")}`}</Text>

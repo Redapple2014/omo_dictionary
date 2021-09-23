@@ -22,9 +22,7 @@ const LoginScreen = (props) => {
   const [isSecurePassword, setIsSecurePassword] = useState(true);
   const [isEmailErrorMsg, setIsEmailErrorMsg] = useState(false);
   const [isPasswordErrorMsg, setIsPasswordErrorMsg] = useState(false);
-
   const {t, i18n} = useTranslation();
-
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
 
@@ -46,7 +44,7 @@ const LoginScreen = (props) => {
             userdata: res.user,
           });
         })
-        .catch((error) => alert('Fail to login. Check your id & password'));
+        .catch((error) => alert(`${t("FailLoginText")}`));
     }
   };
 

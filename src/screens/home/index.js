@@ -299,7 +299,7 @@ const HomeScreen = (props) => {
       .catch((error) => console.log('error!'));
   }
 
-  console.log(reacientlyViewedDataSet)
+  // console.log(reacientlyViewedDataSet)
 
   //search the entered data
   function onSearchSubmit() {
@@ -332,6 +332,7 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage('recent_data');
     } else {
+
       console.log('search text input is empty');
       setSearchText('');
     }
@@ -362,6 +363,8 @@ const HomeScreen = (props) => {
     }).catch(function (err) {
       console.log(err);
     });
+
+    // console.log('**************dfdfdffgfgfgfgfgfg : ',JSON.stringify(result))
     setSearchdata(result);
 
     // localDB
@@ -399,19 +402,19 @@ const HomeScreen = (props) => {
     //     console.log(err);
     //   });
 
-    localDB.allDocs(
-      {
-        include_docs: true,
-        attachments: true,
-      },
-      function (err, response) {
-        if (err) {
-          return console.log(err);
-        }
-        // handle result
-        //console.log(response.rows);
-      },
-    );
+    // localDB.allDocs(
+    //   {
+    //     include_docs: true,
+    //     attachments: true,
+    //   },
+    //   function (err, response) {
+    //     if (err) {
+    //       return console.log(err);
+    //     }
+    //     // handle result
+    //     //console.log(response.rows);
+    //   },
+    // );
   }
 
   useEffect(() => {
@@ -454,14 +457,15 @@ const HomeScreen = (props) => {
     let arr = dataSet;
     if (arr != 'undefined') {
       return arr.map((data, i) => {
-        if (data.language == '몽골어') {
+        if (data.l == '몽골어') {
           return (
-            <View key={`${i + data?.lemma}`}>
+            <View key={`${i + data?.le}`} style={{flexDirection:'row'}}>
+              <Text style={{fontSize: 17, marginTop: 2}}>{`${i + 1} `}</Text>
               <Text
                 style={{
                   color: Constants.appColors.BLACK,
                   fontSize: 18,
-                }}>{`${data?.lemma}`}</Text>
+                }}>{`${data?.le}`}</Text>
             </View>
           );
         }
@@ -530,13 +534,13 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              {item?.Lemma?.writtenForm && <View
+              {item?.L?.w && <View
                 style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
                 <TouchableOpacity
                   onPress={() => {
                     try {
                       Tts.setDefaultLanguage('ko-KR');
-                      Tts.speak(item?.Lemma?.writtenForm);
+                      Tts.speak(item?.L?.w);
                     } catch (e) {
                       //console.log(`cannot play the sound file`, e)
                       Toast.show('No Audio File Found', Toast.SHORT);
@@ -550,15 +554,15 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>}
               <Text style={styles.TextStyle}>
-                {item.name}
-                {item?.origin && `(${item?.origin})`}
+                <Text style={{fontWeight:'bold'}}>{item?.L?.w}</Text>
+                {item?.o && `(${item?.o})`}
               </Text>
               <Text
                 style={[
                   styles.TextStyle,
                   {color: Constants.appColors.GRAY, fontSize: 12},
                 ]}>
-                {item?.partOfSpeech}
+                {item?.p}
               </Text>
 
               <View
@@ -568,11 +572,8 @@ const HomeScreen = (props) => {
                   flexDirection: 'row',
                   paddingLeft: 12,
                 }}>
-                <Text style={{fontSize: 17, marginTop: 2}}>{`${
-                  index + 1
-                } `}</Text>
-                {/* {item?.Sense[0]?.Equivalent &&
-                  renderEquivalent(item?.Sense[0]?.Equivalent)} */}
+                {item?.S[0]?.E &&
+                  renderEquivalent(item?.S[0]?.E)}
               </View>
             </View>
           </TouchableOpacity>
@@ -596,7 +597,7 @@ const HomeScreen = (props) => {
             onPress={() => {
               const id = item._id;
               localDB.get(id).then(function (doc) {
-                storeRecentlyViewedData(item);
+                storeRecentlyViewedData(doc);
                 console.log(`data : ${id} `,JSON.stringify(doc))
                 props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
                   searchResultData: doc,
@@ -614,6 +615,8 @@ const HomeScreen = (props) => {
                 paddingVertical: 4,
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
+                height:50,
+                justifyContent:'center'
               }}>
               <View
                 style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
@@ -621,7 +624,7 @@ const HomeScreen = (props) => {
                   onPress={() => {
                     try {
                       Tts.setDefaultLanguage('ko-KR');
-                      Tts.speak(item?.Lemma?.writtenForm);
+                      Tts.speak(item?.name);
                     } catch (e) {
                       //console.log(`cannot play the sound file`, e)
                       Toast.show('No Audio File Found', Toast.SHORT);
@@ -636,17 +639,17 @@ const HomeScreen = (props) => {
               </View>
               <Text style={styles.TextStyle}>
                 {item.name}
-                {item?.origin && `(${item?.origin})`}
+                {/* {item?.origin && `(${item?.origin})`} */}
               </Text>
-              <Text
+              {/* <Text
                 style={[
                   styles.TextStyle,
                   {color: Constants.appColors.GRAY, fontSize: 12},
                 ]}>
                 {item?.partOfSpeech}
-              </Text>
+              </Text> */}
 
-              <View
+              {/* <View
                 key={index}
                 style={{
                   marginHorizontal: 4,
@@ -656,9 +659,9 @@ const HomeScreen = (props) => {
                 <Text style={{fontSize: 17, marginTop: 2}}>{`${
                   index + 1
                 } `}</Text>
-                {/* {item?.Sense[0]?.Equivalent &&
-                  renderEquivalent(item?.Sense[0]?.Equivalent)} */}
-              </View>
+                {item?.Sense[0]?.Equivalent &&
+                  renderEquivalent(item?.Sense[0]?.Equivalent)}
+              </View> */}
             </View>
           </TouchableOpacity>
         )}
@@ -709,7 +712,7 @@ const HomeScreen = (props) => {
             ) : (
               <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
                 <Image
-                  source={require('../../assets/logo/omo-logo_1.png')}
+                  source={require('../../assets/logo/home-logo.png')}
                   style={{width: 300, height: 100, resizeMode: 'contain'}}
                 />
               </View>
@@ -854,8 +857,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
     position: 'absolute',
-    top: Sizes.WINDOW_HEIGHT / 2 - 24,
-    left: Sizes.WINDOW_WIDTH / 2 - 24,
+    top: Sizes.WINDOW_HEIGHT / 2 - 40,
+    left: Sizes.WINDOW_WIDTH / 2 - 40,
     zIndex: 2,
   },
   TextStyle: {

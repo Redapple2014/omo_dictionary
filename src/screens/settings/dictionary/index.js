@@ -10,7 +10,6 @@ import {
 } from '../../../navigations/Routes';
 import PouchDB from 'pouchdb-react-native';
 import { NavigationEvents } from 'react-navigation';
-import { set } from 'react-native-reanimated';
 
 var userDB = new PouchDB('usersettings');
 

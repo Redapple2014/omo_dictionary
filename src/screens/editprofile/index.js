@@ -108,10 +108,10 @@ const EditProfileScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
-                    title='User Settings'
+                    title={`${t("UserSettingsText")}`}
                     leftIcon={`${t("CancelText")}`}
                     onPressleftIcon={goBack}
-                    rightIcon={`    Save`}
+                    rightIcon={`    ${t("SaveText")}`}
                     onPressrightIcon={updateUserData}
                 />
             </View>
@@ -242,7 +242,7 @@ const EditProfileScreen = (props) => {
                 />
                 <View style={{ alignItems: 'center' }}>
                     <CustomButton
-                        title='Log Out'
+                        title={`${t("LogOutText")}`}
                         onPress={OnLogOutPress}
                         style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.WHITE, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
                         titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}

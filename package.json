@@ -1,7 +1,8 @@
 {
-  "name": "OmoOmo",
-  "version": "0.0.1",
+  "name": "Omo Dictionary",
+  "version": "1.0.0",
   "private": true,
+  "pkgName":"omo-korean.appspot.com",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -40,6 +41,7 @@
     "react-native-get-random-values": "^1.7.0",
     "react-native-image-picker": "^4.0.6",
     "react-native-localize": "^2.1.1",
+    "react-native-rate": "^1.2.9",
     "react-native-reanimated": "^2.2.0",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^3.5.0",

@@ -13,6 +13,11 @@ import CustomButton from "../../components/button/CustomButton";
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/Octicons';
+import database from '@react-native-firebase/database';
+import base64 from 'react-native-base64';
+import {
+    NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH
+} from '../../navigations/Routes'
 
 const EditProfileScreen = (props) => {
 
@@ -91,17 +96,51 @@ const EditProfileScreen = (props) => {
             });
     }
 
-    const updateUserData = () => {
-        var userNow = auth()?.currentUser;
-        const updatedData = {
-            displayName:name
+    const getData = () => {
+        if (auth().currentUser) {
+            const userId = auth().currentUser.uid;
+            //   console.log(userId)
+            database()
+                .ref("users/" + userId)
+                .once("value", function (snapshot) {
+                    if (snapshot.val() != null) {
+                        const userData = snapshot.val()
+                        setUserdata(userData)
+                        setName(userData.displayName);
+                        setUsername(userData.username)
+                        setEmail(userData.email)
+                        setPassword(base64.decode(userData.password))
+
+                    }
+                });
         }
-        userNow.updateProfile(updatedData).then((x)=>console.log(x)).catch((e)=>console.log(e))
+    }
+
+
+    const updateUserData = () => {
+        var uid = auth()?.currentUser.uid;
+        const jsonData = {
+            displayName: name,
+            username,
+        }
+        try {
+            database()
+                .ref('users/' + uid)
+                .set({ ...userData, ...jsonData })
+                .then(() => {
+                    console.log('User updated successfully!');
+                    goBack()
+                });
+        } catch (error) {
+            console.log('error====>> ', error);
+
+        }
     }
 
     useEffect(() => {
-        getDatafromStorage()
-    },[])
+        // getDatafromStorage()
+        getData()
+    }, [])
 
     return (
         <View style={{ flex: 1 }}>
@@ -131,7 +170,7 @@ const EditProfileScreen = (props) => {
                 </View>
 
 
-                
+
                 <CustomInput
                     label={`${t("NameText")}`}
                     ref={nameInputRef}
@@ -189,7 +228,8 @@ const EditProfileScreen = (props) => {
                     leftIconContainerStyle={{ marginRight: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
                     placeholderFontSize={2}
-                    containerStyle={{ height: 50, marginTop: 32 }}
+                    // containerStyle={{ height: 50, marginTop: 32 }}
+                    containerStyle={{ height: 50, marginVertical: 36 }}
                     value={email}
                     disabled={true}
                     onChangeText={
@@ -202,7 +242,7 @@ const EditProfileScreen = (props) => {
                     onSubmitEditing={() => passwordInputRef.current.focus()}
                 />
 
-                <CustomInput
+                {/* <CustomInput
                     label={`${t("PasswordText")}`}
                     ref={passwordInputRef}
                     labelStyle={{ fontSize: 14, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
@@ -220,26 +260,21 @@ const EditProfileScreen = (props) => {
                     value={password}
                     onChangeText={value => {
                         setPassword(value)
-                        //setIsPasswordErrorMsg(Verify.varifyPassword(value))
                     }}
                     errorStyle={{ color: Constants.appColors.PRIMARY_COLOR }}
                     containerStyle={{ height: 50, marginVertical: 36 }}
-                    //errorMessage={password && !isPasswordErrorMsg ? `${t("PasswordInvalidText")}` : ''}
                     onSubmitEditing={() => console.log('submit log in')}
-                    rightIcon={password.length > 0 &&
-                        <TouchableOpacity
-                            onPress={() => setIsSecurePassword(!isSecurePassword)}>
-                            <Icon
-                                name={
-                                    isSecurePassword ? 'eye-closed' : 'eye'
-                                }
-                                size={isSecurePassword ? 22 : 23}
-                                color='#3DB2FF'
-                            />
-                        </TouchableOpacity>
-                    }
-                    onSubmitEditing={() => confPasswordInputRef.current.focus()}
-                />
+                /> */}
+
+                <View style={{ alignItems: 'center',
+            marginBottom:12 }}>
+                    <CustomButton
+                        title={`${t("ChangePasswordText")}`}
+                        onPress={()=>props.navigation.navigate(NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH)}
+                        style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.PRIMARY_COLOR, borderWidth: 1, borderColor: Constants.appColors.PRIMARY_COLOR, borderRadius: 10 }}
+                        titleStyle={{ fontSize: 14, color: Constants.appColors.WHITE, fontWeight: 'bold' }}
+                    />
+                </View>
                 <View style={{ alignItems: 'center' }}>
                     <CustomButton
                         title={`${t("LogOutText")}`}

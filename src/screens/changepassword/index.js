@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -9,23 +9,87 @@ import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { useTranslation } from 'react-i18next';
+import database from '@react-native-firebase/database';
+import base64 from 'react-native-base64';
+import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-simple-toast';
+import {
+    NAVIGATION_PROFILE_SCREEN_PATH
+} from '../../navigations/Routes';
+
 
 const ChangePasswordScreen = (props) => {
+    const [userData, setUserdata] = useState({})
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isSecureOldPassword, setIsSecureOldPassword] = useState(true);
     const [isSecureNewPassword, setIsSecureNewPassword] = useState(true);
     const [isSecureConfirmPassword, setIsSecureConfirmPassword] = useState(true);
-    const { t,i18n } = useTranslation();
+    const [isNewPasswordErrorMsg, setIsNewPasswordErrorMsg] = useState(false);
+    const [isConPasswordErrorMsg, setIsConPasswordErrorMsg] = useState(false);
+    const { t, i18n } = useTranslation();
     const oldPasswordInputRef = useRef(null);
     const newPasswordInputRef = useRef(null);
     const confirmPasswordInputRef = useRef(null);
 
 
-    const onSavePress = () => {
-        console.log('save new password pressed')
+    const getData = () => {
+        if (auth().currentUser) {
+            const userId = auth().currentUser.uid;
+            database()
+                .ref("users/" + userId)
+                .once("value", function (snapshot) {
+                    if (snapshot.val() != null) {
+                        const userData = snapshot.val()
+                        setUserdata(userData)
+                    }
+                });
+        }
     }
+
+    const OnLogOutPress = () => {
+        auth()
+            .signOut()
+            .then(() => {
+                
+            });
+    }
+
+    const updateUserData = () => {
+        if (newPassword == confirmPassword) {
+            if (userData.password == base64.encode(oldPassword)) {
+                var uid = auth()?.currentUser.uid;
+                const jsonData = {
+                    password: base64.encode(newPassword)
+                }
+                try {
+                    database()
+                        .ref('users/' + uid)
+                        .set({ ...userData, ...jsonData })
+                        .then(() => {
+                            auth().currentUser.updatePassword(newPassword).then(() => {
+                                console.log('User password updated successfully!');
+                                props.navigation.navigate(NAVIGATION_PROFILE_SCREEN_PATH)
+                            OnLogOutPress()
+                              }).catch((error) => { console.log(error); });
+                        });
+                } catch (error) {
+                    console.log('error====>> ', error);
+                }
+
+
+            } else {
+                Toast.show(`${t("OldPasswordMismatch")}`, Toast.SHORT)
+            }
+        } else {
+            Toast.show(`${t("PasswordChangeMismatchText")}`, Toast.SHORT)
+        }
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
 
     return (
         <View style={{ flex: 1 }}>
@@ -35,14 +99,14 @@ const ChangePasswordScreen = (props) => {
                     title={`${t("PasswordText")}`}
                     leftIcon={`${t('CancelText')}`}
                     onPressleftIcon={() => props.navigation.dispatch(NavigationActions.back())}
-                    rightIcon={`${t('SaveText')}`}
-                    onPressrightIcon={onSavePress}
+                    rightIcon={`   ${t('SaveText')}`}
+                    onPressrightIcon={updateUserData}
                 />
             </View>
             <CustomInput
                 label={`${t("OldPasswordText")}`}
                 ref={oldPasswordInputRef}
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400', marginLeft: 4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}
@@ -70,7 +134,7 @@ const ChangePasswordScreen = (props) => {
             <CustomInput
                 label={`${t("NewPasswordText")}`}
                 ref={newPasswordInputRef}
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400', marginLeft: 4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}
@@ -84,8 +148,12 @@ const ChangePasswordScreen = (props) => {
                 value={newPassword}
                 onChangeText={value => {
                     setNewPassword(value)
+                    setIsNewPasswordErrorMsg(Verify.varifyPassword(value));
                 }}
-                containerStyle={{ height: 50, marginTop: 32 }}
+                containerStyle={{ height: 50, marginVertical: 32 }}
+                errorMessage={
+                    newPassword && !isNewPasswordErrorMsg ? `${t('PasswordInvalidText')}` : ''
+                  }
                 onSubmitEditing={() => confirmPasswordInputRef.current.focus()}
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureNewPassword(!isSecureNewPassword)}>
@@ -98,7 +166,7 @@ const ChangePasswordScreen = (props) => {
             <CustomInput
                 label={`${t("ConfirmPasswordText")}`}
                 ref={confirmPasswordInputRef}
-                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400',marginLeft:4 }}
+                labelStyle={{ fontSize: 14, marginBottom: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400', marginLeft: 4 }}
                 autoCapitalize='none'
                 returnKeyType='next'
                 autoCorrect={false}
@@ -112,9 +180,13 @@ const ChangePasswordScreen = (props) => {
                 value={confirmPassword}
                 onChangeText={value => {
                     setConfirmPassword(value)
+                    setIsConPasswordErrorMsg(Verify.varifyPassword(value));
                 }}
                 containerStyle={{ height: 50, marginTop: 32 }}
-                onSubmitEditing={onSavePress}
+                onSubmitEditing={() => { }}
+                errorMessage={
+                    confirmPassword && !isConPasswordErrorMsg ? `${t('PasswordInvalidText')}` : ''
+                  }
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureConfirmPassword(!isSecureConfirmPassword)}>
                         <Icon

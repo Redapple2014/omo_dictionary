@@ -5,7 +5,6 @@ import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
     NAVIGATION_SIGNUP_SCREEN_PATH,
@@ -25,7 +24,11 @@ import Toast from 'react-native-simple-toast';
 import Icon from "react-native-vector-icons/Ionicons";
 import { launchImageLibrary } from 'react-native-image-picker';
 import Dialog from "react-native-dialog";
-import Rate, { AndroidMarket } from 'react-native-rate'
+import Rate, { AndroidMarket } from 'react-native-rate';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import base64 from 'react-native-base64';
+
 const pkg = require('../../../package.json');
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -109,6 +112,22 @@ const ProfileScreen = (props) => {
             })
             .catch(error => console.log('error!'));
     }
+
+
+    const getData = () => {
+        if (auth().currentUser) {
+          const userId = auth().currentUser.uid;
+        //   console.log(userId)
+          database()
+            .ref("users/" + userId)
+            .once("value", function(snapshot) {
+              if (snapshot.val() != null) {
+                    const userData = snapshot.val()
+                    setUserdata(userData)
+              }
+            });
+        }
+      }
 
     function onHaveAccountButtonPress() {
         props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH);
@@ -252,7 +271,8 @@ const ProfileScreen = (props) => {
 
     useEffect(() => {
         try {
-            getDatafromStorage()
+            //getDatafromStorage()
+            getData()
         } catch (e) {
             console.log(e)
         }
@@ -299,7 +319,7 @@ const ProfileScreen = (props) => {
                                 }
                                 <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'right' }}>    {userData?.displayName}</Text>
                             </View>
-                            <Text style={{ fontSize: 15, textAlign: 'right' }}>userName</Text>
+                            <Text style={{ fontSize: 15, textAlign: 'right' }}>{userData?.username}</Text>
                             <Text style={{ fontSize: 15 }}>{userData?.email}</Text>
                         </View>
                     </View>

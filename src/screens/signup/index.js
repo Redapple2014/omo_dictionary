@@ -18,9 +18,9 @@ import {NavigationActions} from 'react-navigation';
 import EIcons from 'react-native-vector-icons/Entypo';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import auth from '@react-native-firebase/auth';
 import {NAVIGATION_LOGIN_SCREEN_PATH} from '../../navigations/Routes';
 import {useTranslation} from 'react-i18next';
+import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import base64 from 'react-native-base64';
 
@@ -392,7 +392,7 @@ const SinupScreen = (props) => {
               </TouchableOpacity>
             )
           }
-          onSubmitEditing={registerUser}
+          onSubmitEditing={()=>{}}
         />
         <View style={{alignItems: 'center'}}>
           <CustomButton

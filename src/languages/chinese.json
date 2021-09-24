@@ -116,6 +116,9 @@
         "ReminderTimeText":"提醒时间",
         "ResetSpacedRepetitionScoresTitleText":"重置间隔重复分数",
         "ResetSpacedRepetitionScoresDecsText":"您绝对确定要重置间隔重复分数吗？ 这将删除您的测试历史并将您的所有卡片分数恢复为默认值。",
-        "ResetScoresText":"重置分数"
+        "ResetScoresText":"重置分数",
+        "ChangePasswordText":"更改密码",
+        "PasswordChangeMismatchText":"新密码和确认密码必须相同",
+        "OldPasswordMismatch":"旧密码不正确"
     }
 }

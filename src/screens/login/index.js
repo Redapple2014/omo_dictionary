@@ -44,7 +44,7 @@ const LoginScreen = (props) => {
             userdata: res.user,
           });
         })
-        .catch((error) => alert(`${t("FailLoginText")}`));
+        .catch((error) => {alert(`${t("FailLoginText")}`);console.log(error)});
     }
   };
 

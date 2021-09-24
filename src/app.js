@@ -23,7 +23,7 @@ const App = () => {
   React.useEffect(() => {
     setTimeout(() => {
       setHideSplash(true);
-    }, 100); 
+    }, 2000); 
   }, []);
   
   React.useEffect(() => {

@@ -118,6 +118,9 @@
         "ReminderTimeText":"Reminder Time",
         "ResetSpacedRepetitionScoresTitleText":"Reset Spaced repetition Scores",
         "ResetSpacedRepetitionScoresDecsText":"Are you ABSOLUTELY sure that you want to reset your spaced repetition scores? This will delete your test histories and return all of your card scores to their default values.",
-        "ResetScoresText":"Reset Scores"
+        "ResetScoresText":"Reset Scores",
+        "ChangePasswordText":"Change Password",
+        "PasswordChangeMismatchText":"New Password & Confirm Password must be same",
+        "OldPasswordMismatch":"Old Password is incorrect"
     }
 }

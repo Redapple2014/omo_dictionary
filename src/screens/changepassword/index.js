@@ -52,7 +52,7 @@ const ChangePasswordScreen = (props) => {
         auth()
             .signOut()
             .then(() => {
-                
+
             });
     }
 
@@ -70,9 +70,10 @@ const ChangePasswordScreen = (props) => {
                         .then(() => {
                             auth().currentUser.updatePassword(newPassword).then(() => {
                                 console.log('User password updated successfully!');
+                                setToDefalult()
                                 props.navigation.navigate(NAVIGATION_PROFILE_SCREEN_PATH)
-                            OnLogOutPress()
-                              }).catch((error) => { console.log(error); });
+                                OnLogOutPress()
+                            }).catch((error) => { console.log(error); });
                         });
                 } catch (error) {
                     console.log('error====>> ', error);
@@ -85,6 +86,12 @@ const ChangePasswordScreen = (props) => {
         } else {
             Toast.show(`${t("PasswordChangeMismatchText")}`, Toast.SHORT)
         }
+    }
+
+    function setToDefalult() {
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
     }
 
     useEffect(() => {
@@ -153,7 +160,7 @@ const ChangePasswordScreen = (props) => {
                 containerStyle={{ height: 50, marginVertical: 32 }}
                 errorMessage={
                     newPassword && !isNewPasswordErrorMsg ? `${t('PasswordInvalidText')}` : ''
-                  }
+                }
                 onSubmitEditing={() => confirmPasswordInputRef.current.focus()}
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureNewPassword(!isSecureNewPassword)}>
@@ -186,7 +193,7 @@ const ChangePasswordScreen = (props) => {
                 onSubmitEditing={() => { }}
                 errorMessage={
                     confirmPassword && !isConPasswordErrorMsg ? `${t('PasswordInvalidText')}` : ''
-                  }
+                }
                 rightIcon={
                     <TouchableOpacity onPress={() => setIsSecureConfirmPassword(!isSecureConfirmPassword)}>
                         <Icon

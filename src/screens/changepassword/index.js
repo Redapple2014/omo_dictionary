@@ -3,7 +3,6 @@ import { View, Text, StatusBar, TouchableOpacity, Platform } from 'react-native'
 import CustomHeader from "../../components/header";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Constants from '../../utills/Constants';
-import Sizes from '../../utills/Size';
 import Verify from '../../utills/Validation';
 import CustomInput from "../../components/input/CustomInput";
 import { NavigationActions } from 'react-navigation';
@@ -61,7 +60,8 @@ const ChangePasswordScreen = (props) => {
             if (userData.password == base64.encode(oldPassword)) {
                 var uid = auth()?.currentUser.uid;
                 const jsonData = {
-                    password: base64.encode(newPassword)
+                    password: base64.encode(newPassword),
+                    uid
                 }
                 try {
                     database()

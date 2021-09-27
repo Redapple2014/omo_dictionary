@@ -30,7 +30,6 @@ var localDB = new PouchDB('flashcard');
 const DisplayCardScreen = (props) => {
 
     const data1 = props.navigation.getParam('data', 'nothing sent');
-    // console.log("data : ",data1)
     const [data, setData] = useState(data1?.doc)
     const [editMode, setEditMode] = useState(false);
     const [items, setItems] = useState([]);
@@ -40,12 +39,8 @@ const DisplayCardScreen = (props) => {
     const [myData, setMyData] = useState([]);
     const [catDetails, setCatDetails] = useState({})
     const [category, setCategory] = useState('');
-    // console.log('data : ',JSON.stringify(data))
-    // console.log('my data : ',JSON.stringify(myData))
 
     const { t, i18n } = useTranslation();
-
-
 
     const isChecked = (itemId) => {
         try {

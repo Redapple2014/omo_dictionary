@@ -26,14 +26,11 @@ const EditProfileScreen = (props) => {
     const [name, setName] = useState(userData?.displayName);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isSecurePassword, setIsSecurePassword] = useState(true);
     const [profilePicDetails, setProfilePicDetails] = useState(null)
     const nameInputRef = useRef(null)
     const userNameInputRef = useRef(null)
     const emailInputRef = useRef(null)
     const passwordInputRef = useRef(null)
-    const confPasswordInputRef = useRef(null)
 
     const goBack = () => props.navigation.dispatch(NavigationActions.back());
 
@@ -62,18 +59,18 @@ const EditProfileScreen = (props) => {
         });
     };
 
-    const getDatafromStorage = async () => {
-        AsyncStorage.getItem('user_data')
-            .then(req => {
-                if (!req) {
-                    setUserdata('')
-                    console.log('no data found on recent search')
-                    return
-                }
-                setUserdata(JSON.parse(req))
-            })
-            .catch(error => console.log('error!'));
-    }
+    // const getDatafromStorage = async () => {
+    //     AsyncStorage.getItem('user_data')
+    //         .then(req => {
+    //             if (!req) {
+    //                 setUserdata('')
+    //                 console.log('no data found on recent search')
+    //                 return
+    //             }
+    //             setUserdata(JSON.parse(req))
+    //         })
+    //         .catch(error => console.log('error!'));
+    // }
 
     const removeItemValue = async (key) => {
         try {
@@ -122,6 +119,7 @@ const EditProfileScreen = (props) => {
         const jsonData = {
             displayName: name,
             username,
+            uid
         }
         try {
             database()

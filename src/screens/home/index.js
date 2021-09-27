@@ -26,12 +26,25 @@ import indexFile from '../../resources/dictionary/summary_json.json';
 import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
+import {openDatabase} from 'react-native-sqlite-storage'
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 import {defaultSettings} from '../../utills/userdata';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
+//SQLite.enablePromise(true);//
+
+var db = openDatabase({name: 'omo_test.db',createFromLocation: 1}, openCB, errorCB);
+
+function errorCB(err) {
+  console.log("SQL Error: " + err);
+
+}
+
+function openCB() {
+  console.log("Database OPENED");
+}
 
 var userDB = new PouchDB('usersettings');
 
@@ -45,10 +58,11 @@ const HomeScreen = (props) => {
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
   const {t, i18n} = useTranslation();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
   const [ids,setIDS]= useState([])
+  const [newData,setNewData] = useState([])
 
 
   async function loadFile(index) {
@@ -313,7 +327,8 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage('search_data');
       setSearchText(searchText);
-      searchResult(searchText);
+      //searchResult(searchText);
+      searchFunc(searchText);
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -417,8 +432,32 @@ const HomeScreen = (props) => {
     // );
   }
 
+
+  function searchFunc(item){
+    db.transaction((tx) => {
+      const sql = `SELECT lemma, id FROM words_info WHERE searchLemma LIKE ${item}% COLLATE NOCASE UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE ${item}% COLLATE NOCASE ORDER BY lemma`;
+      // console.log(sql)
+      tx.executeSql(`SELECT count(*) FROM words_info`, [], (tx, results) => {
+        // tx.executeSql(`SELECT lemma, id FROM words_info WHERE searchLemma LIKE ${item}% COLLATE NOCASE UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE ${item}% COLLATE NOCASE ORDER BY lemma`, [],(tx, results) => {
+          var len = results.rows.length;
+          // console.log("Query completed : ",len);
+          var temp = [];
+          for (let i = 0; i < len; i++) {
+            let row = results.rows.item(i)
+            temp.push(row)
+            // console.log(`Employee name: ${JSON.stringify(row)}`);
+          }
+          setNewData(temp)
+        });
+    });
+  }
+
+
+  console.log(`total data: ${JSON.stringify(newData.length)}`);
+
   useEffect(() => {
-    loadAllJsons();
+
+    //loadAllJsons();
 
     // destroy db
     // try {
@@ -428,7 +467,8 @@ const HomeScreen = (props) => {
     // } catch (e) {
     //   console.log(e)
     // }
-  }, []);
+
+  });
   /* */
 
   useEffect(() => {
@@ -727,7 +767,8 @@ const HomeScreen = (props) => {
               value={searchText}
               onChangeText={(value) => {
                 setSearchText(value);
-                searchResult(value);
+                //searchResult(value);
+                searchFunc(value)
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.WHITE,

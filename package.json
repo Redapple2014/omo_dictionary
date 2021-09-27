@@ -1,8 +1,8 @@
 {
-  "name": "Omo Dictionary",
+  "name": "OmoDictionary",
   "version": "1.0.0",
   "private": true,
-  "pkgName":"omo-korean.appspot.com",
+  "pkgName": "omo-korean.appspot.com",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -48,6 +48,7 @@
     "react-native-simple-toast": "^1.1.3",
     "react-native-splash-screen": "^3.2.0",
     "react-native-sqlite-2": "^3.4.1",
+    "react-native-sqlite-storage": "^5.0.0",
     "react-native-status-bar-height": "^2.6.0",
     "react-native-tts": "^4.1.0",
     "react-native-vector-icons": "^8.1.0",

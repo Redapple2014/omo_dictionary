@@ -146,6 +146,29 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
+  function getWordData(wordId) {
+    const query =
+      `SELECT * FROM ( ` +
+      `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
+      `UNION ` +
+      `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
+      `WHERE partofspeech IS NOT NULL;`;
+
+    db.transaction((tx) => {
+      // console.log(sql)
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.length;
+        console.log('Query completed : ', len);
+        var temp = [];
+        for (let i = 0; i < len; i++) {
+          let row = results.rows.item(i);
+          temp.push(row);
+        }
+        setNewData(temp);
+      });
+    });
+  }
+
   function searchFunc(text) {
     setSearchdata([]);
     if (text.length == 0) {
@@ -153,9 +176,11 @@ const HomeScreen = (props) => {
     }
 
     const query =
-      `SELECT lemma, id FROM words_info WHERE searchLemma LIKE "${text}%" COLLATE NOCASE ` +
-      `UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE "${text}%" COLLATE NOCASE ` +
-      `ORDER BY lemma;`;
+      `SELECT * FROM ( ` +
+      `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
+      `UNION ` +
+      `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
+      `WHERE partofspeech IS NOT NULL;`;
 
     db.transaction((tx) => {
       // console.log(sql)

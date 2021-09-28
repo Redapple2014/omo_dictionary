@@ -148,11 +148,23 @@ const HomeScreen = (props) => {
 
   function getWordData(wordId) {
     const query =
-      `SELECT * FROM ( ` +
-      `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
-      `UNION ` +
-      `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
-      `WHERE partofspeech IS NOT NULL;`;
+      `SELECT w.id, w.lemma, w.partofspeech, origin,
+          (SELECT JSON_OBJECT(
+            'lemma', (SELECT JSON_GROUP_ARRAY(words_app.lemma)  from words_app where  words_app.id = w.id ),
+          'writtenForm', (SELECT JSON_GROUP_ARRAY(words_app.writtenForm)  from words_app where  words_app.id = w.id )
+          )) as wordForm
+          ,
+          (SELECT JSON_OBJECT(
+            'en_lm', (SELECT JSON_GROUP_ARRAY(words_en.en_lm)  from words_en where  words_en.id = w.id ),
+            'en_def', (SELECT JSON_GROUP_ARRAY(words_en.en_def)  from words_en where  words_en.id = w.id )
+          )) as sense
+      FROM (
+        SELECT lemma, id,  partofspeech, origin   FROM words_info WHERE    searchLemma  LIKE "${text}%" COLLATE NOCASE 
+      UNION 
+        SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma ) as w 
+      WHERE partofspeech IS NOT NULL AND origin IS NOT NULL limit 50;`
+
+
 
     db.transaction((tx) => {
       // console.log(sql)

@@ -21,32 +21,36 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import indexFile from '../../resources/dictionary/summary_json.json';
 
 import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
-import {openDatabase} from 'react-native-sqlite-storage'
+import {openDatabase} from 'react-native-sqlite-storage';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 import {defaultSettings} from '../../utills/userdata';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
+
+// old word database
 const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
-//SQLite.enablePromise(true);//
 
-var db = openDatabase({name: 'omo_test.db',createFromLocation: 1}, openCB, errorCB);
+// open database
+const db = openDatabase(
+  {name: 'omo_test.db', createFromLocation: 1},
+  openCB,
+  errorCB,
+);
 
+// open database failed
 function errorCB(err) {
-  console.log("SQL Error: " + err);
-
+  console.log('SQL Error: ' + err);
 }
 
+// open database successfully
 function openCB() {
-  console.log("Database OPENED");
+  console.log('Database OPENED');
 }
-
-var userDB = new PouchDB('usersettings');
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -61,220 +65,8 @@ const HomeScreen = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
-  const [ids,setIDS]= useState([])
-  const [newData,setNewData] = useState([])
-
-
-  async function loadFile(index) {
-    if (index == 1) {
-      import('../../resources/dictionary/1.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(2)
-          })().catch(e => console.log("Caught: " + e));
-          
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    }
-    else if (index == 2) {
-      import('../../resources/dictionary/2.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(3)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    }
-    else if (index == 3) {
-      import('../../resources/dictionary/4.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(4)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 4) {
-      import('../../resources/dictionary/4.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(5)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 5) {
-      import('../../resources/dictionary/5.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(6)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 6) {
-      import('../../resources/dictionary/6.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(7)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 7) {
-      import('../../resources/dictionary/7.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(8)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 8) {
-      import('../../resources/dictionary/8.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(9)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 9) {
-      import('../../resources/dictionary/9.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(10)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 10) {
-      import('../../resources/dictionary/10.json')
-        .then(({default: data}) => {
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(11)
-          })().catch(e => console.log("Caught: " + e));
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    } 
-    else if (index == 11) {
-      import('../../resources/dictionary/11.json')
-        .then(({default: data}) => {
-          insertJsonFile(index, data);
-          (async () => {
-            await insertJsonFile(index, data);
-            loadFile(12)
-            
-          })().catch(e => console.log("Caught: " + e));
-          
-        })
-        .catch((error) => {
-          console.log('error====', error);
-        });
-    }
-    else if(index==12){
-      userDB.post(defaultSettings).then(function (response) {
-        AsyncStorage.setItem('inserted_data', 'inserted')
-      setLoading(false);
-      }).catch(function (err) {
-        console.log(err);
-      });
-    }
-  }
-
-  async function insertJsonFile(fileIndex, json) {
-    let index = 0;
-    while (json.length > 0){
-      let data = json.splice(0,200)
-      await insert(data);
-      console.log(fileIndex, index);
-      index++;
-    }
-   
-  }
-
-  //lopping of all json
-  async function loadAllJsons() {
-
-    AsyncStorage.getItem('inserted_data')
-    .then((flag) => {
-      if (!flag) {
-        setLoadingText('Insert data ...');
-        loadFile(1);
-      }
-      else{
-        setLoading(false);
-      }
-    })
-    .catch((error) => console.log('error!'));
-
-  }
-
-  async function indexDB() {
-    console.log('create Index...');
-    setLoadingText('Create Index ...');
-    await localDB
-      .createIndex({
-        index: {
-          fields: ['name'],
-        },
-      })
-      .then(function (result) {
-        // setLoading(false);
-        console.log('created index successfully');
-      })
-      .catch(function (err) {
-        // setLoading(false);
-        console.log(err);
-      });
-  }
-
-  //insert function
-  async function insert(json) {
-    //bulk data insert
-    await localDB
-      .bulkDocs(json)
-      .then(function (result) {
-        console.log('Row inserted Successfully');
-      })
-      .catch(function (err) {
-        console.log('err=======', err);
-        setLoading(false);
-        console.log(
-          'Unable to insert into DB. Error: ' + err.name + ' - ' + err.message,
-        );
-      });
-  }
+  const [ids, setIDS] = useState([]);
+  const [newData, setNewData] = useState([]);
 
   //delete recently searched data
   const removeItemValue = async function (key) {
@@ -294,7 +86,7 @@ const HomeScreen = (props) => {
     }
   };
 
-  //retrive recently searched data
+  // retrieve recently searched data
   function getDatafromStorage(from) {
     AsyncStorage.getItem(from)
       .then((req) => {
@@ -308,14 +100,11 @@ const HomeScreen = (props) => {
         } else {
           setReacientlyViewedDataSet(JSON.parse(req));
         }
-
       })
       .catch((error) => console.log('error!'));
   }
 
-  // console.log(reacientlyViewedDataSet)
-
-  //search the entered data
+  // search the entered data
   function onSearchSubmit() {
     if (searchText) {
       if (reacientlySearchedData.length > MAX_NUMBER_OF_RECENT_DATA) {
@@ -327,7 +116,6 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage('search_data');
       setSearchText(searchText);
-      //searchResult(searchText);
       searchFunc(searchText);
     } else {
       console.log('search text input is empty');
@@ -347,7 +135,6 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage('recent_data');
     } else {
-
       console.log('search text input is empty');
       setSearchText('');
     }
@@ -359,117 +146,33 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  function searchResult(text) {
-    // reset the search result
+  function searchFunc(text) {
     setSearchdata([]);
     if (text.length == 0) {
       return;
     }
 
-    var regex = new RegExp('^' + text + '+', 'i');
-    var result = indexFile.filter(function (text) {
-      return regex.test(text.name);
-    });
-    let ids = result.map((item,index)=>item["_id"])
-    console.log('result', ids);
-    setIDS(ids)
-       localDB.get(ids).then(function (doc) {
-     console.log(`data ******* : ${id} `,JSON.stringify(doc))
-    }).catch(function (err) {
-      console.log(err);
-    });
+    const query =
+      `SELECT lemma, id FROM words_info WHERE searchLemma LIKE "${text}%" COLLATE NOCASE ` +
+      `UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE "${text}%" COLLATE NOCASE ` +
+      `ORDER BY lemma;`;
 
-    // console.log('**************dfdfdffgfgfgfgfgfg : ',JSON.stringify(result))
-    setSearchdata(result);
-
-    // localDB
-    //   .find({
-    //     selector: {
-    //       name: {$eq: `${text.toLowerCase()}`},
-    //     },
-    //     limit: 20,
-    //     // fields: ['Lemma.writtenForm'],
-    //   })
-    //   .then(function (result) {
-    //     // handle result
-    //     console.log('done===', result.docs.length);
-    //     setSearchdata(result.docs);
-    //   })
-    //   .catch(function (err) {
-    //     console.log(err);
-    //   });
-  }
-
-  /* fro testing*/
-  //fetch data by id
-  async function fetchDataById() {
-    // const id = '27733'
-    // localDB.get(id).then(function (doc) {
-    //  console.log(`data : ${id} `,JSON.stringify(doc))
-    // }).catch(function (err) {
-    //   console.log(err);
-    // });
-
-    // get all documents
-    // localDB.allDocs().then(function (result) {
-    //   console.log(JSON.stringify('************ ',result))
-    //   }).catch(function (err) {
-    //     console.log(err);
-    //   });
-
-    // localDB.allDocs(
-    //   {
-    //     include_docs: true,
-    //     attachments: true,
-    //   },
-    //   function (err, response) {
-    //     if (err) {
-    //       return console.log(err);
-    //     }
-    //     // handle result
-    //     //console.log(response.rows);
-    //   },
-    // );
-  }
-
-
-  function searchFunc(item){
     db.transaction((tx) => {
-      const sql = `SELECT lemma, id FROM words_info WHERE searchLemma LIKE ${item}% COLLATE NOCASE UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE ${item}% COLLATE NOCASE ORDER BY lemma`;
       // console.log(sql)
-      tx.executeSql(`SELECT count(*) FROM words_info`, [], (tx, results) => {
-        // tx.executeSql(`SELECT lemma, id FROM words_info WHERE searchLemma LIKE ${item}% COLLATE NOCASE UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE ${item}% COLLATE NOCASE ORDER BY lemma`, [],(tx, results) => {
-          var len = results.rows.length;
-          // console.log("Query completed : ",len);
-          var temp = [];
-          for (let i = 0; i < len; i++) {
-            let row = results.rows.item(i)
-            temp.push(row)
-            // console.log(`Employee name: ${JSON.stringify(row)}`);
-          }
-          setNewData(temp)
-        });
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.length;
+        console.log('Query completed : ', len);
+        var temp = [];
+        for (let i = 0; i < len; i++) {
+          let row = results.rows.item(i);
+          temp.push(row);
+        }
+        setNewData(temp);
+      });
     });
   }
-
 
   console.log(`total data: ${JSON.stringify(newData.length)}`);
-
-  useEffect(() => {
-
-    //loadAllJsons();
-
-    // destroy db
-    // try {
-    //   localDB.destroy()
-    //   setLoading(false)
-    //   console.log('done')
-    // } catch (e) {
-    //   console.log(e)
-    // }
-
-  });
-  /* */
 
   useEffect(() => {
     getDatafromStorage('search_data');
@@ -499,7 +202,7 @@ const HomeScreen = (props) => {
       return arr.map((data, i) => {
         if (data.l == '몽골어') {
           return (
-            <View key={`${i + data?.le}`} style={{flexDirection:'row'}}>
+            <View key={`${i + data?.le}`} style={{flexDirection: 'row'}}>
               <Text style={{fontSize: 17, marginTop: 2}}>{`${i + 1} `}</Text>
               <Text
                 style={{
@@ -515,7 +218,7 @@ const HomeScreen = (props) => {
     }
   }
 
-  //render recently searched data
+  // render recently searched data
   function renderRecentSearchData() {
     return (
       <FlatList
@@ -574,27 +277,29 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              {item?.L?.w && <View
-                style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    try {
-                      Tts.setDefaultLanguage('ko-KR');
-                      Tts.speak(item?.L?.w);
-                    } catch (e) {
-                      //console.log(`cannot play the sound file`, e)
-                      Toast.show('No Audio File Found', Toast.SHORT);
-                    }
-                  }}>
-                  <AntDesign
-                    name="sound"
-                    size={19}
-                    color={Constants.appColors.BLACK}
-                  />
-                </TouchableOpacity>
-              </View>}
+              {item?.L?.w && (
+                <View
+                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      try {
+                        Tts.setDefaultLanguage('ko-KR');
+                        Tts.speak(item?.L?.w);
+                      } catch (e) {
+                        //console.log(`cannot play the sound file`, e)
+                        Toast.show('No Audio File Found', Toast.SHORT);
+                      }
+                    }}>
+                    <AntDesign
+                      name="sound"
+                      size={19}
+                      color={Constants.appColors.BLACK}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
               <Text style={styles.TextStyle}>
-                <Text style={{fontWeight:'bold'}}>{item?.L?.w}</Text>
+                <Text style={{fontWeight: 'bold'}}>{item?.L?.w}</Text>
                 {item?.o && `(${item?.o})`}
               </Text>
               <Text
@@ -612,8 +317,7 @@ const HomeScreen = (props) => {
                   flexDirection: 'row',
                   paddingLeft: 12,
                 }}>
-                {item?.S[0]?.E &&
-                  renderEquivalent(item?.S[0]?.E)}
+                {item?.S[0]?.E && renderEquivalent(item?.S[0]?.E)}
               </View>
             </View>
           </TouchableOpacity>
@@ -626,7 +330,7 @@ const HomeScreen = (props) => {
     );
   }
 
-  //render recently searched data list
+  // render recently searched data list
   function renderSearchData() {
     return (
       <FlatList
@@ -636,16 +340,21 @@ const HomeScreen = (props) => {
             key={index}
             onPress={() => {
               const id = item._id;
-              localDB.get(id).then(function (doc) {
-                storeRecentlyViewedData(doc);
-                console.log(`data : ${id} `,JSON.stringify(doc))
-                props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                  searchResultData: doc,
+              localDB
+                .get(id)
+                .then(function (doc) {
+                  storeRecentlyViewedData(doc);
+                  console.log(`data : ${id} `, JSON.stringify(doc));
+                  props.navigation.navigate(
+                    NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
+                    {
+                      searchResultData: doc,
+                    },
+                  );
+                })
+                .catch(function (err) {
+                  console.log(err);
                 });
-              }).catch(function (err) {
-                console.log(err);
-              });
-             
             }}>
             <View
               style={{
@@ -655,8 +364,8 @@ const HomeScreen = (props) => {
                 paddingVertical: 4,
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
-                height:50,
-                justifyContent:'center'
+                height: 50,
+                justifyContent: 'center',
               }}>
               <View
                 style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
@@ -768,7 +477,7 @@ const HomeScreen = (props) => {
               onChangeText={(value) => {
                 setSearchText(value);
                 //searchResult(value);
-                searchFunc(value)
+                searchFunc(value);
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.WHITE,

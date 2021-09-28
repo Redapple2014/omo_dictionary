@@ -26,10 +26,14 @@ const LoginScreen = (props) => {
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
 
+
+//handel forget password button
   function onForgetPasswordPress() {
     props.navigation.navigate(NAVIGATION_FORGET_PASSWORD_SCREEN_PATH);
   }
 
+
+//user login handeller
   const userLogin = () => {
     if (email.length == 0 || password.length == 0) {
       alert(`${t('SigninAlertText')}`);

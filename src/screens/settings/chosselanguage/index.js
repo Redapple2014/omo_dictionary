@@ -19,9 +19,11 @@ const ChooseLanguageScreen = (props) => {
     
     const { t, i18n } = useTranslation();
 
+
+    //go back navigation
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
-
+//set language as per navigation
     const setLanguage = code => {
         if(from=='profile'){
             return i18n.changeLanguage(code)
@@ -30,6 +32,7 @@ const ChooseLanguageScreen = (props) => {
         }
     };
 
+    //load user settings
     async function fetchUserSettings(){
         userDB.allDocs(
             {
@@ -50,6 +53,7 @@ const ChooseLanguageScreen = (props) => {
         );
     }
 
+    //update user settings
      function updateUserSettings(item) {
         console.log('languageSelected : ', languageSelected)
         userDB.get(DisplayLanguageData.id).then(function (doc) {

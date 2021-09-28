@@ -26,6 +26,8 @@ const ViewFlashcardDataScreen = (props) => {
     ee.addListener('tts-finish', () => { });
     ee.addListener('tts-cancel', () => { });
     const { t, i18n } = useTranslation();
+
+    //render the user's flash card data
     const renderData = () => {
         const arr = data.definition
         const arr2 = data.examples

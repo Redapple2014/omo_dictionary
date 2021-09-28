@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Alert, Share } from 'react-native';
+import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Alert, Share, Linking } from 'react-native';
 import CustomButton from "../../components/button/CustomButton";
 import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
@@ -12,7 +12,8 @@ import {
     NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH,
     NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH,
     NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH,
-    NAVIGATION_EDIT_PROFILE_SCREEN_PATH
+    NAVIGATION_EDIT_PROFILE_SCREEN_PATH,
+    NAVIGATION_ABOUT_SCREEN_PATH
 } from '../../navigations/Routes';
 import EIcons from 'react-native-vector-icons/Entypo';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,6 @@ import Rate, { AndroidMarket } from 'react-native-rate';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import base64 from 'react-native-base64';
-
 const pkg = require('../../../package.json');
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -49,7 +49,7 @@ const ProfileScreen = (props) => {
     const [feedbackText, setFeedbackText] = useState('')
     const [rated, setRated] = useState(false)
 
-
+//choose profile picture from local storage
     const chooseFile = () => {
         let options = {
             mediaType: "photo"
@@ -75,10 +75,13 @@ const ProfileScreen = (props) => {
         });
     };
 
+
+//Create account Button handeller
     function onCreateAccountButtonPress() {
         props.navigation.navigate(NAVIGATION_SIGNUP_SCREEN_PATH);
     };
 
+//load user setting 
     async function fetchUserSettings() {
         userDB.allDocs(
             {
@@ -99,21 +102,7 @@ const ProfileScreen = (props) => {
         );
     }
 
-    const getDatafromStorage = () => {
-        AsyncStorage.getItem('user_data')
-            .then(req => {
-                if (!req) {
-                    setUserdata('')
-                    console.log('no data found on recent search')
-                    return
-                }
-                // console.log(JSON.parse(req))
-                setUserdata(JSON.parse(req))
-            })
-            .catch(error => console.log('error!'));
-    }
-
-
+//get user data from firebase
     const getData = () => {
         if (auth().currentUser) {
           const userId = auth().currentUser.uid;
@@ -129,16 +118,22 @@ const ProfileScreen = (props) => {
         }
       }
 
+
+//Login Button Pressed
     function onHaveAccountButtonPress() {
         props.navigation.navigate(NAVIGATION_LOGIN_SCREEN_PATH);
     };
 
+//Upgrade user account type to pro handller
     const handelProButton = () => {
         console.log('Upgrage to Pro')
     }
 
+//language change handeller
     const setLanguage = code => i18n.changeLanguage(code);
 
+
+//reset settings bttton handeler to  settings as default
     const handelResetButton = () => {
         // console.log('reset settings')
         Alert.alert(
@@ -173,6 +168,7 @@ const ProfileScreen = (props) => {
             ])
     }
 
+    //render settings top section 
     const handelMenu1Items = (item, index) => {
         if (item.id == 1) {
             props.navigation.navigate(NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH, { "from": "profile", userSettings });
@@ -183,32 +179,26 @@ const ProfileScreen = (props) => {
         }
     }
 
+    //render settings Bottom section 
     const handelMenu2Items = (item, index) => {
         if (item.id == 1) {
-            setVisible(true);
+            Linking.openURL(`mailto:${pkg.mailId}?subject=OMO Dictionary Feedback ${pkg.version}`)
         } else if (item.id == 2) {
             onRatePress()
         } else if (item.id == 3) {
             onShare()
         } else if (item.id == 4) {
-            Alert.alert(
-                `${t("AboutText")}`,
-                `${pkg.name} - ${pkg.version}`,
-                [
-                    {
-                        text: `${t("OkText")}`,
-                        onPress: () => console.log("ok Pressed"),
-                        style: "ok"
-                    }
-                ])
+            props.navigation.navigate(NAVIGATION_ABOUT_SCREEN_PATH);
         }
     }
 
+//handel cancel feedback
     const handleCancel = () => {
         setFeedbackText('')
         setVisible(!visible);
     };
 
+    //handel send feedback
     const handleSend = () => {
         if (feedbackText.length > 0) {
             console.log('name : ', feedbackText)
@@ -219,6 +209,7 @@ const ProfileScreen = (props) => {
         }
     };
 
+    //handel share app with friends & family
     const onShare = async () => {
         try {
             const result = await Share.share({
@@ -243,6 +234,7 @@ const ProfileScreen = (props) => {
         }
     };
 
+    //handel rate us
     const onRatePress = () => {
         const options = {
             AppleAppID: "2193813192",
@@ -265,13 +257,13 @@ const ProfileScreen = (props) => {
         })
     }
 
+    //handel edit profile
     const onEditProfile = () => {
         props.navigation.navigate(NAVIGATION_EDIT_PROFILE_SCREEN_PATH);
     }
 
     useEffect(() => {
         try {
-            //getDatafromStorage()
             getData()
         } catch (e) {
             console.log(e)

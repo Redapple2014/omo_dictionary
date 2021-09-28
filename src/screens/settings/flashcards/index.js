@@ -25,6 +25,8 @@ const FlashcardListsScreen = (props) => {
     const [dailyPracticeReminder, setDailyPracticeReminder] = useState(userSettings?.doc?.Flashcard?.dailyPracticeReminder);
     const [updated, setUpdated] = useState(false)
 
+
+    //fetch user data
     async function fetchUserSettings() {
         userDB.allDocs(
             {
@@ -45,6 +47,7 @@ const FlashcardListsScreen = (props) => {
         );
     }
 
+    //toggle user settings data 
     const toggleSwitch = (id) => {
         if (id == 1) {
             setDefaultCategoryTapHoldSection(previousState => !previousState)
@@ -60,6 +63,7 @@ const FlashcardListsScreen = (props) => {
         }
     };
 
+    //handel reset scores data of the user
     const handelResetButton = () => {
         // console.log('reset settings')
         Alert.alert(
@@ -75,6 +79,8 @@ const FlashcardListsScreen = (props) => {
             ])
     }
 
+
+    //update user settings
     function updateUserSettings() {
         userDB.get(userSettings.id).then(function (doc) {
             let newObject = {

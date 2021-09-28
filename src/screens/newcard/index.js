@@ -43,7 +43,7 @@ const NewCardScreen = (props) => {
     const [examplesInputs, setExamplesInputs] = useState([{ key: '', value: '' }]);
     const [catDetails, setCatDetails] = useState(pathFrom ? pathFrom : {})
 
-    //fetch function
+    //fetch all flashcard data
     async function fetchData() {
         localDB.allDocs(
             {
@@ -102,9 +102,8 @@ const NewCardScreen = (props) => {
         }
     }
 
-
+//handel save flashcard data to a category
     const handleDone = () => {
-        //console.log('CAT: ',category)
         if (koreanHandWord.length > 0 && partOfSpeech.length > 0 && hanja.length > 0 && englishHandWord.length > 0 && definitionsInputs.length > 0 && examplesInputs.length > 0) {
             if (category !== `${t("SelectaCategoryText")}`) {
                 if (definitionsInputs[0].value.length > 0 && examplesInputs[0].value.length > 0) {
@@ -144,9 +143,9 @@ const NewCardScreen = (props) => {
 
     useEffect(() => {
         fetchData()
-
     }, [])
-
+    
+//go back handeller
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
     return (

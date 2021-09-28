@@ -21,7 +21,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-
 import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
@@ -140,25 +139,26 @@ const HomeScreen = (props) => {
     }
   }
 
+  //function to check if the inputed text is korean
   const isKoreanWord = (text) => {
     const re = /[\u3131-\uD79D]/giu;
     const match = text.match(re);
     return match ? match.length === text.length : false;
   };
 
+
+//Function to search data from pre loaded DB uing SQLite
   function searchFunc(text) {
     setSearchdata([]);
     if (text.length == 0) {
       return;
     }
-
     const query =
       `SELECT lemma, id FROM words_info WHERE searchLemma LIKE "${text}%" COLLATE NOCASE ` +
       `UNION SELECT lemma, id FROM words_app WHERE writtenForm LIKE "${text}%" COLLATE NOCASE ` +
       `ORDER BY lemma;`;
 
     db.transaction((tx) => {
-      // console.log(sql)
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);
@@ -167,12 +167,12 @@ const HomeScreen = (props) => {
           let row = results.rows.item(i);
           temp.push(row);
         }
-        setNewData(temp);
+        setSearchdata(temp);
       });
     });
   }
 
-  console.log(`total data: ${JSON.stringify(newData.length)}`);
+  //console.log(`total data: ${JSON.stringify(searchedData)}`);
 
   useEffect(() => {
     getDatafromStorage('search_data');
@@ -196,6 +196,8 @@ const HomeScreen = (props) => {
     };
   }, []);
 
+
+  //render method of equivalent under sence of each item  
   function renderEquivalent(dataSet) {
     let arr = dataSet;
     if (arr != 'undefined') {
@@ -387,7 +389,7 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
-                {item.name}
+                {item.lemma}
                 {/* {item?.origin && `(${item?.origin})`} */}
               </Text>
               {/* <Text

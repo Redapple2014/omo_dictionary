@@ -32,7 +32,7 @@ const FlashcardListRenderScreen = (props) => {
     const [categoryName,setCategoryName] = useState(userSetting?.doc?.Flashcard?.defaultFlashcard)
     const [updated, setUpdated] = useState(false)
     
-    //fetch function
+    //fetch all flashcard data
     async function fetchData() {
         localDB.allDocs(
             {
@@ -53,6 +53,8 @@ const FlashcardListRenderScreen = (props) => {
         );
     }
 
+
+    //fetch user settings data
     async function fetchUserSettings() {
         userDB.allDocs(
             {
@@ -73,8 +75,8 @@ const FlashcardListRenderScreen = (props) => {
         );
     }
 
+    //update user settings data
     function updateUserSettings() {
-
         userDB.get(userSettings.id).then(function (doc) {
             let newObject = {
                 ...doc,
@@ -97,6 +99,8 @@ const FlashcardListRenderScreen = (props) => {
 
     }
 
+
+    //render flashcards with dragable feature
     const renderItem = ({ item, index, move, moveEnd, isActive }) => {
         // console.log(categoryName ,  item.doc.name)
         return (
@@ -163,10 +167,7 @@ const FlashcardListRenderScreen = (props) => {
                                 <Text style={{ textAlign: 'center', marginTop: 12,fontWeight:'bold' }}>{`${t("CreateNewText")}`}</Text>
                                 </TouchableOpacity></>
                         )
-
-
                 }
-
             </View>
         </View>
     )

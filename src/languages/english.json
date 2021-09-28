@@ -121,6 +121,7 @@
         "ResetScoresText":"Reset Scores",
         "ChangePasswordText":"Change Password",
         "PasswordChangeMismatchText":"New Password & Confirm Password must be same",
-        "OldPasswordMismatch":"Old Password is incorrect"
+        "OldPasswordMismatch":"Old Password is incorrect",
+        "VersionText":"Version"
     }
 }

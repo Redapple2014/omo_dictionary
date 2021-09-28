@@ -43,6 +43,7 @@ const SinupScreen = (props) => {
   const passwordInputRef = useRef(null);
   const confPasswordInputRef = useRef(null);
 
+  //choose profile picture from local storage
   const chooseFile = () => {
     let options = {
       mediaType: 'photo',
@@ -66,6 +67,7 @@ const SinupScreen = (props) => {
     });
   };
 
+  //clear all user input fields
   function setToDefalult() {
     setName('');
     setUsername('');
@@ -74,6 +76,7 @@ const SinupScreen = (props) => {
     setConfirmPassword('');
   }
 
+  //register user funtion
   const registerUser = () => {
     if (
       email.length == 0 ||

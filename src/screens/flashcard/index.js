@@ -64,7 +64,7 @@ const FlashcardScreen = (props) => {
     const [items, setItems] = useState([]);
 
 
-    //insert data
+    //insert category function handeller
     async function insert() {
         localDB
             .find({
@@ -87,6 +87,7 @@ const FlashcardScreen = (props) => {
     }
 
 
+//insert function to create a new category
     async function insertData() {
         const json = {
             "category": "flashcard",
@@ -128,7 +129,7 @@ const FlashcardScreen = (props) => {
         );
     }
 
-    //dalete data
+    //dalete data function
     async function deleteData() {
 
         items.map((item) => {
@@ -148,6 +149,10 @@ const FlashcardScreen = (props) => {
         setItems([])
     }
 
+
+
+
+//render each category with drag feature
     const renderItem = ({ item, index, move, moveEnd, isActive }) => {
         return (
             <TouchableOpacity
@@ -203,15 +208,20 @@ const FlashcardScreen = (props) => {
         )
     }
 
+
+//Show dialog popup
     const showDialog = () => {
         setVisible(true);
     };
 
+//handel cancel function from dialog input
     const handleCancel = () => {
         setNewCategoryName('')
         setVisible(false);
     };
 
+
+//handel delete button 
     const handleDelete = () => {
         if (items.length == 0) {
             Toast.show('Selet a item to delete', Toast.SHORT);
@@ -220,8 +230,9 @@ const FlashcardScreen = (props) => {
         }
     }
 
-    const handleSave = () => {
 
+//handel save function from dialog input
+    const handleSave = () => {
         if (newCategoryName.length > 0) {
             console.log('name : ', newCategoryName)
             setVisible(false);
@@ -232,6 +243,7 @@ const FlashcardScreen = (props) => {
         }
     };
 
+//Function to check if the item is checked or not
     const isChecked = (itemId) => {
         try {
             const isThere = items.includes(itemId);
@@ -241,6 +253,7 @@ const FlashcardScreen = (props) => {
         }
     };
 
+//Function to toggle the item(check and uncheck)
     const toggleChecked = (itemId) => {
         const x = [itemId, ...items]
 

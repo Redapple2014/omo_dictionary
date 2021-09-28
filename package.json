@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "pkgName": "omo-korean.appspot.com",
+  "mailId":"robinzxu@gmail.com",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

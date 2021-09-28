@@ -135,16 +135,14 @@ const SearchResultScreen = (props) => {
     ee.addListener('tts-cancel', () => { });
 
 
-
+//detect if the user put is korean
     const isKoreanWord = (text) => {
         const re = /[\u3131-\uD79D]/g;
         const match = text.match(re);
         return match ? match.length === text.length : false;
     };
 
-
-    //console.log("searchResultData : ", data)
-
+    //render Equivalent from sense of each item
     const renderEquivalent = (dataSet) => {
         let arr = dataSet
         if (arr != 'undefined') {
@@ -161,6 +159,7 @@ const SearchResultScreen = (props) => {
         }
     }
 
+    //render Sense Example from sense of each item
     const renderSenseExample = (dataSet) => {
         
         if (dataSet != 'undefined') {
@@ -174,6 +173,9 @@ const SearchResultScreen = (props) => {
 
     }
 
+
+
+    //render each item
     const renderData = (type, dataSet) => {
         let arr = dataSet
         if (dataSet != 'undefined') {
@@ -277,7 +279,6 @@ const SearchResultScreen = (props) => {
                 </View>
             </>
             }
-
         </View>
     )
 }

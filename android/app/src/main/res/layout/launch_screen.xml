@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
 android:background="@drawable/background_splash"
+android:gravity="center_vertical|center_horizontal"
 android:orientation="vertical">
 
   <ImageView
@@ -12,16 +13,5 @@ android:orientation="vertical">
     android:layout_height="240dp"
     android:src="@mipmap/omo_logo"
     android:gravity="center"
-    android:layout_marginTop="100dp"
     android:padding="50dp"/>
-
-<TextView
-        android:layout_width="match_parent" 
-        android:layout_height="match_parent" 
-        android:text="한국어 사전\nKorean Dictionary"
-        android:textSize="18dp"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_marginTop="50dp"
-        android:textColor="@color/app_bg"/>
 </LinearLayout>

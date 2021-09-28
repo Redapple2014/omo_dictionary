@@ -32,7 +32,7 @@ const ChangePasswordScreen = (props) => {
     const newPasswordInputRef = useRef(null);
     const confirmPasswordInputRef = useRef(null);
 
-
+    //get data of loged in user
     const getData = () => {
         if (auth().currentUser) {
             const userId = auth().currentUser.uid;
@@ -47,6 +47,8 @@ const ChangePasswordScreen = (props) => {
         }
     }
 
+
+//Log out function
     const OnLogOutPress = () => {
         auth()
             .signOut()
@@ -55,6 +57,7 @@ const ChangePasswordScreen = (props) => {
             });
     }
 
+//update the user password
     const updateUserData = () => {
         if (newPassword == confirmPassword) {
             if (userData.password == base64.encode(oldPassword)) {
@@ -88,6 +91,8 @@ const ChangePasswordScreen = (props) => {
         }
     }
 
+
+//clear all the input fields
     function setToDefalult() {
         setOldPassword('');
         setNewPassword('');

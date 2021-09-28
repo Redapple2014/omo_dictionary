@@ -25,6 +25,7 @@ import DictionaryScreen from '../screens/settings/dictionary';
 import FlashcardListsScreen from '../screens/settings/flashcards';
 import FlashcardListRenderScreen from '../screens/settings/flashcardlist';
 import EditProfileScreen from '../screens/editprofile';
+import AboutScreen from '../screens/about';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
@@ -46,6 +47,7 @@ import {
   NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH,
   NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH,
   NAVIGATION_EDIT_PROFILE_SCREEN_PATH,
+  NAVIGATION_ABOUT_SCREEN_PATH,
 
   NAVIGATION_FLASHCARD_STACK_PATH,
   NAVIGATION_FLASHCARD_SCREEN_PATH,
@@ -145,7 +147,8 @@ const ProfileStack = createStackNavigator(
     [NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH]:DictionaryScreen,
     [NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH]:FlashcardListsScreen,
     [NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH]: FlashcardListRenderScreen,
-    [NAVIGATION_EDIT_PROFILE_SCREEN_PATH]: EditProfileScreen
+    [NAVIGATION_EDIT_PROFILE_SCREEN_PATH]: EditProfileScreen,
+    [NAVIGATION_ABOUT_SCREEN_PATH]:AboutScreen
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,

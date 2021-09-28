@@ -42,6 +42,8 @@ const DisplayCardScreen = (props) => {
 
     const { t, i18n } = useTranslation();
 
+
+//Function to check if the item is checked or not
     const isChecked = (itemId) => {
         try {
             const isThere = items.includes(itemId);
@@ -51,6 +53,8 @@ const DisplayCardScreen = (props) => {
         }
     };
 
+
+//Function to toggle the item(check and uncheck)
     const toggleChecked = (itemId, item) => {
         const x = [itemId, ...items]
         const y = [item, ...newSet]
@@ -63,6 +67,8 @@ const DisplayCardScreen = (props) => {
         }
     }
 
+
+//function handle the delete fash card items
     const handelDelete = () => {
 
         let x = leftItems.filter(i => !newSet.some(j => i.englishHeadWord === j.englishHeadWord))
@@ -82,7 +88,7 @@ const DisplayCardScreen = (props) => {
 
     }
 
-    //fetch function
+    //function to fetch the data
     async function fetchData() {
         localDB.get(data1?.doc["_id"]).then(function (doc) {
             console.log(doc)
@@ -90,6 +96,8 @@ const DisplayCardScreen = (props) => {
         }).catch((e) => console.log(e))
     }
 
+
+//Function responceble to drag items
     const moveHandel = () => {
         if (category) {
             const x = Object.assign({}, catDetails?.doc, { "cards": [...catDetails?.doc?.cards, ...newSet] })
@@ -109,7 +117,7 @@ const DisplayCardScreen = (props) => {
 
     }
 
-    //fetch function
+    //fetch falshcard data using sorting by category name
     async function fetchCatData() {
         localDB.allDocs(
             {
@@ -121,8 +129,6 @@ const DisplayCardScreen = (props) => {
                     return console.log(err);
                 }
                 const y = response.rows.filter(item => item.id != data["_id"])
-                // console.log("filtered data : ", JSON.stringify(y))
-                // setMyData(response.rows);
                 setMyData(y);
                 return y;
             },

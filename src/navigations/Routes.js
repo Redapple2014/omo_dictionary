@@ -21,6 +21,7 @@ export const NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH = 'FlashcardListsScreen';
 export const NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH = 'FlashcardListRenderScreen';
 export const NAVIGATION_EDIT_PROFILE_SCREEN_PATH = 'EditProfileScreen';
 export const NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH = 'ChangePasswordScreen';
+export const NAVIGATION_ABOUT_SCREEN_PATH = 'AboutScreen';
 
 export const NAVIGATION_SIGNUP_SCREEN_PATH = 'SignupScreen';
 export const NAVIGATION_LOGIN_SCREEN_PATH = 'LoginScreen';

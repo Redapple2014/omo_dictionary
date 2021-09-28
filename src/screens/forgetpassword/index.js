@@ -17,8 +17,10 @@ const ForgetPasswordScreen = (props) => {
 
   const emailInputRef = useRef(null)
   const { t,i18n } = useTranslation();
-  const forgetPasswordPress = () => {
 
+
+//Forget password handeller
+  const forgetPasswordPress = () => {
     if (email != '' && Verify.varifyEmail(email)) {
       auth().sendPasswordResetEmail(email).then(() => {
         props.navigation.dispatch(NavigationActions.back())

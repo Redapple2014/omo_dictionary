@@ -34,6 +34,7 @@ const EditProfileScreen = (props) => {
 
     const goBack = () => props.navigation.dispatch(NavigationActions.back());
 
+//choose profile picture from local storage 
     const chooseFile = () => {
         let options = {
             mediaType: "photo"
@@ -59,19 +60,7 @@ const EditProfileScreen = (props) => {
         });
     };
 
-    // const getDatafromStorage = async () => {
-    //     AsyncStorage.getItem('user_data')
-    //         .then(req => {
-    //             if (!req) {
-    //                 setUserdata('')
-    //                 console.log('no data found on recent search')
-    //                 return
-    //             }
-    //             setUserdata(JSON.parse(req))
-    //         })
-    //         .catch(error => console.log('error!'));
-    // }
-
+//function responsible for removing data from local storage
     const removeItemValue = async (key) => {
         try {
             await AsyncStorage.removeItem(key);
@@ -84,6 +73,7 @@ const EditProfileScreen = (props) => {
         }
     }
 
+//Logout function
     const OnLogOutPress = () => {
         auth()
             .signOut()
@@ -93,6 +83,7 @@ const EditProfileScreen = (props) => {
             });
     }
 
+//get data of currentl logged in user
     const getData = () => {
         if (auth().currentUser) {
             const userId = auth().currentUser.uid;
@@ -113,7 +104,7 @@ const EditProfileScreen = (props) => {
         }
     }
 
-
+//update user data (displayname, userName)
     const updateUserData = () => {
         var uid = auth()?.currentUser.uid;
         const jsonData = {
@@ -136,7 +127,6 @@ const EditProfileScreen = (props) => {
     }
 
     useEffect(() => {
-        // getDatafromStorage()
         getData()
     }, [])
 

@@ -24,6 +24,8 @@ const DictionaryScreen = (props) => {
     const [displayTranslatorExample, setDisplayTranslatorExample] = useState(userSettings?.doc?.Dictionary?.displayTranslatorExample);
     const [updated, setUpdated] = useState(false)
 
+
+    //toogle seeting swith
     const toggleSwitch = (id) => {
         if (id == 1) {
             setShowKoreanDefinition(previousState => !previousState)
@@ -48,6 +50,7 @@ const DictionaryScreen = (props) => {
 
     };
 
+    //fetch user settings data
     async function fetchUserSettings() {
         userDB.allDocs(
             {
@@ -68,7 +71,7 @@ const DictionaryScreen = (props) => {
         );
     }
 
-
+//update settings data
     function updateUserSettings() {
         userDB.get(userSettings.id).then(function (doc) {
             let newObject = {
@@ -163,7 +166,6 @@ const DictionaryScreen = (props) => {
                             style={{ position: 'absolute', right: 0, top: 2 }}
                         />
                     </View>
-
                 </View>
             </View>
         </View>

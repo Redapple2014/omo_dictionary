@@ -115,7 +115,7 @@ const HomeScreen = (props) => {
       );
       getDatafromStorage('search_data');
       setSearchText(searchText);
-      searchFunc(searchText);
+      getWordData(searchText);
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -146,7 +146,8 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  function getWordData(wordId) {
+  function getWordData(text) {
+    setSearchdata([]);
     const query =
       `SELECT w.id, w.lemma, w.partofspeech, origin,
           (SELECT JSON_OBJECT(
@@ -164,36 +165,8 @@ const HomeScreen = (props) => {
         SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma ) as w 
       WHERE partofspeech IS NOT NULL AND origin IS NOT NULL limit 50;`
 
-
-
     db.transaction((tx) => {
       // console.log(sql)
-      tx.executeSql(query, [], (tx, results) => {
-        var len = results.rows.length;
-        console.log('Query completed : ', len);
-        var temp = [];
-        for (let i = 0; i < len; i++) {
-          let row = results.rows.item(i);
-          temp.push(row);
-        }
-        setNewData(temp);
-      });
-    });
-  }
-
-  function searchFunc(text) {
-    setSearchdata([]);
-    if (text.length == 0) {
-      return;
-    }
-    const query =
-      `SELECT * FROM ( ` +
-      `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
-      `UNION ` +
-      `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
-      `WHERE partofspeech IS NOT NULL;`;
-
-    db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);
@@ -207,7 +180,33 @@ const HomeScreen = (props) => {
     });
   }
 
-  //console.log(`total data: ${JSON.stringify(searchedData)}`);
+  // function searchFunc(text) {
+  //   setSearchdata([]);
+  //   if (text.length == 0) {
+  //     return;
+  //   }
+  //   const query =
+  //     `SELECT * FROM ( ` +
+  //     `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
+  //     `UNION ` +
+  //     `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
+  //     `WHERE partofspeech IS NOT NULL;`;
+
+  //   db.transaction((tx) => {
+  //     tx.executeSql(query, [], (tx, results) => {
+  //       var len = results.rows.length;
+  //       console.log('Query completed : ', len);
+  //       var temp = [];
+  //       for (let i = 0; i < len; i++) {
+  //         let row = results.rows.item(i);
+  //         temp.push(row);
+  //       }
+  //       setSearchdata(temp);
+  //     });
+  //   });
+  // }
+
+  // console.log(JSON.parse(searchedData));
 
   useEffect(() => {
     getDatafromStorage('search_data');
@@ -410,7 +409,7 @@ const HomeScreen = (props) => {
                   onPress={() => {
                     try {
                       Tts.setDefaultLanguage('ko-KR');
-                      Tts.speak(item?.name);
+                      Tts.speak(item?.lemma);
                     } catch (e) {
                       //console.log(`cannot play the sound file`, e)
                       Toast.show('No Audio File Found', Toast.SHORT);
@@ -425,15 +424,15 @@ const HomeScreen = (props) => {
               </View>
               <Text style={styles.TextStyle}>
                 {item.lemma}
-                {/* {item?.origin && `(${item?.origin})`} */}
+                {item?.origin && `(${item?.origin})`}
               </Text>
-              {/* <Text
+              <Text
                 style={[
                   styles.TextStyle,
                   {color: Constants.appColors.GRAY, fontSize: 12},
                 ]}>
-                {item?.partOfSpeech}
-              </Text> */}
+                {item?.partofspeech}
+              </Text>
 
               {/* <View
                 key={index}
@@ -514,7 +513,8 @@ const HomeScreen = (props) => {
               onChangeText={(value) => {
                 setSearchText(value);
                 //searchResult(value);
-                searchFunc(value);
+                getWordData(value);
+                
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.WHITE,

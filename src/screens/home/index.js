@@ -148,22 +148,26 @@ const HomeScreen = (props) => {
 
   function getWordData(text) {
     setSearchdata([]);
-    const query =
-      `SELECT w.id, w.lemma, w.partofspeech, origin,
-          (SELECT JSON_OBJECT(
-            'lemma', (SELECT JSON_GROUP_ARRAY(words_app.lemma)  from words_app where  words_app.id = w.id ),
-          'writtenForm', (SELECT JSON_GROUP_ARRAY(words_app.writtenForm)  from words_app where  words_app.id = w.id )
-          )) as wordForm
-          ,
-          (SELECT JSON_OBJECT(
-            'en_lm', (SELECT JSON_GROUP_ARRAY(words_en.en_lm)  from words_en where  words_en.id = w.id ),
-            'en_def', (SELECT JSON_GROUP_ARRAY(words_en.en_def)  from words_en where  words_en.id = w.id )
-          )) as sense
+    const query = 
+      `SELECT w.id, w.lemma, w.partofspeech, w.origin,
+          JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
+          AS sense,
+
+          JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', words_app.lemma, 'writtenForm', words_app.writtenForm))) 
+          AS wordForm
       FROM (
-        SELECT lemma, id,  partofspeech, origin   FROM words_info WHERE    searchLemma  LIKE "${text}%" COLLATE NOCASE 
-      UNION 
-        SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma ) as w 
-      WHERE partofspeech IS NOT NULL AND origin IS NOT NULL limit 50;`
+        SELECT * FROM (
+          SELECT DISTINCT lemma,  id,  partofspeech, origin   FROM words_info WHERE    searchLemma  LIKE "${text}%" COLLATE NOCASE 
+          UNION 
+          SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE ORDER by id
+        ) WHERE partofspeech IS NOT NULL AND origin IS NOT NULL GROUP BY id
+      ) as w 
+
+      LEFT JOIN words_app ON words_app.id = w.id
+      LEFT JOIN words_en ON words_en.id = w.id
+      GROUP BY w.id  
+      ORDER by w.lemma
+      `
 
     db.transaction((tx) => {
       // console.log(sql)

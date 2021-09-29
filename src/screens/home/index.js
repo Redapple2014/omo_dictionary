@@ -24,32 +24,14 @@ import Tts from 'react-native-tts';
 import { useTranslation } from 'react-i18next';
 import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
-import { openDatabase } from 'react-native-sqlite-storage';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 import { defaultSettings } from '../../utills/userdata';
-
+import db from '../../utills/loadDb';
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
 // old word database
 const localDB = new PouchDB('dev', { adapter: 'react-native-sqlite' });
-
-// open database
-const db = openDatabase(
-  { name: 'omo_test.db', createFromLocation: 1 },
-  openCB,
-  errorCB,
-);
-
-// open database failed
-function errorCB(err) {
-  console.log('SQL Error: ' + err);
-}
-
-// open database successfully
-function openCB() {
-  console.log('Database OPENED');
-}
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -166,8 +148,7 @@ const HomeScreen = (props) => {
       LEFT JOIN words_app ON words_app.id = w.id
       LEFT JOIN words_en ON words_en.id = w.id
       GROUP BY w.id  
-      ORDER by w.lemma
-      `
+      ORDER by w.lemma`
 
     db.transaction((tx) => {
       // console.log(sql)
@@ -183,32 +164,6 @@ const HomeScreen = (props) => {
       });
     });
   }
-
-  // function searchFunc(text) {
-  //   setSearchdata([]);
-  //   if (text.length == 0) {
-  //     return;
-  //   }
-  //   const query =
-  //     `SELECT * FROM ( ` +
-  //     `SELECT lemma, id,  partofspeech   FROM words_info WHERE   searchLemma  LIKE "${text}%" COLLATE NOCASE ` +
-  //     `UNION ` +
-  //     `SELECT lemma, id, NULL as  partofspeech FROM words_app  WHERE lemma LIKE "${text}%" COLLATE NOCASE  ORDER BY lemma )` +
-  //     `WHERE partofspeech IS NOT NULL;`;
-
-  //   db.transaction((tx) => {
-  //     tx.executeSql(query, [], (tx, results) => {
-  //       var len = results.rows.length;
-  //       console.log('Query completed : ', len);
-  //       var temp = [];
-  //       for (let i = 0; i < len; i++) {
-  //         let row = results.rows.item(i);
-  //         temp.push(row);
-  //       }
-  //       setSearchdata(temp);
-  //     });
-  //   });
-  // }
 
   // console.log(searchedData);
 
@@ -238,17 +193,18 @@ const HomeScreen = (props) => {
   //render method of equivalent under sence of each item  
   function renderEquivalent(dataSet) {
     let arr = JSON.parse(dataSet);
-    if (arr.en_def != 'undefined') {
-      return arr.en_def.map((data, i) => {
+    // console.log(arr)
+    if (arr != 'undefined') {
+      return arr.map((data, i) => {
         // if (data.l == '몽골어') {
           return (
               <View key={`${i}`} style={{ flexDirection: 'row'}}>
-              <Text style={{ fontSize: 17, marginTop: 2 }}>{`${i + 1} `}</Text>
+              <Text style={{ fontSize: 15, marginTop: 2 }}>{`${i + 1} `}</Text>
               <Text
                 style={{
                   color: Constants.appColors.BLACK,
-                  fontSize: 18,
-                }}>{`${data}`}</Text>
+                  fontSize: 15,marginTop: 2
+                }}>{`${data.en_def}`}</Text>
                 </View>
           );
         // }
@@ -317,14 +273,14 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
               }}>
-              {item?.L?.w && (
+              {item?.lemma && (
                 <View
                   style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                   <TouchableOpacity
                     onPress={() => {
                       try {
                         Tts.setDefaultLanguage('ko-KR');
-                        Tts.speak(item?.L?.w);
+                        Tts.speak(item?.lemma);
                       } catch (e) {
                         //console.log(`cannot play the sound file`, e)
                         Toast.show('No Audio File Found', Toast.SHORT);
@@ -339,25 +295,26 @@ const HomeScreen = (props) => {
                 </View>
               )}
               <Text style={styles.TextStyle}>
-                <Text style={{ fontWeight: 'bold' }}>{item?.L?.w}</Text>
-                {item?.o && `(${item?.o})`}
+                <Text style={{ fontWeight: 'bold' }}>{item?.lemma}</Text>
+                {item?.origin && `(${item?.origin})`}
               </Text>
               <Text
                 style={[
                   styles.TextStyle,
                   { color: Constants.appColors.GRAY, fontSize: 12 },
                 ]}>
-                {item?.p}
+                {item?.partofspeech}
               </Text>
 
               <View
                 key={index}
                 style={{
                   marginHorizontal: 4,
-                  flexDirection: 'row',
+                 
                   paddingLeft: 12,
                 }}>
-                {item?.S[0]?.E && renderEquivalent(item?.S[0]?.E)}
+                {item?.sense &&
+                  renderEquivalent(item?.sense)}
               </View>
             </View>
           </TouchableOpacity>
@@ -379,26 +336,7 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              // const id = item._id;
-              // localDB
-              //   .get(id)
-              //   .then(function (doc) {
-              //     storeRecentlyViewedData(doc);
-              //     console.log(`data : ${id} `, JSON.stringify(doc));
-              //     props.navigation.navigate(
-              //       NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
-              //       {
-              //         searchResultData: doc,
-              //       },
-              //     );
-              //   })
-              //   .catch(function (err) {
-              //     console.log(err);
-              //   });
-
-
               storeRecentlyViewedData(item);
-              // console.log(item)
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH,{searchResultData: item});
             }}>
             <View
@@ -432,7 +370,7 @@ const HomeScreen = (props) => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.TextStyle}>
-                {item.lemma}
+                {item?.lemma}
                 {item?.origin && `(${item?.origin})`}
               </Text>
               <Text
@@ -450,8 +388,6 @@ const HomeScreen = (props) => {
                  
                   paddingLeft: 12,
                 }}>
-                {/* <Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1
-                  } `}</Text> */}
                 {item?.sense &&
                   renderEquivalent(item?.sense)}
               </View>

@@ -19,6 +19,8 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8DC47AA2D5EF218D7C8F8B81 /* libPods-OmoOmo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED846F2F1E33E241572A3685 /* libPods-OmoOmo-tvOS.a */; };
 		8E781E0F195F776772ED8238 /* libPods-OmoOmo-OmoOmoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C85BA82970CE6CC8A4FA014 /* libPods-OmoOmo-OmoOmoTests.a */; };
+		917A1CAF27049AAF009DA890 /* omo_test.db in Resources */ = {isa = PBXBuildFile; fileRef = 917A1CAD27049AA6009DA890 /* omo_test.db */; };
+		917A1CB027049AAF009DA890 /* omo_en_v1.db in Resources */ = {isa = PBXBuildFile; fileRef = 917A1CAE27049AAF009DA890 /* omo_en_v1.db */; };
 		91EE3BAA26E8CE8300EA3891 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91EE3BA926E8CE8300EA3891 /* GoogleService-Info.plist */; };
 		EF59B4A5EEFB965358159ACE /* libPods-OmoOmo-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 23DA347F60ECC6D1BC50FC1C /* libPods-OmoOmo-tvOSTests.a */; };
 /* End PBXBuildFile section */
@@ -71,6 +73,8 @@
 		62F0F49BFCCF41B3B7699C07 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		6936FB4AFA221DFF6888BB99 /* Pods-OmoOmo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmoOmo.release.xcconfig"; path = "Target Support Files/Pods-OmoOmo/Pods-OmoOmo.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = OmoOmo/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		917A1CAD27049AA6009DA890 /* omo_test.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = omo_test.db; sourceTree = "<group>"; };
+		917A1CAE27049AAF009DA890 /* omo_en_v1.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = omo_en_v1.db; sourceTree = "<group>"; };
 		91EE3BA926E8CE8300EA3891 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A2B23DD62E67482A976C882F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		B517A563F06E45A0AC02330F /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				917A1CAC27049A79009DA890 /* www */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				91EE3BA926E8CE8300EA3891 /* GoogleService-Info.plist */,
@@ -238,6 +243,15 @@
 				2D02E4901E0B4A5D006451C7 /* OmoOmo-tvOSTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		917A1CAC27049A79009DA890 /* www */ = {
+			isa = PBXGroup;
+			children = (
+				917A1CAE27049AAF009DA890 /* omo_en_v1.db */,
+				917A1CAD27049AA6009DA890 /* omo_test.db */,
+			);
+			name = www;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -383,7 +397,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				917A1CB027049AAF009DA890 /* omo_en_v1.db in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				917A1CAF27049AAF009DA890 /* omo_test.db in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				91EE3BAA26E8CE8300EA3891 /* GoogleService-Info.plist in Resources */,
 			);

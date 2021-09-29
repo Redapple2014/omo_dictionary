@@ -18,7 +18,7 @@ const SearchHeader = (props) => {
       {
         props.leftIcon ?
 
-          <View style={{ width: 100, left: 2, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 100, left: -16, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <TouchableOpacity onPress={props.onPressleftIcon}>
               <View style={{ flexDirection: 'row' }}>
                 <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />

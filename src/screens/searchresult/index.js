@@ -134,8 +134,58 @@ const SearchResultScreen = (props) => {
     ee.addListener('tts-finish', () => { });
     ee.addListener('tts-cancel', () => { });
 
+    const [wordInfo, setWordInfo] = useState();
+    const [wordApp, setWordApp] = useState();
+    const [relForm, setRelForm] = useState();
+    const [wordsEn, setWordsEn] = useState();
+    const [wordsEx, setWordsEx] = useState();
 
-//detect if the user put is korean
+
+
+    const getWordInfo = () => {
+        const query = `SELECT *  from words_info where  words_info.id = ${data?.id}`
+        db.transaction((tx) => {
+            tx.executeSql(query, [], (tx, results) => {
+                var len = results.rows.length;
+                console.log('Query completed : ', len);
+                var temp = [];
+                for (let i = 0; i < len; i++) {
+                    let row = results.rows.item(i);
+                    temp.push(row);
+                }
+                wordInfo(temp);
+            });
+        });
+    }
+
+
+    useEffect(()=>{
+        getWordInfo()
+    },[])
+
+
+
+
+    // -- word info 
+    // 
+
+    // -- wordForm 
+    // SELECT *  from words_app where  words_app.id = 14956 
+
+    // -- relatedForm 
+    // SELECT *  from rel_form where  rel_form.rel_form_id = 14956 
+
+    // -- get Sense (lemma and definition)
+    // SELECT *  from words_en where  words_en.id = 14956 
+
+    // -- get SenseExample
+    // SELECT *  from words_ex where  words_ex.id = 14956 
+
+
+
+
+
+    //detect if the user put is korean
     const isKoreanWord = (text) => {
         const re = /[\u3131-\uD79D]/g;
         const match = text.match(re);
@@ -148,9 +198,9 @@ const SearchResultScreen = (props) => {
         if (arr != 'undefined') {
             //console.log("renderSenseExample : ", arr)
             return arr.map((data, i) => {
-                if (data.l == '몽골어'){
-                return (<View key={`${i + data?.le}`}><Text style={{ color: Constants.appColors.PRIMARY_COLOR, fontSize: 18 }}>{`${data?.le}`}</Text><Text style={{ marginVertical: 4 }}>{`${data?.d}`}</Text></View>
-                )
+                if (data.l == '몽골어') {
+                    return (<View key={`${i + data?.le}`}><Text style={{ color: Constants.appColors.PRIMARY_COLOR, fontSize: 18 }}>{`${data?.le}`}</Text><Text style={{ marginVertical: 4 }}>{`${data?.d}`}</Text></View>
+                    )
                 }
             })
         }
@@ -161,7 +211,7 @@ const SearchResultScreen = (props) => {
 
     //render Sense Example from sense of each item
     const renderSenseExample = (dataSet) => {
-        
+
         if (dataSet != 'undefined') {
             let arr = dataSet
             return arr.map((data, i) => {
@@ -173,8 +223,6 @@ const SearchResultScreen = (props) => {
 
     }
 
-
-
     //render each item
     const renderData = (type, dataSet) => {
         let arr = dataSet
@@ -183,7 +231,7 @@ const SearchResultScreen = (props) => {
                 if (type == 1) {
                     if (data?.t == "발음" && data?.p != 'undefined') {
                         return (
-                            <View key={i+data?.p} style={{ marginHorizontal: 2 }}><Text>{`${data && data?.p},`}</Text></View>
+                            <View key={i + data?.p} style={{ marginHorizontal: 2 }}><Text>{`${data && data?.p},`}</Text></View>
                         )
                     }
                     else {
@@ -233,7 +281,6 @@ const SearchResultScreen = (props) => {
     }
 
 
-
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
@@ -248,7 +295,7 @@ const SearchResultScreen = (props) => {
                     onSoundPlay={() => {
                         try {
                             Tts.setDefaultLanguage('ko-KR');
-                            Tts.speak(data?.L?.w)
+                            Tts.speak(data?.lemma)
                         } catch (e) {
                             //console.log(`cannot play the sound file`, e)
                             Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
@@ -259,12 +306,12 @@ const SearchResultScreen = (props) => {
             <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
                 <View style={{ borderBottomWidth: .5, borderBottomColor: Constants.appColors.LIGHTGRAY, paddingVertical: 10 }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.L?.w}</Text>
-                        <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.o && `(${data?.o})`}</Text>
+                        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.lemma}</Text>
+                        <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.origin && `(${data?.origin})`}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }} >
-                        <Text style={{ paddingRight: 6 }}>{data?.p}</Text>
-                        <Text>{data?.v}</Text>
+                        <Text style={{ paddingRight: 6 }}>{data?.partofspeech}</Text>
+                        <Text>{data?.partofspeech}</Text>
                     </View>
                 </View>
                 <View style={{ marginVertical: 10 }}>

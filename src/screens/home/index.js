@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Platform,
@@ -16,27 +16,27 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import {useTranslation} from 'react-i18next';
-import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
+import { useTranslation } from 'react-i18next';
+import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
-import {openDatabase} from 'react-native-sqlite-storage';
+import { openDatabase } from 'react-native-sqlite-storage';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
-import {defaultSettings} from '../../utills/userdata';
+import { defaultSettings } from '../../utills/userdata';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
 // old word database
-const localDB = new PouchDB('dev', {adapter: 'react-native-sqlite'});
+const localDB = new PouchDB('dev', { adapter: 'react-native-sqlite' });
 
 // open database
 const db = openDatabase(
-  {name: 'omo_test.db', createFromLocation: 1},
+  { name: 'omo_test.db', createFromLocation: 1 },
   openCB,
   errorCB,
 );
@@ -60,7 +60,7 @@ const HomeScreen = (props) => {
   const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
@@ -206,7 +206,7 @@ const HomeScreen = (props) => {
   //   });
   // }
 
-  // console.log(JSON.parse(searchedData));
+  // console.log(searchedData);
 
   useEffect(() => {
     getDatafromStorage('search_data');
@@ -233,21 +233,21 @@ const HomeScreen = (props) => {
 
   //render method of equivalent under sence of each item  
   function renderEquivalent(dataSet) {
-    let arr = dataSet;
-    if (arr != 'undefined') {
-      return arr.map((data, i) => {
-        if (data.l == '몽골어') {
+    let arr = JSON.parse(dataSet);
+    if (arr.en_def != 'undefined') {
+      return arr.en_def.map((data, i) => {
+        // if (data.l == '몽골어') {
           return (
-            <View key={`${i + data?.le}`} style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: 17, marginTop: 2}}>{`${i + 1} `}</Text>
+              <View key={`${i}`} style={{ flexDirection: 'row'}}>
+              <Text style={{ fontSize: 17, marginTop: 2 }}>{`${i + 1} `}</Text>
               <Text
                 style={{
                   color: Constants.appColors.BLACK,
                   fontSize: 18,
-                }}>{`${data?.le}`}</Text>
-            </View>
+                }}>{`${data}`}</Text>
+                </View>
           );
-        }
+        // }
       });
     } else {
       return <></>;
@@ -259,7 +259,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
             <View
               style={{
@@ -296,7 +296,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
@@ -315,7 +315,7 @@ const HomeScreen = (props) => {
               }}>
               {item?.L?.w && (
                 <View
-                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
+                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                   <TouchableOpacity
                     onPress={() => {
                       try {
@@ -335,13 +335,13 @@ const HomeScreen = (props) => {
                 </View>
               )}
               <Text style={styles.TextStyle}>
-                <Text style={{fontWeight: 'bold'}}>{item?.L?.w}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{item?.L?.w}</Text>
                 {item?.o && `(${item?.o})`}
               </Text>
               <Text
                 style={[
                   styles.TextStyle,
-                  {color: Constants.appColors.GRAY, fontSize: 12},
+                  { color: Constants.appColors.GRAY, fontSize: 12 },
                 ]}>
                 {item?.p}
               </Text>
@@ -371,26 +371,31 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
-              const id = item._id;
-              localDB
-                .get(id)
-                .then(function (doc) {
-                  storeRecentlyViewedData(doc);
-                  console.log(`data : ${id} `, JSON.stringify(doc));
-                  props.navigation.navigate(
-                    NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
-                    {
-                      searchResultData: doc,
-                    },
-                  );
-                })
-                .catch(function (err) {
-                  console.log(err);
-                });
+              // const id = item._id;
+              // localDB
+              //   .get(id)
+              //   .then(function (doc) {
+              //     storeRecentlyViewedData(doc);
+              //     console.log(`data : ${id} `, JSON.stringify(doc));
+              //     props.navigation.navigate(
+              //       NAVIGATION_SEARCH_RESULT_SCREEN_PATH,
+              //       {
+              //         searchResultData: doc,
+              //       },
+              //     );
+              //   })
+              //   .catch(function (err) {
+              //     console.log(err);
+              //   });
+
+
+              storeRecentlyViewedData(item);
+              // console.log(item)
+              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH,{searchResultData: item});
             }}>
             <View
               style={{
@@ -400,11 +405,11 @@ const HomeScreen = (props) => {
                 paddingVertical: 4,
                 paddingHorizontal: 8,
                 borderWidth: 0.5,
-                height: 50,
+                height: 'auto',
                 justifyContent: 'center',
               }}>
               <View
-                style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
+                style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                 <TouchableOpacity
                   onPress={() => {
                     try {
@@ -429,24 +434,23 @@ const HomeScreen = (props) => {
               <Text
                 style={[
                   styles.TextStyle,
-                  {color: Constants.appColors.GRAY, fontSize: 12},
+                  { color: Constants.appColors.GRAY, fontSize: 12 },
                 ]}>
                 {item?.partofspeech}
               </Text>
 
-              {/* <View
+              <View
                 key={index}
                 style={{
                   marginHorizontal: 4,
-                  flexDirection: 'row',
+                 
                   paddingLeft: 12,
                 }}>
-                <Text style={{fontSize: 17, marginTop: 2}}>{`${
-                  index + 1
-                } `}</Text>
-                {item?.Sense[0]?.Equivalent &&
-                  renderEquivalent(item?.Sense[0]?.Equivalent)}
-              </View> */}
+                {/* <Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1
+                  } `}</Text> */}
+                {item?.sense &&
+                  renderEquivalent(item?.sense)}
+              </View>
             </View>
           </TouchableOpacity>
         )}
@@ -459,7 +463,7 @@ const HomeScreen = (props) => {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -495,10 +499,10 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
+              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
                 <Image
                   source={require('../../assets/logo/home-logo.png')}
-                  style={{width: 300, height: 100, resizeMode: 'contain'}}
+                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
                 />
               </View>
             )}
@@ -514,7 +518,7 @@ const HomeScreen = (props) => {
                 setSearchText(value);
                 //searchResult(value);
                 getWordData(value);
-                
+
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.WHITE,
@@ -532,20 +536,20 @@ const HomeScreen = (props) => {
                 top: isKeyboardVisible
                   ? Sizes.WINDOW_HEIGHT * 0.01
                   : searchText.length > 0
-                  ? Sizes.WINDOW_HEIGHT * 0.01
-                  : Sizes.WINDOW_HEIGHT * 0.29,
+                    ? Sizes.WINDOW_HEIGHT * 0.01
+                    : Sizes.WINDOW_HEIGHT * 0.29,
                 position: 'absolute',
                 alignSelf: 'center',
               }}
-              inputStyle={{color: 'black'}}
+              inputStyle={{ color: 'black' }}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
             />
           </TouchableWithoutFeedback>
 
           {isKeyboardVisible &&
-          searchText.length == 0 &&
-          reacientlySearchedData.length != 0 ? (
+            searchText.length == 0 &&
+            reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -554,7 +558,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>{`${t(
+                <Text style={{ fontWeight: 'bold' }}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -577,14 +581,14 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 16}}>{reacientlySearchedStatus}</Text>
+              <Text style={{ paddingTop: 16 }}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
           {!isKeyboardVisible &&
-          searchText.length == 0 &&
-          reacientlyViewedDataSet.length != 0 ? (
+            searchText.length == 0 &&
+            reacientlyViewedDataSet.length != 0 ? (
             <>
               <View
                 style={{
@@ -593,7 +597,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>{`${t(
+                <Text style={{ fontWeight: 'bold' }}>{`${t(
                   'RecentlyViewedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -621,7 +625,7 @@ const HomeScreen = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={{paddingTop: 100}}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{ paddingTop: 100 }}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

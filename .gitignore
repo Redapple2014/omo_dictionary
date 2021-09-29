@@ -4,6 +4,7 @@
 
 # Xcode
 #
+
 build/
 *.pbxuser
 !default.pbxuser
@@ -21,6 +22,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 *.db
+ios/omo_en_v1.db
 # Android/IntelliJ
 #
 build/

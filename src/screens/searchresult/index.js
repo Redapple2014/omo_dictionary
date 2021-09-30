@@ -243,16 +243,19 @@ const SearchResultScreen = (props) => {
       let arr = JSON.parse(sense);
       return arr.map((data, i) => {
         return (
-          <View style={{flexDirection: 'row'}}>
-            <View key={`${i + data?.en_lm}`}>
-              <Text
-                style={{
-                  color: Constants.appColors.PRIMARY_COLOR,
-                  fontSize: 17,
-                }}>{`${data?.en_lm}; `}</Text>
+          <>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
+              <View key={`${i + data?.en_lm}`}>
+                <Text
+                  style={{
+                    color: Constants.appColors.PRIMARY_COLOR,
+                    fontSize: 17,
+                  }}>{`${data?.en_lm}; `}</Text>
+              </View>
             </View>
             {renderSeneDefData(wordInfo.sense, data.sense_id)}
-          </View>
+          </>
         );
       });
     } catch (e) {
@@ -484,10 +487,7 @@ const SearchResultScreen = (props) => {
                 marginBottom: Sizes.WINDOW_WIDTH * 0.45,
                 paddingHorizontal: 12,
               }}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={{fontSize: 17}}>1.</Text>
-                {renderSeneData(wordInfo.sense)}
-              </View>
+              <View>{renderSeneData(wordInfo.sense)}</View>
             </ScrollView>
           </View>
         </>

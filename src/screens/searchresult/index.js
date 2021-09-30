@@ -194,51 +194,6 @@ const SearchResultScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  //render Equivalent from sense of each item => not using right now
-  const renderEquivalent = (dataSet) => {
-    let arr = dataSet;
-    if (arr != 'undefined') {
-      //console.log("renderSenseExample : ", arr)
-      return arr.map((data, i) => {
-        if (data.l == '몽골어') {
-          return (
-            <View key={`${i + data?.le}`}>
-              <Text
-                style={{
-                  color: Constants.appColors.PRIMARY_COLOR,
-                  fontSize: 18,
-                }}>{`${data?.le}`}</Text>
-              <Text style={{marginVertical: 4}}>{`${data?.d}`}</Text>
-            </View>
-          );
-        }
-      });
-    } else {
-      return <></>;
-    }
-  };
-
-  //render Sense Example from sense of each item => not using right now
-  const renderSenseExample = (dataSet) => {
-    if (dataSet != 'undefined') {
-      let arr = dataSet;
-      return arr.map((data, i) => {
-        return (
-          <View key={`${i + data?.e1}`} style={{marginVertical: 4}}>
-            <Text
-              style={{
-                color: Constants.appColors.PRIMARY_COLOR,
-                fontWeight: 'bold',
-                fontSize: 12,
-              }}>{`${data?.e1}; `}</Text>
-          </View>
-        );
-      });
-    } else {
-      return;
-    }
-  };
-
   //render Sense leema from sense
   const renderSeneData = (sense) => {
     try {
@@ -246,9 +201,9 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row'}} key={`${i + data?.en_lm}`}>
               <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
-              <View key={`${i + data?.en_lm}`}>
+              <View>
                 <Text
                   style={{
                     color: Constants.appColors.PRIMARY_COLOR,
@@ -272,10 +227,10 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (data.sense_id === sense_id) {
           return (
-            <View>
+            <View key={`${i + data?.en_def}`}>
               <View
                 style={{flexDirection: 'column'}}
-                key={`${i + data?.en_def}`}>
+                >
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
@@ -302,10 +257,10 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (data.sense_id === sense_id) {
           return (
-            <>
+            <View key={`${i + data?.example_1}`} >
               {data?.example_1 && <Text>{data.example_1}</Text>}
               {data?.example_2 && <Text>{data.example_2}</Text>}
-            </>
+            </View>
           );
         } else {
           return <></>;

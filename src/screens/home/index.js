@@ -62,6 +62,22 @@ const HomeScreen = (props) => {
     }
   }
 
+  //lopping of all json
+  async function loadAllJsons() {
+    AsyncStorage.getItem('inserted_data')
+    .then((flag) => {
+      if (!flag) {
+        setLoadingText('Insert data ...');
+        loadFile(1);
+      }
+      else{
+        setLoading(false);
+      }
+    })
+    .catch((error) => console.log('error!'));
+  }
+
+
   
   //delete recently searched data
   const removeItemValue = async function (key) {
@@ -182,8 +198,10 @@ const HomeScreen = (props) => {
   // console.log(searchedData);
 
   useEffect(() => {
+    loadAllJsons();
     getDatafromStorage('search_data');
     getDatafromStorage('recent_data');
+    
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {

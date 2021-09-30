@@ -31,7 +31,7 @@ const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
 // old word database
-const localDB = new PouchDB('dev', { adapter: 'react-native-sqlite' });
+var userDB = new PouchDB('usersettings');
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -49,6 +49,36 @@ const HomeScreen = (props) => {
   const [ids, setIDS] = useState([]);
   const [newData, setNewData] = useState([]);
 
+
+
+  async function loadFile(index) {
+    if (index == 1) {
+      userDB.post(defaultSettings).then(function (response) {
+        AsyncStorage.setItem('inserted_data', 'inserted')
+      setLoading(false);
+      }).catch(function (err) {
+        console.log(err);
+      });
+    }
+  }
+
+  //lopping of all json
+  async function loadAllJsons() {
+    AsyncStorage.getItem('inserted_data')
+    .then((flag) => {
+      if (!flag) {
+        setLoadingText('Insert data ...');
+        loadFile(1);
+      }
+      else{
+        setLoading(false);
+      }
+    })
+    .catch((error) => console.log('error!'));
+  }
+
+
+  
   //delete recently searched data
   const removeItemValue = async function (key) {
     try {
@@ -168,8 +198,10 @@ const HomeScreen = (props) => {
   // console.log(searchedData);
 
   useEffect(() => {
+    loadAllJsons();
     getDatafromStorage('search_data');
     getDatafromStorage('recent_data');
+    
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {

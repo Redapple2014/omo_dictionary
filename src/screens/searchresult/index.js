@@ -145,27 +145,31 @@ const SearchResultScreen = (props) => {
 
   const getWordInfo = () => {
     const query = `SELECT words_info.id, words_info.lemma, words_info.partofspeech, words_info.origin, words_info.vocabularyLevel, words_info.lexicalUnit,
-                        words_info.homonym_number, words_info.annotation,
+            words_info.homonym_number, words_info.annotation,
 
-                        JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
-                        AS sense,
+              (select
+              JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', words_en.sense_id, 'en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
+              FROM words_en where words_en.id = ${data?.id})
+              AS sense,
 
-                        JSON_GROUP_ARRAY(DISTINCT(json_object('type', rel_form.type, 'writtenForm', rel_form.writtenForm)))
-                        AS relatedForm,
-                
-                        JSON_GROUP_ARRAY(DISTINCT(json_object('type', words_ex.type, 'example_1', words_ex.example_1,  'example_2', words_ex.example_2 ))) 
-                        AS senseExample,
-                
-                        JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', words_app.lemma, 'writtenForm', words_app.writtenForm))) 
-                        AS wordForm
-           
-                    FROM words_info, words_en, rel_form, words_ex, words_app   
-                    WHERE  
-                        words_info.id = ${data?.id} 
-                        AND words_info.id = words_en.id 
-                        AND words_info.id = rel_form.rel_form_id 
-                        AND words_info.id = words_ex.id 
-                        AND words_info.id = words_app.id`;
+              (select 
+              JSON_GROUP_ARRAY(DISTINCT(json_object('type', rel_form.type, 'writtenForm', rel_form.writtenForm)))
+              FROM rel_form where rel_form.rel_form_id = ${data?.id})
+              AS relatedForm,
+            
+              (select 
+              JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', words_ex.sense_id, 'type', words_ex.type, 'example_1', words_ex.example_1,  'example_2', words_ex.example_2 ))) 
+              FROM words_ex where words_ex.id = ${data?.id})
+              AS senseExample,
+            
+              (select 
+              JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', words_app.lemma, 'writtenForm', words_app.writtenForm)))
+              FROM words_app where words_app.id = ${data?.id})
+              AS wordForm
+            
+
+            FROM words_info 
+            WHERE  words_info.id =${data?.id} `;
 
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
@@ -239,12 +243,15 @@ const SearchResultScreen = (props) => {
       let arr = JSON.parse(sense);
       return arr.map((data, i) => {
         return (
-          <View style={{flexDirection: 'column'}} key={`${i + data?.en_lm}`}>
-            <Text
-              style={{
-                color: Constants.appColors.PRIMARY_COLOR,
-                fontSize: 17,
-              }}>{`${data?.en_lm}; `}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <View key={`${i + data?.en_lm}`}>
+              <Text
+                style={{
+                  color: Constants.appColors.PRIMARY_COLOR,
+                  fontSize: 17,
+                }}>{`${data?.en_lm}; `}</Text>
+            </View>
+            {renderSeneDefData(wordInfo.sense, data.sense_id)}
           </View>
         );
       });
@@ -254,18 +261,29 @@ const SearchResultScreen = (props) => {
   };
 
   //render Sense definations from sense
-  const renderSeneDefData = (sense) => {
+  const renderSeneDefData = (sense, sense_id) => {
     try {
       let arr = JSON.parse(sense);
       return arr.map((data, i) => {
-        return (
-          <View style={{flexDirection: 'column'}} key={`${i + data?.en_def}`}>
-            <Text
-              style={{
-                width: Sizes.WINDOW_WIDTH - 64,
-              }}>{`${data?.en_def}`}</Text>
-          </View>
-        );
+        if (data.sense_id === sense_id) {
+          return (
+            <View>
+              <View
+                style={{flexDirection: 'column'}}
+                key={`${i + data?.en_def}`}>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                  }}>{`${data?.en_def}`}</Text>
+              </View>
+              <View style={{marginLeft: 12}}>
+                {renderSenseExampleData(wordInfo.senseExample, data?.sense_id)}
+              </View>
+            </View>
+          );
+        } else {
+          return <></>;
+        }
       });
     } catch (e) {
       console.log(e);
@@ -273,16 +291,20 @@ const SearchResultScreen = (props) => {
   };
 
   //render Sense Example from sense
-  const renderSenseExampleData = (senseExample) => {
+  const renderSenseExampleData = (senseExample, sense_id) => {
     try {
       let arr = JSON.parse(senseExample);
       return arr.map((data, i) => {
-        return (
-          <>
-            {data?.example_1 && <Text>{data.example_1}</Text>}
-            {data?.example_2 && <Text>{data.example_2}</Text>}
-          </>
-        );
+        if (data.sense_id === sense_id) {
+          return (
+            <>
+              {data?.example_1 && <Text>{data.example_1}</Text>}
+              {data?.example_2 && <Text>{data.example_2}</Text>}
+            </>
+          );
+        } else {
+          return <></>;
+        }
       });
     } catch (e) {
       console.log(e);
@@ -465,10 +487,6 @@ const SearchResultScreen = (props) => {
               <View style={{flexDirection: 'row'}}>
                 <Text style={{fontSize: 17}}>1.</Text>
                 {renderSeneData(wordInfo.sense)}
-              </View>
-              {renderSeneDefData(wordInfo.sense)}
-              <View style={{marginLeft: 12}}>
-                {renderSenseExampleData(wordInfo.senseExample)}
               </View>
             </ScrollView>
           </View>

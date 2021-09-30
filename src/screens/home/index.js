@@ -50,12 +50,11 @@ const HomeScreen = (props) => {
   const [newData, setNewData] = useState([]);
 
 
-
   async function loadFile(index) {
     if (index == 1) {
       userDB.post(defaultSettings).then(function (response) {
         AsyncStorage.setItem('inserted_data', 'inserted')
-      setLoading(false);
+        setLoading(false);
       }).catch(function (err) {
         console.log(err);
       });
@@ -65,20 +64,18 @@ const HomeScreen = (props) => {
   //lopping of all json
   async function loadAllJsons() {
     AsyncStorage.getItem('inserted_data')
-    .then((flag) => {
-      if (!flag) {
-        setLoadingText('Insert data ...');
-        loadFile(1);
-      }
-      else{
-        setLoading(false);
-      }
-    })
-    .catch((error) => console.log('error!'));
+      .then((flag) => {
+        if (!flag) {
+          setLoadingText('Insert data ...');
+          loadFile(1);
+        }
+        else {
+          setLoading(false);
+        }
+      })
+      .catch((error) => console.log('error!'));
   }
 
-
-  
   //delete recently searched data
   const removeItemValue = async function (key) {
     try {
@@ -159,8 +156,9 @@ const HomeScreen = (props) => {
   };
 
   function getWordData(text) {
+    console.log('data searching')
     setSearchdata([]);
-    const query = 
+    const query =
       `SELECT w.id, w.lemma, w.partofspeech, w.origin,
           JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
           AS sense,
@@ -201,7 +199,7 @@ const HomeScreen = (props) => {
     loadAllJsons();
     getDatafromStorage('search_data');
     getDatafromStorage('recent_data');
-    
+
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
@@ -229,16 +227,16 @@ const HomeScreen = (props) => {
     if (arr != 'undefined') {
       return arr.map((data, i) => {
         // if (data.l == '몽골어') {
-          return (
-              <View key={`${i}`} style={{ flexDirection: 'row'}}>
-              <Text style={{ fontSize: 15, marginTop: 2 }}>{`${i + 1} `}</Text>
-              <Text
-                style={{
-                  color: Constants.appColors.BLACK,
-                  fontSize: 15,marginTop: 2
-                }}>{`${data.en_def}`}</Text>
-                </View>
-          );
+        return (
+          <View key={`${i}`} style={{ flexDirection: 'row' }}>
+            <Text style={{ fontSize: 15, marginTop: 2 }}>{`${i + 1} `}</Text>
+            <Text
+              style={{
+                color: Constants.appColors.BLACK,
+                fontSize: 15, marginTop: 2
+              }}>{`${data.en_def}`}</Text>
+          </View>
+        );
         // }
       });
     } else {
@@ -342,7 +340,7 @@ const HomeScreen = (props) => {
                 key={index}
                 style={{
                   marginHorizontal: 4,
-                 
+
                   paddingLeft: 12,
                 }}>
                 {item?.sense &&
@@ -369,7 +367,7 @@ const HomeScreen = (props) => {
             key={index}
             onPress={() => {
               storeRecentlyViewedData(item);
-              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH,{searchResultData: item});
+              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, { searchResultData: item });
             }}>
             <View
               style={{
@@ -417,7 +415,7 @@ const HomeScreen = (props) => {
                 key={index}
                 style={{
                   marginHorizontal: 4,
-                 
+
                   paddingLeft: 12,
                 }}>
                 {item?.sense &&

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "pkgName": "omo-korean.appspot.com",
-  "mailId":"robinzxu@gmail.com",
+  "mailId": "robinzxu@gmail.com",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@craftzdog/pouchdb-core-react-native": "^7.2.2",
     "@craftzdog/pouchdb-replication-react-native": "^7.0.0",
+    "@fawazahmed/react-native-read-more": "^2.1.1",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/checkbox": "^0.5.8",
     "@react-native-community/masked-view": "^0.1.11",
@@ -35,6 +36,7 @@
     "react-i18next": "^11.11.4",
     "react-native": "0.63.4",
     "react-native-base64": "^0.2.1",
+    "react-native-collapsible": "^1.6.0",
     "react-native-dialog": "^9.1.0",
     "react-native-draggable-dynamic-flatlist": "^1.0.4",
     "react-native-elements": "^3.4.2",

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,16 +9,16 @@ import {
   NativeModules,
   NativeEventEmitter,
 } from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import SearchHeader from '../../components/searchHeader';
-import {NavigationActions} from 'react-navigation';
-import {useTranslation} from 'react-i18next';
+import { NavigationActions } from 'react-navigation';
+import { useTranslation } from 'react-i18next';
 import Tts from 'react-native-tts';
 import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
-
+import ReadMore from '@fawazahmed/react-native-read-more';
 // const data = {"homonym_number":"0","lexicalUnit":"단어","partOfSpeech":"동사","vocabularyLevel":"없음","Lemma":{"writtenForm":"갈아입히다"},"WordForm":[{"type":"발음","pronunciation":"가라이피다","sound":"https://dicmedia.korean.go.kr/multimedia/sound_file/giyeok_2005/garaipida.wav"},{"type":"활용","writtenForm":"갈아입히어","pronunciation":"가라이피여","sound":"https://dicmedia.korean.go.kr/multimedia/naver/2016/20000/18000/14769_garaipiyeo.wav","FormRepresentation":{"type":"준말","writtenForm":"갈아입혀","pronunciation":"가라이펴","sound":"https://dicmedia.korean.go.kr/multimedia/naver/2016/50000/46000/14769_garaipyeo.wav"}},{"type":"활용","writtenForm":"갈아입히니","pronunciation":"가라이피니","sound":"https://dicmedia.korean.go.kr/multimedia/naver/2016/20000/18000/14769_garaipini.wav"}],"RelatedForm":[{"type":"가봐라","_id":"53830","writtenForm":"갈아입다"}],"Sense":[{"_id":"1","definition":"입고 있던 옷을 벗고 다른 옷으로 바꾸어 입게 하다.","syntacticPattern":"1이 2에게 3을 (4로) 갈아입히다","SenseExample":[{"_id":"1","type":"구","example_1":"깨끗한 옷으로 갈아입히다."},{"_id":"2","type":"구","example_1":"새 옷으로 갈아입히다."},{"_id":"3","type":"구","example_1":"환자복으로 갈아입히다."},{"_id":"4","type":"문장","example_1":"잘 시간이 되어 엄마는 아이를 잠옷으로 갈아입혔다."},{"_id":"5","type":"문장","example_1":"간호사가 새로 입원하게 된 환자에게 환자복으로 갈아입힐 준비를 했다."},{"_id":"6","type":"대화","example_1":"아기가 바지에 오줌을 쌌어요.","example_2":"얼른 목욕시키고 옷을 갈아입혀야겠네."}],"Equivalent":[{"language":"몽골어","lemma":"сольж өмсүүлэх","definition":"өмсч байсан хувцасыг нь тайлж өөр хувцасаар сольж өмсгүүлэх."},{"language":"베트남어","lemma":"cho thay, bắt thay (quần áo)","definition":"Cởi quần áo đang mặc ra và cho đổi sang mặc quần áo khác."},{"language":"타이어","lemma":"เปลี่ยนชุดให้, เปลี่ยนเสื้อผ้าให้, เปลี่ยนใส่ชุดใหม่ให้","definition":"ทำให้ถอดเสื้อผ้าที่ใส่อยู่และเปลี่ยนใส่เสื้อผ้าชุดอื่น"},{"language":"인도네시아어","lemma":"menggantikan baju","definition":"melepaskan baju yang dipakai seseorang kemudian menggantikannya dengan yang lain"},{"language":"러시아어","lemma":"переодеть","definition":"Снять одежду и надеть другую. "},{"language":"영어","lemma":"change someone's clothes","definition":"To have someone take off his/her clothes and put on other clothes."},{"language":"일본어","lemma":"きがえさせる【着替えさせる】","definition":"着ている服を脱がせて、別の服に替えて着せる。"},{"language":"프랑스어","lemma":"changer, habiller, vêtir","definition":"Enlever un vêtement que porte quelqu'un, et lui en faire porter un autre."},{"language":"스페인어","lemma":"hacer cambiar","definition":"Obligar a mudarse de ropa."},{"language":"아랍어","lemma":"يُغيّر ملابسه","definition":"يَخلع ملابسه ويرتدي ملابس أخرى"},{"language":"중국어","lemma":"换，改换","definition":"让对方把身上的衣服脱掉，改穿别的衣服。"}]}],"_id":"14769","_rev":"1-ec5c603a4b9a449a8c99ea32ac86d3fb"}
 
 // const data = {
@@ -135,11 +135,11 @@ import Toast from 'react-native-simple-toast';
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
-  ee.addListener('tts-start', () => {});
-  ee.addListener('tts-finish', () => {});
-  ee.addListener('tts-cancel', () => {});
+  ee.addListener('tts-start', () => { });
+  ee.addListener('tts-finish', () => { });
+  ee.addListener('tts-cancel', () => { });
 
   const [wordInfo, setWordInfo] = useState([]);
 
@@ -201,8 +201,8 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{flexDirection: 'row'}} key={`${i + data?.en_lm}`}>
-              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
+            <View style={{ flexDirection: 'row' }} key={`${i + data?.en_lm}`}>
+              <Text style={{ fontSize: 17 }}>{data.sense_id}.</Text>
               <View>
                 <Text
                   style={{
@@ -229,16 +229,20 @@ const SearchResultScreen = (props) => {
           return (
             <View key={`${i + data?.en_def}`}>
               <View
-                style={{flexDirection: 'column'}}
-                >
+                style={{ flexDirection: 'column' }}
+              >
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              <View style={{marginLeft: 12}}>
-                {renderSenseExampleData(wordInfo.senseExample, data?.sense_id)}
+
+              <View style={{ marginLeft: 12 }}>
+                <ReadMore seeMoreStyle={{ color: Constants.appColors.PRIMARY_COLOR }} seeLessStyle={{ color: Constants.appColors.PRIMARY_COLOR }}>
+                  {renderSenseExampleData(wordInfo.senseExample, data?.sense_id)}
+                </ReadMore>
               </View>
+
             </View>
           );
         } else {
@@ -257,9 +261,10 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (data.sense_id === sense_id) {
           return (
-            <View key={`${i + data?.example_1}`} >
-              {data?.example_1 && <Text>{data.example_1}</Text>}
-              {data?.example_2 && <Text>{data.example_2}</Text>}
+            <View style={{ height: 40 }} key={`${i + data?.example_1}`} >
+
+              {data?.example_1 && <Text>{`${data.example_1} ,`}</Text>}
+              {data?.example_2 && <Text>{`${data.example_2} ,`}</Text>}
             </View>
           );
         } else {
@@ -282,7 +287,7 @@ const SearchResultScreen = (props) => {
           if (data?.lemma != 'undefined' || data?.lemma != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i + data?.p} style={{marginHorizontal: 2}}>
+                <View key={i + data?.p} style={{ marginHorizontal: 2 }}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -295,7 +300,7 @@ const SearchResultScreen = (props) => {
           if (data?.type != 'undefined' || data?.type != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i} style={{marginHorizontal: 2}}>
+                <View key={i} style={{ marginHorizontal: 2 }}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -304,28 +309,6 @@ const SearchResultScreen = (props) => {
             return <Text></Text>;
           }
         }
-        // else if (type == 3) {
-        //     console.log("sense : ", arr)
-        //     return (
-        //         data?.sense &&
-        //         <View style={{ borderBottomWidth: .7, borderBottomColor: Constants.appColors.LIGHTGRAY, paddingBottom: 4 }}>
-        //             <View key={i} style={{ marginHorizontal: 4, flexDirection: 'row' }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${i + 1} `}</Text>
-        //                 {
-        //                     data?.E && renderEquivalent(data?.E)
-        //                 }
-        //             </View>
-
-        //             <View key={`${i + data?.id}`} style={{ marginHorizontal: 16 }}>
-        //                 {
-        //                     data?.S && renderSenseExample(data?.S)
-
-        //                 }
-
-        //             </View>
-        //         </View>
-
-        //     )
-        // }
         else {
           return <></>;
         }
@@ -337,7 +320,7 @@ const SearchResultScreen = (props) => {
 
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -365,29 +348,29 @@ const SearchResultScreen = (props) => {
           }}
         />
       </View>
-      <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
+      <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
         <View
           style={{
             borderBottomWidth: 0.5,
             borderBottomColor: Constants.appColors.LIGHTGRAY,
             paddingVertical: 10,
           }}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
               {data?.lemma}
             </Text>
-            <Text style={{fontSize: 24, color: 'black', fontWeight: '500'}}>
+            <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
               {data?.origin && `(${data?.origin})`}
             </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{paddingRight: 6}}>{data?.partofspeech}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ paddingRight: 6 }}>{data?.partofspeech}</Text>
             <Text>{data?.partofspeech}</Text>
           </View>
         </View>
         {data?.wordForm?.writtenForm && data?.wordForm?.relatedForm && (
-          <View style={{marginVertical: 10}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{ marginVertical: 10 }}>
+            <View style={{ flexDirection: 'row' }}>
               <View
                 style={{
                   backgroundColor: '#3D9CE0',
@@ -406,7 +389,7 @@ const SearchResultScreen = (props) => {
               </View>
               {data?.wordForm && renderData(1, data?.wordForm)}
             </View>
-            <View style={{marginTop: 8, flexDirection: 'row'}}>
+            <View style={{ marginTop: 8, flexDirection: 'row' }}>
               <View
                 style={{
                   backgroundColor: '#5ED65C',
@@ -436,7 +419,30 @@ const SearchResultScreen = (props) => {
               paddingHorizontal: 16,
               paddingVertical: 4,
             }}>
-            <Text style={{fontSize: 16}}>{`${t('DefinitionText')}`}</Text>
+            <Text style={{ fontSize: 16 }}>{`${t('DefinitionText')}`}</Text>
+          </View>
+          <View style={{ backgroundColor: 'white' }}>
+            <ScrollView
+              contentInsetAdjustmentBehavior="automatic"
+              style={{
+                marginBottom: Sizes.WINDOW_WIDTH * 0.45,
+                paddingHorizontal: 12,
+              }}>
+              <View>{renderSeneData(wordInfo.sense)}</View>
+            </ScrollView>
+          </View>
+        </>
+      )}
+
+      {/* {wordInfo?.sense && wordInfo?.senseExample && (
+        <>
+          <View
+            style={{
+              backgroundColor: '#f8f8f8',
+              paddingHorizontal: 16,
+              paddingVertical: 4,
+            }}>
+            <Text style={{fontSize: 16}}>{`${t('idiomsText')}`}</Text>
           </View>
           <View style={{backgroundColor: 'white'}}>
             <ScrollView
@@ -449,7 +455,7 @@ const SearchResultScreen = (props) => {
             </ScrollView>
           </View>
         </>
-      )}
+      )} */}
     </View>
   );
 };

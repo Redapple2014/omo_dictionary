@@ -858,6 +858,13 @@
     xmlbuilder "^14.0.0"
     xmldom "~0.5.0"
 
+"@fawazahmed/react-native-read-more@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@fawazahmed/react-native-read-more/-/react-native-read-more-2.1.1.tgz#e175744dc7a326176e19566d9efea4a4f04e46cb"
+  integrity sha512-Vd5GAAwRt3TnZh6fdZ35EqRDNR98Z7k/dd2/r/haU2KVQfFBWgg2U7j/WDJ05KAqsng1o/jkY+t7mpAtoX5E6w==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -7545,6 +7552,11 @@ react-native-base64@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/react-native-base64/-/react-native-base64-0.2.1.tgz#3d0e73a649c4c0129f7b7695d3912456aebae847"
   integrity sha512-eHgt/MA8y5ZF0aHfZ1aTPcIkDWxza9AaEk4GcpIX+ZYfZ04RcaNahO+527KR7J44/mD3efYfM23O2C1N44ByWA==
+
+react-native-collapsible@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-1.6.0.tgz#ca261ffff16914f872059bb0972e3a78c4b37f9c"
+  integrity sha512-beZjdgbT9Y/Pg591Xy5XkKG20HffJiVad4n9bfcUF/f783A+tvOVXnqvbS58Lkaym93mi4jcDPMuW9Vc1t6rqg==
 
 react-native-dialog@^9.1.0:
   version "9.1.0"

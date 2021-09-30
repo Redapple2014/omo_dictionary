@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar,LogBox } from 'react-native';
+import { View, Text, StatusBar, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createAppContainer } from 'react-navigation';
 
@@ -13,7 +13,9 @@ import { store } from './store/store';
 
 const AppContainer = createAppContainer(MainAppNavigator);
 
-LogBox.ignoreLogs(['Animated: ...','Reanimated 2']);
+LogBox.ignoreLogs(['Animated: ...', 'Reanimated 2']);
+
+
 
 
 const App = () => {
@@ -23,9 +25,9 @@ const App = () => {
   React.useEffect(() => {
     setTimeout(() => {
       setHideSplash(true);
-    }, 2000); 
+    }, 2000);
   }, []);
-  
+
   React.useEffect(() => {
     hideSplash && SplashScreen.hide();
   }, [hideSplash]);

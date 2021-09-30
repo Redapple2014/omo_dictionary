@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Switch, StatusBar } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationActions } from 'react-navigation';
@@ -10,7 +10,7 @@ import {
 } from '../../../navigations/Routes';
 import PouchDB from 'pouchdb-react-native';
 import { NavigationEvents } from 'react-navigation';
-
+import { getStatusBarHeight } from "react-native-status-bar-height";
 var userDB = new PouchDB('usersettings');
 
 const DictionaryScreen = (props) => {
@@ -71,7 +71,7 @@ const DictionaryScreen = (props) => {
         );
     }
 
-//update settings data
+    //update settings data
     function updateUserSettings() {
         userDB.get(userSettings.id).then(function (doc) {
             let newObject = {
@@ -103,16 +103,19 @@ const DictionaryScreen = (props) => {
     return (
         <View style={{ flex: 1 }}>
             <NavigationEvents onDidFocus={(payload) => fetchUserSettings()} />
-            <View style={styles.container}>
-                <View style={{ width: 100, left: -4, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
-                        </View>
-                    </TouchableOpacity>
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+                <View style={styles.container}>
+                    <View style={{ width: 100, left: -4, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
+                                <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={[styles.textStyle, { marginLeft: 0 }]}>{`${t("DictionaryText")}`}</Text>
                 </View>
-                <Text style={[styles.textStyle, { marginLeft: 0 }]}>{`${t("DictionaryText")}`}</Text>
             </View>
             <View style={{ flex: 1, paddingHorizontal: 12 }}>
                 <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>

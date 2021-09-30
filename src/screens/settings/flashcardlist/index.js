@@ -10,7 +10,7 @@ import MIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FA5Icons from 'react-native-vector-icons/FontAwesome5';
 import { useTranslation } from 'react-i18next';
-
+import { getStatusBarHeight } from "react-native-status-bar-height";
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -29,9 +29,9 @@ const FlashcardListRenderScreen = (props) => {
     const [userSettings, setUserSettings] = useState(userSetting)
     const [myData, setData] = useState([]);
     const [editMode, setEditMode] = useState(false)
-    const [categoryName,setCategoryName] = useState(userSetting?.doc?.Flashcard?.defaultFlashcard)
+    const [categoryName, setCategoryName] = useState(userSetting?.doc?.Flashcard?.defaultFlashcard)
     const [updated, setUpdated] = useState(false)
-    
+
     //fetch all flashcard data
     async function fetchData() {
         localDB.allDocs(
@@ -87,12 +87,12 @@ const FlashcardListRenderScreen = (props) => {
             }
 
             console.log('new obj doc : ', JSON.stringify(newObject))
-            userDB.put(newObject).then((response)=>{
-                console.log('responcen : ',response)
+            userDB.put(newObject).then((response) => {
+                console.log('responcen : ', response)
                 //goBack()
                 // fetchUserSettings()
-            }).catch((e)=>
-            console.log('ERORor: ',e))
+            }).catch((e) =>
+                console.log('ERORor: ', e))
         }).catch(function (err) {
             console.log('EROR : ', err);
         });
@@ -105,7 +105,7 @@ const FlashcardListRenderScreen = (props) => {
         // console.log(categoryName ,  item.doc.name)
         return (
             <TouchableOpacity
-                onPress={() => {setUpdated(true);setCategoryName(item.doc.name)}}
+                onPress={() => { setUpdated(true); setCategoryName(item.doc.name) }}
                 onLongPress={move}
                 onPressOut={moveEnd}>
                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -131,7 +131,7 @@ const FlashcardListRenderScreen = (props) => {
                         </View>
                     </View>
                     {
-                          categoryName ==  item.doc.name && <View style={{position:'absolute',right:16}}><AntDesign name='checkcircle' color={Constants.appColors.PRIMARY_COLOR} size={20}/></View>
+                        categoryName == item.doc.name && <View style={{ position: 'absolute', right: 16 }}><AntDesign name='checkcircle' color={Constants.appColors.PRIMARY_COLOR} size={20} /></View>
                     }
                 </View>
             </TouchableOpacity>
@@ -142,17 +142,20 @@ const FlashcardListRenderScreen = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <NavigationEvents onDidFocus={(payload) => {fetchData();fetchUserSettings()}} />
-            <View style={styles.container}>
-                <View style={{ width: 100, left: 0, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='chevron-back-sharp' size={20} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 16, color: 'white' }}>{`${t("FlashcardsText")}`}</Text>
-                        </View>
-                    </TouchableOpacity>
+            <NavigationEvents onDidFocus={(payload) => { fetchData(); fetchUserSettings() }} />
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+                <View style={styles.container}>
+                    <View style={{ width: 100, left: 0, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name='chevron-back-sharp' size={20} color={Constants.appColors.WHITE} />
+                                <Text style={{ fontSize: 16, color: 'white' }}>{`${t("FlashcardsText")}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.textStyle}>{`${t("DefaultCategoryText")}`}</Text>
                 </View>
-                <Text style={styles.textStyle}>{`${t("DefaultCategoryText")}`}</Text>
             </View>
             <View style={{ flex: 1 }}>
                 {
@@ -164,8 +167,8 @@ const FlashcardListRenderScreen = (props) => {
                         : (<>
                             <Text style={{ textAlign: 'center', marginTop: 24 }}>{`${t("NoCategoryFoundText")}`}</Text>
                             <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_FLASHCARD_SCREEN_PATH)}>
-                                <Text style={{ textAlign: 'center', marginTop: 12,fontWeight:'bold' }}>{`${t("CreateNewText")}`}</Text>
-                                </TouchableOpacity></>
+                                <Text style={{ textAlign: 'center', marginTop: 12, fontWeight: 'bold' }}>{`${t("CreateNewText")}`}</Text>
+                            </TouchableOpacity></>
                         )
                 }
             </View>

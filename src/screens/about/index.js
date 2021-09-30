@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet,StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Constants from '../../utills/Constants';
 import { NavigationActions } from 'react-navigation';
@@ -14,6 +14,8 @@ const AboutScreen = (props) => {
     const { t, i18n } = useTranslation();
     return (
         <View style={{ flex: 1 }}>
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
             <View style={styles.container}>
                 <View style={{ width: 100, left: -4, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
@@ -24,6 +26,7 @@ const AboutScreen = (props) => {
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.textStyle}>{`${t("AboutText")}`}</Text>
+            </View>
             </View>
             <View style={{ alignItems:'center',paddingVertical:12,backgroundColor:"white" }}>
                 <Image style={{ width: 200, height: 100, resizeMode: 'contain' }} source={require('../../assets/logo/full_logo_red.png')} />

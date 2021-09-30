@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Switch,Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Switch, Alert, StatusBar } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import CustomButton from "../../../components/button/CustomButton";
 import PouchDB from 'pouchdb-react-native';
@@ -10,7 +10,9 @@ import Sizes from '../../../utills/Size';
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {
     NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH
-} from '../../../navigations/Routes'
+} from '../../../navigations/Routes';
+import { getStatusBarHeight } from "react-native-status-bar-height";
+
 PouchDB.plugin(require('pouchdb-find'));
 var userDB = new PouchDB('usersettings');
 
@@ -70,12 +72,12 @@ const FlashcardListsScreen = (props) => {
             `${t("ResetSpacedRepetitionScoresTitleText")}`,
             `${t("ResetSpacedRepetitionScoresDecsText")}`,
             [
-              {
-                text: `${t("CancelText")}`,
-                onPress: () => console.log("Cancel Pressed"),
-                style: "cancel"
-              },
-              { text: `${t("ResetScoresText")}`, onPress: () => console.log("Reset scores Pressed") }
+                {
+                    text: `${t("CancelText")}`,
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: `${t("ResetScoresText")}`, onPress: () => console.log("Reset scores Pressed") }
             ])
     }
 
@@ -111,16 +113,19 @@ const FlashcardListsScreen = (props) => {
     return (
         <View style={{ flex: 1 }}>
             <NavigationEvents onDidFocus={(payload) => { fetchUserSettings() }} />
-            <View style={styles.container}>
-                <View style={{ width: 100, left: -4, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
-                            <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
-                        </View>
-                    </TouchableOpacity>
+            <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
+                <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
+                <View style={styles.container}>
+                    <View style={{ width: 100, left: -4, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => props.navigation.dispatch(NavigationActions.back())}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
+                                <Text style={{ fontSize: 18, color: 'white' }}>{`${t("ProfileText")}`}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.textStyle}>{`${t("FlashcardsText")}`}</Text>
                 </View>
-                <Text style={styles.textStyle}>{`${t("FlashcardsText")}`}</Text>
             </View>
             <View style={{ flex: 1, paddingHorizontal: 12 }}>
                 <View style={{ marginTop: 8, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
@@ -171,14 +176,14 @@ const FlashcardListsScreen = (props) => {
                         <Text style={{ marginRight: 8, fontWeight: 'bold', color: Constants.appColors.BLACK, fontSize: 16 }}>17:00</Text>
                     </View>
                 </View>
-                <View style={{ justifyContent: 'center', alignItems: 'center',marginTop:12 }}>
-                <CustomButton
-                    style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
-                    title={`${t("ResetToDefaultSettingsText")}`}
-                    titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
-                    onPress={handelResetButton}
-                />
-            </View>
+                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
+                    <CustomButton
+                        style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                        title={`${t("ResetToDefaultSettingsText")}`}
+                        titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
+                        onPress={handelResetButton}
+                    />
+                </View>
             </View>
         </View>
     )

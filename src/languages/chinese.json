@@ -119,6 +119,7 @@
         "ResetScoresText":"重置分数",
         "ChangePasswordText":"更改密码",
         "PasswordChangeMismatchText":"新密码和确认密码必须相同",
-        "OldPasswordMismatch":"旧密码不正确"
+        "OldPasswordMismatch":"旧密码不正确",
+        "idiomsText":"成语和谚语"
     }
 }

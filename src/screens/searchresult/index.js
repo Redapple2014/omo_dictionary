@@ -183,7 +183,9 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, []);
 
-  console.log(wordInfo);
+
+
+  // console.log(wordInfo);
 
   //detect if the user put is korean
   const isKoreanWord = (text) => {
@@ -377,6 +379,7 @@ const SearchResultScreen = (props) => {
       return;
     }
   };
+
 
   return (
     <View style={{flex: 1}}>

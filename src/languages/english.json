@@ -123,6 +123,7 @@
         "PasswordChangeMismatchText":"New Password & Confirm Password must be same",
         "OldPasswordMismatch":"Old Password is incorrect",
         "VersionText":"Version",
-        "idiomsText":"Idioms & Proverbs"
+        "IdiomsText":"Idioms & Proverbs",
+        "SentenceText":"Sentence"
     }
 }

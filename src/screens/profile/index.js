@@ -288,7 +288,7 @@ const ProfileScreen = (props) => {
                     <Text style={styles.textStyle}>{`${t("ProfileText")}`}</Text>
                 </View>
             </View>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 {
                     userData && auth().currentUser?.uid ? <View style={{ paddingHorizontal: 12, justifyContent: 'space-between', flexDirection: 'row' }}>
 

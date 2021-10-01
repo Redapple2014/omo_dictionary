@@ -78,7 +78,7 @@ const ViewFlashcardDataScreen = (props) => {
             {data?.definition  && <>
                 <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}><Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text></View>
                 <View style={{ backgroundColor: 'white' }}>
-                    <ScrollView contentInsetAdjustmentBehavior="automatic" style={{  paddingHorizontal: 12 }}>{data?.definition && renderData()}</ScrollView>
+                    <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false} style={{  paddingHorizontal: 12 }}>{data?.definition && renderData()}</ScrollView>
                 </View>
             </>
             }

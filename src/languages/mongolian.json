@@ -120,6 +120,7 @@
         "ChangePasswordText":"Нууц үгээ өөрчлөх",
         "PasswordChangeMismatchText":"Шинэ нууц үг, нууц үгээ баталгаажуулах нь ижил байх ёстой",
         "OldPasswordMismatch":"Хуучин нууц үг буруу байна",
-        "idiomsText":"хэлц үг, зүйр цэцэн үгс"
+        "IdiomsText":"хэлц үг, зүйр цэцэн үгс",
+        "SentenceText":"өгүүлбэр"
     }
 }

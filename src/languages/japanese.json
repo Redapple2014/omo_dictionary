@@ -120,6 +120,7 @@
         "ChangePasswordText":"パスワードを変更する",
         "PasswordChangeMismatchText":"新しいパスワードとパスワードの確認は同じである必要があります",
         "OldPasswordMismatch":"古いパスワードが正しくありません",
-        "idiomsText":"イディオムとことわざ"
+        "IdiomsText":"イディオムとことわざ",
+        "SentenceText":"文"
     }
 }

@@ -120,6 +120,7 @@
         "ChangePasswordText":"更改密码",
         "PasswordChangeMismatchText":"新密码和确认密码必须相同",
         "OldPasswordMismatch":"旧密码不正确",
-        "idiomsText":"成语和谚语"
+        "IdiomsText":"成语和谚语",
+        "SentenceText":"句子"
     }
 }

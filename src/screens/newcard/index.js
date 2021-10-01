@@ -160,7 +160,7 @@ const NewCardScreen = (props) => {
                     onPressrightIcon={handleDone}
                 />
             </View>
-            <ScrollView style={{ flex: 1 }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 <CustomInput
                     label={`${t("KoreanHandwordText")}`}
                     ref={koreanHandWordRef}
@@ -211,7 +211,7 @@ const NewCardScreen = (props) => {
                             keyboardShouldPersistTaps={'handled'}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity onPress={() => { setPopOverlayActive(!isPoPOverlayActive); setPartOfSpeech(item) }}>
-                                    <View style={{ borderWidth: .5 }}>
+                                    <View style={{ borderWidth: .5,marginVertical:4,borderRadius:10,borderColor:Constants.appColors.LIGHTGRAY }}>
                                         <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{item}</Text>
                                     </View>
                                 </TouchableOpacity>
@@ -288,12 +288,11 @@ const NewCardScreen = (props) => {
                         </View>
                         {
                             myData.length == 0 ? <View><Text style={{ textAlign: 'center' }}>{`${t("NodataFoundText")}`}</Text></View> :
-
                                 <FlatList
                                     keyboardShouldPersistTaps={'handled'}
                                     renderItem={({ item, index }) => (
                                         <TouchableOpacity onPress={() => { setCategory(item?.doc?.name); setCatDetails(item); setOverlayActive(!isOverlayActive); console.log(item) }}>
-                                            <View style={{ borderWidth: .5 }}>
+                                            <View style={{ borderWidth: .5,marginVertical:4,borderRadius:10,borderColor:Constants.appColors.LIGHTGRAY }}>
                                                 <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{item?.doc?.name}</Text>
                                             </View>
                                         </TouchableOpacity>

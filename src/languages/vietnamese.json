@@ -120,6 +120,7 @@
         "ChangePasswordText":"Đổi mật khẩu",
         "PasswordChangeMismatchText":"Mật khẩu mới & Mật khẩu xác nhận phải giống nhau",
         "OldPasswordMismatch":"Mật khẩu cũ không đúng",
-        "idiomsText":"thành ngữ & tục ngữ"
+        "IdiomsText":"thành ngữ & tục ngữ",
+        "SentenceText":"câu"
     }
 }

@@ -344,7 +344,7 @@ const SearchResultScreen = (props) => {
             <View
               style={{flexDirection: 'row', marginVertical: 4}}
               key={`${i + data?.en_lm}`}>
-              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
+              <Text style={{fontSize: 17}}>{data.sense_id}. </Text>
               <View>
                 <Text
                   style={{

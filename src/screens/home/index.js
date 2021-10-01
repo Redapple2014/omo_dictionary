@@ -352,21 +352,20 @@ const HomeScreen = (props) => {
               )}
               <Text style={styles.TextStyle}>
                 <Text style={{fontWeight: 'bold'}}>{item?.lemma}</Text>
-                {item?.origin && `(${item?.origin})`}
+                <Text>{item?.origin && `(${item?.origin})`}</Text>
               </Text>
               <Text
                 style={[
                   styles.TextStyle,
                   {color: Constants.appColors.GRAY, fontSize: 12},
                 ]}>
-                {item?.partofspeech}
+                {item?.partofspeech ?? item?.partOfSpeech}
               </Text>
 
               <View
                 key={index}
                 style={{
                   marginHorizontal: 4,
-
                   paddingLeft: 12,
                 }}>
                 {item?.sense && renderEquivalent(item?.sense)}
@@ -391,6 +390,7 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
+              console.log(item)
               storeRecentlyViewedData(item);
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
                 searchResultData: item,
@@ -435,7 +435,7 @@ const HomeScreen = (props) => {
                   styles.TextStyle,
                   {color: Constants.appColors.GRAY, fontSize: 12},
                 ]}>
-                {item?.partofspeech}
+                {item?.partofspeech ?? item?.partOfSpeech}
               </Text>
 
               <View

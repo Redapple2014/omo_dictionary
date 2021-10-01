@@ -211,8 +211,8 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, []);
 
-  console.log('len : ', wordInfo?.idiomInfo);
-
+//  ÷÷÷ console.log('len : ', wordInfo?.idiomInfo);
+// ÷
   //detect if the user put is korean
   const isKoreanWord = (text) => {
     const re = /[\u3131-\uD79D]/g;
@@ -522,8 +522,8 @@ const SearchResultScreen = (props) => {
             </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={{paddingRight: 6}}>{data?.partofspeech}</Text>
-            <Text>{data?.partofspeech}</Text>
+            <Text style={{paddingRight: 6}}>{data?.partofspeech ?? data?.partOfSpeech}</Text>
+            {/* <Text>{data?.partofspeech}</Text> */}
           </View>
         </View>
         {data?.wordForm?.writtenForm && data?.wordForm?.relatedForm && (

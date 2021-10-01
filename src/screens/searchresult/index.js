@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,12 @@ import {
   NativeModules,
   NativeEventEmitter,
 } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import SearchHeader from '../../components/searchHeader';
-import { NavigationActions } from 'react-navigation';
-import { useTranslation } from 'react-i18next';
+import {NavigationActions} from 'react-navigation';
+import {useTranslation} from 'react-i18next';
 import Tts from 'react-native-tts';
 import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
@@ -135,17 +135,17 @@ import ReadMore from '@fawazahmed/react-native-read-more';
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
-  const { t, i18n } = useTranslation();
+  const {t, i18n} = useTranslation();
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
-  ee.addListener('tts-start', () => { });
-  ee.addListener('tts-finish', () => { });
-  ee.addListener('tts-cancel', () => { });
+  ee.addListener('tts-start', () => {});
+  ee.addListener('tts-finish', () => {});
+  ee.addListener('tts-cancel', () => {});
 
   const [wordInfo, setWordInfo] = useState([]);
 
   const getWordInfo = () => {
-    const query = `SELECT words_info.id, words_info.lemma, words_info.partofspeech, words_info.origin, words_info.vocabularyLevel, words_info.lexicalUnit,
-            words_info.homonym_number, words_info.annotation,
+    const query = `SELECT words_info.id, words_info.lemma AS lemma, words_info.partofspeech AS partofspeech, words_info.origin AS origin, words_info.vocabularyLevel as vocabularyLevel, words_info.lexicalUnit as lexicalUnit,
+                    words_info.homonym_number AS homonym_number, words_info.annotation AS annotation,
 
               (select
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', words_en.sense_id, 'en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
@@ -238,9 +238,7 @@ const SearchResultScreen = (props) => {
     } catch (e) {
       console.log(e);
     }
-  }
-
-
+  };
 
   const renderIdiomDefData = (idiomsSense, id) => {
     try {
@@ -249,19 +247,22 @@ const SearchResultScreen = (props) => {
         if (data.sense_id === id) {
           return (
             <View key={`${i + data?.en_lm}`}>
-              <View style={{ flexDirection: 'column' }}>
+              <View style={{flexDirection: 'column'}}>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
-                    color: Constants.appColors.PRIMARY_COLOR
+                    color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data?.en_lm}`}</Text>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              <View style={{ marginLeft: 12 }}>
-                {renderIdiomsSenseSample(wordInfo.idiomsSenseSample, data.sense_id)}
+              <View style={{marginLeft: 12}}>
+                {renderIdiomsSenseSample(
+                  wordInfo.idiomsSenseSample,
+                  data.sense_id,
+                )}
               </View>
             </View>
           );
@@ -272,9 +273,7 @@ const SearchResultScreen = (props) => {
     } catch (e) {
       console.log(e);
     }
-
-  }
-
+  };
 
   // const renderSyntacticPattern = (idiomsDef,id) => {
   //   try{
@@ -291,20 +290,22 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{ flexDirection: 'row', marginTop: 12 }} key={`${i + data?.lemma}`}>
-              <Text style={{ fontSize: 17 }}>{i + 1}.</Text>
+            <View
+              style={{flexDirection: 'row', marginTop: 12}}
+              key={`${i + data?.lemma}`}>
+              <Text style={{fontSize: 17}}>{i + 1}.</Text>
               <View>
                 <Text
                   style={{
                     color: Constants.appColors.BLACK,
                     fontSize: 17,
-                    marginBottom: 8
+                    marginBottom: 8,
                   }}>{`${data?.lemma}; `}</Text>
                 {renderIdiomDefData(wordInfo.idiomsSense, data.sense_id)}
               </View>
             </View>
-            {data?.syntacticPattern &&
-              <View style={{ flexDirection: 'row' }}>
+            {data?.syntacticPattern && (
+              <View style={{flexDirection: 'row'}}>
                 <View
                   style={{
                     backgroundColor: '#3D9CE0',
@@ -312,7 +313,7 @@ const SearchResultScreen = (props) => {
                     width: '30%',
                     alignItems: 'center',
                     borderRadius: 10,
-                    marginRight: 8
+                    marginRight: 8,
                   }}>
                   <Text
                     style={{
@@ -322,9 +323,9 @@ const SearchResultScreen = (props) => {
                       marginHorizontal: 8,
                     }}>{`${t('SentenceText')}`}</Text>
                 </View>
-                <Text style={{ marginTop: 3, }}>{data?.syntacticPattern}</Text>
+                <Text style={{marginTop: 3}}>{data?.syntacticPattern}</Text>
               </View>
-            }
+            )}
           </>
         );
       });
@@ -340,8 +341,10 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{ flexDirection: 'row',marginVertical:4 }} key={`${i + data?.en_lm}`}>
-              <Text style={{ fontSize: 17 }}>{data.sense_id}.</Text>
+            <View
+              style={{flexDirection: 'row', marginVertical: 4}}
+              key={`${i + data?.en_lm}`}>
+              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
               <View>
                 <Text
                   style={{
@@ -367,21 +370,18 @@ const SearchResultScreen = (props) => {
         if (data.sense_id === sense_id) {
           return (
             <View key={`${i + data?.en_def}`}>
-              <View style={{ flexDirection: 'column',marginVertical:4 }}>
+              <View style={{flexDirection: 'column', marginVertical: 4}}>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
 
-              <View style={{ marginLeft: 12 ,marginTop:6}}>
+              <View style={{marginLeft: 12, marginTop: 6}}>
                 {/* <ReadMore
                   seeMoreStyle={{ color: Constants.appColors.PRIMARY_COLOR }}
                   seeLessStyle={{ color: Constants.appColors.PRIMARY_COLOR }}> */}
-                  {renderSenseExampleData(
-                    wordInfo.senseExample,
-                    data?.sense_id,
-                  )}
+                {renderSenseExampleData(wordInfo.senseExample, data?.sense_id)}
                 {/* </ReadMore> */}
               </View>
             </View>
@@ -403,9 +403,26 @@ const SearchResultScreen = (props) => {
         if (data.sense_id === sense_id) {
           return (
             // <View style={{ height: 40 }} key={`${i + data?.example_1}`}>
-              <View key={`${i + data?.example_1}`} style={{marginVertical:8,paddingLeft:8,borderLeftWidth:2,borderLeftColor:Constants.appColors.PRIMARY_COLOR}}>
-              {data?.example_1 && <Text style={{color:Constants.appColors.PRIMARY_COLOR}}>{`${data.example_1}`}</Text>}
-              {data?.example_2 && <Text style={{color:Constants.appColors.PRIMARY_COLOR}}>{`${data.example_2}`}</Text>}
+            <View
+              key={`${i + data?.example_1}`}
+              style={{
+                marginVertical: 8,
+                paddingLeft: 8,
+                borderLeftWidth: 2,
+                borderLeftColor: Constants.appColors.PRIMARY_COLOR,
+              }}>
+              {data?.example_1 && (
+                <Text
+                  style={{
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data.example_1}`}</Text>
+              )}
+              {data?.example_2 && (
+                <Text
+                  style={{
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data.example_2}`}</Text>
+              )}
             </View>
           );
         } else {
@@ -428,7 +445,9 @@ const SearchResultScreen = (props) => {
           if (data?.lemma != 'undefined' || data?.lemma != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i + data?.p} style={{ marginHorizontal: 2, marginTop: 3, }}>
+                <View
+                  key={i + data?.p}
+                  style={{marginHorizontal: 2, marginTop: 3}}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -441,7 +460,7 @@ const SearchResultScreen = (props) => {
           if (data?.type != 'undefined' || data?.type != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i} style={{ marginHorizontal: 2 }}>
+                <View key={i} style={{marginHorizontal: 2}}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -459,7 +478,7 @@ const SearchResultScreen = (props) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -487,29 +506,29 @@ const SearchResultScreen = (props) => {
           }}
         />
       </View>
-      <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
+      <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
         <View
           style={{
             borderBottomWidth: 0.5,
             borderBottomColor: Constants.appColors.LIGHTGRAY,
             paddingVertical: 10,
           }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
               {data?.lemma}
             </Text>
-            <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
+            <Text style={{fontSize: 24, color: 'black', fontWeight: '500'}}>
               {data?.origin && `(${data?.origin})`}
             </Text>
           </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ paddingRight: 6 }}>{data?.partofspeech}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{paddingRight: 6}}>{data?.partofspeech}</Text>
             <Text>{data?.partofspeech}</Text>
           </View>
         </View>
         {data?.wordForm?.writtenForm && data?.wordForm?.relatedForm && (
-          <View style={{ marginVertical: 10 }}>
-            <View style={{ flexDirection: 'row' }}>
+          <View style={{marginVertical: 10}}>
+            <View style={{flexDirection: 'row'}}>
               <View
                 style={{
                   backgroundColor: '#3D9CE0',
@@ -528,7 +547,7 @@ const SearchResultScreen = (props) => {
               </View>
               {data?.wordForm && renderData(1, data?.wordForm)}
             </View>
-            <View style={{ marginTop: 8, flexDirection: 'row' }}>
+            <View style={{marginTop: 8, flexDirection: 'row'}}>
               <View
                 style={{
                   backgroundColor: '#5ED65C',
@@ -558,9 +577,9 @@ const SearchResultScreen = (props) => {
               paddingHorizontal: 16,
               paddingVertical: 4,
             }}>
-            <Text style={{ fontSize: 16 }}>{`${t('DefinitionText')}`}</Text>
+            <Text style={{fontSize: 16}}>{`${t('DefinitionText')}`}</Text>
           </View>
-          <View style={{ backgroundColor: 'white', flex: 1 }}>
+          <View style={{backgroundColor: 'white', flex: 1}}>
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               showsVerticalScrollIndicator={false}
@@ -569,8 +588,7 @@ const SearchResultScreen = (props) => {
                 paddingHorizontal: 12,
               }}>
               <View>{renderSeneData(wordInfo?.sense)}</View>
-              {
-                wordInfo?.idiomsDef.length > 2 &&
+              {wordInfo?.idiomsDef.length > 2 && (
                 <View>
                   <View
                     style={{
@@ -578,11 +596,14 @@ const SearchResultScreen = (props) => {
                       paddingHorizontal: 0,
                       paddingVertical: 4,
                     }}>
-                    <Text style={{ fontSize: 16 }}>{`${t('IdiomsText')}`}</Text>
+                    <Text style={{fontSize: 16}}>{`${t('IdiomsText')}`}</Text>
                   </View>
-                  <View>{wordInfo?.idiomsDef && renderIdiomsData(wordInfo?.idiomsDef)}</View>
+                  <View>
+                    {wordInfo?.idiomsDef &&
+                      renderIdiomsData(wordInfo?.idiomsDef)}
+                  </View>
                 </View>
-              }
+              )}
             </ScrollView>
           </View>
         </>

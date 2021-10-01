@@ -13,6 +13,7 @@ function errorCB(err) {
 }
 
 // open database successfully
+// 가
 function openCB() {
   console.log('Database OPENED');
 }

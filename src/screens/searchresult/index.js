@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,12 @@ import {
   NativeModules,
   NativeEventEmitter,
 } from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import SearchHeader from '../../components/searchHeader';
-import {NavigationActions} from 'react-navigation';
-import {useTranslation} from 'react-i18next';
+import { NavigationActions } from 'react-navigation';
+import { useTranslation } from 'react-i18next';
 import Tts from 'react-native-tts';
 import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
@@ -135,11 +135,11 @@ import ReadMore from '@fawazahmed/react-native-read-more';
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
-  ee.addListener('tts-start', () => {});
-  ee.addListener('tts-finish', () => {});
-  ee.addListener('tts-cancel', () => {});
+  ee.addListener('tts-start', () => { });
+  ee.addListener('tts-finish', () => { });
+  ee.addListener('tts-cancel', () => { });
 
   const [wordInfo, setWordInfo] = useState([]);
 
@@ -149,51 +149,60 @@ const SearchResultScreen = (props) => {
 
               (select
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', words_en.sense_id, 'en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
-              FROM words_en where words_en.id = ${data?.id})
+              FROM words_en where words_en.id = 16391
+              )
               AS sense,
 
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('type', rel_form.type, 'writtenForm', rel_form.writtenForm)))
-              FROM rel_form where rel_form.rel_form_id = ${data?.id})
+              FROM rel_form where rel_form.rel_form_id = 16391
+              )
               AS relatedForm,
             
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', words_ex.sense_id, 'type', words_ex.type, 'example_1', words_ex.example_1,  'example_2', words_ex.example_2 ))) 
-              FROM words_ex where words_ex.id = ${data?.id})
+              FROM words_ex where words_ex.id = 16391
+              )
               AS senseExample,
             
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', words_app.lemma, 'writtenForm', words_app.writtenForm)))
-              FROM words_app where words_app.id = ${data?.id})
+              FROM words_app where words_app.id = 16391
+              )
               AS wordForm,
 
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', idioms_info.lemma, 'lexicalUnit', idioms_info.lexicalUnit)))
-              FROM idioms_info where idioms_info.id = ${data?.id})
+              FROM idioms_info where idioms_info.id = 16391
+              )
               AS idiomInfo,
                 
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', idioms_en.sense_id,'lemma', idioms_en.lemma,  'en_lm', idioms_en.en_lm, 'en_def', idioms_en.en_def)))
-              FROM idioms_en where idioms_en.id = ${data?.id})
+              FROM idioms_en where idioms_en.id = 16391
+              )
               AS idiomsSense,
                 
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', idioms_ex.sense_id,  'example_1', idioms_ex.example_1, 'lemma', idioms_ex.lemma,  'example_2', idioms_ex.example_2, 'example_id', idioms_ex.example_id, 'type', idioms_ex.type )))
-              FROM idioms_ex where idioms_ex.id = ${data?.id})
+              FROM idioms_ex where idioms_ex.id = 16391
+              )
               AS idiomsSenseSample,
                 
               (select 
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', idioms_def.sense_id,'lemma', idioms_def.lemma,  'syntacticPattern', idioms_def.syntacticPattern)))
-              FROM idioms_def where idioms_def.id = ${data?.id})
+              FROM idioms_def where idioms_def.id = 16391
+              )
               AS idiomsDef
           
             FROM words_info 
-            WHERE  words_info.id =${data?.id} `;
+            WHERE  words_info.id =16391 `;
 
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         let row = results.rows.item(0);
         setWordInfo(row);
+        // console.log(row)
       });
     });
   };
@@ -202,7 +211,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, []);
 
-  // console.log(wordInfo);
+  console.log('len : ',wordInfo?.idiomInfo);
 
   //detect if the user put is korean
   const isKoreanWord = (text) => {
@@ -211,15 +220,17 @@ const SearchResultScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  //render Sense leema from sense
-  const renderIdiomsData = (sense) => {
+  //render idioms from sense
+  const renderIdiomsData = (idioms) => {
+    // console.log(idioms)
     try {
-      let arr = JSON.parse(sense);
+      let arr = JSON.parse(idioms);
+      console.log(arr)
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{flexDirection: 'row'}} key={`${i + data?.en_lm}`}>
-              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
+            <View style={{ flexDirection: 'row' }} key={`${i + data?.en_lm}`}>
+              <Text style={{ fontSize: 17 }}>{data.sense_id}.</Text>
               <View>
                 <Text
                   style={{
@@ -244,8 +255,8 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         return (
           <>
-            <View style={{flexDirection: 'row'}} key={`${i + data?.en_lm}`}>
-              <Text style={{fontSize: 17}}>{data.sense_id}.</Text>
+            <View style={{ flexDirection: 'row' }} key={`${i + data?.en_lm}`}>
+              <Text style={{ fontSize: 17 }}>{data.sense_id}.</Text>
               <View>
                 <Text
                   style={{
@@ -271,17 +282,17 @@ const SearchResultScreen = (props) => {
         if (data.sense_id === sense_id) {
           return (
             <View key={`${i + data?.en_def}`}>
-              <View style={{flexDirection: 'column'}}>
+              <View style={{ flexDirection: 'column' }}>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
 
-              <View style={{marginLeft: 12}}>
+              <View style={{ marginLeft: 12 }}>
                 <ReadMore
-                  seeMoreStyle={{color: Constants.appColors.PRIMARY_COLOR}}
-                  seeLessStyle={{color: Constants.appColors.PRIMARY_COLOR}}>
+                  seeMoreStyle={{ color: Constants.appColors.PRIMARY_COLOR }}
+                  seeLessStyle={{ color: Constants.appColors.PRIMARY_COLOR }}>
                   {renderSenseExampleData(
                     wordInfo.senseExample,
                     data?.sense_id,
@@ -306,7 +317,7 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (data.sense_id === sense_id) {
           return (
-            <View style={{height: 40}} key={`${i + data?.example_1}`}>
+            <View style={{ height: 40 }} key={`${i + data?.example_1}`}>
               {data?.example_1 && <Text>{`${data.example_1} ,`}</Text>}
               {data?.example_2 && <Text>{`${data.example_2} ,`}</Text>}
             </View>
@@ -331,7 +342,7 @@ const SearchResultScreen = (props) => {
           if (data?.lemma != 'undefined' || data?.lemma != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i + data?.p} style={{marginHorizontal: 2}}>
+                <View key={i + data?.p} style={{ marginHorizontal: 2 }}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -344,7 +355,7 @@ const SearchResultScreen = (props) => {
           if (data?.type != 'undefined' || data?.type != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i} style={{marginHorizontal: 2}}>
+                <View key={i} style={{ marginHorizontal: 2 }}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -362,7 +373,7 @@ const SearchResultScreen = (props) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -390,29 +401,29 @@ const SearchResultScreen = (props) => {
           }}
         />
       </View>
-      <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
+      <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
         <View
           style={{
             borderBottomWidth: 0.5,
             borderBottomColor: Constants.appColors.LIGHTGRAY,
             paddingVertical: 10,
           }}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
               {data?.lemma}
             </Text>
-            <Text style={{fontSize: 24, color: 'black', fontWeight: '500'}}>
+            <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
               {data?.origin && `(${data?.origin})`}
             </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{paddingRight: 6}}>{data?.partofspeech}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ paddingRight: 6 }}>{data?.partofspeech}</Text>
             <Text>{data?.partofspeech}</Text>
           </View>
         </View>
         {data?.wordForm?.writtenForm && data?.wordForm?.relatedForm && (
-          <View style={{marginVertical: 10}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{ marginVertical: 10 }}>
+            <View style={{ flexDirection: 'row' }}>
               <View
                 style={{
                   backgroundColor: '#3D9CE0',
@@ -431,7 +442,7 @@ const SearchResultScreen = (props) => {
               </View>
               {data?.wordForm && renderData(1, data?.wordForm)}
             </View>
-            <View style={{marginTop: 8, flexDirection: 'row'}}>
+            <View style={{ marginTop: 8, flexDirection: 'row' }}>
               <View
                 style={{
                   backgroundColor: '#5ED65C',
@@ -461,52 +472,36 @@ const SearchResultScreen = (props) => {
               paddingHorizontal: 16,
               paddingVertical: 4,
             }}>
-            <Text style={{fontSize: 16}}>{`${t('DefinitionText')}`}</Text>
+            <Text style={{ fontSize: 16 }}>{`${t('DefinitionText')}`}</Text>
           </View>
-          <View style={{backgroundColor: 'white'}}>
+          <View style={{ backgroundColor: 'white' }}>
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               style={{
                 marginBottom: Sizes.WINDOW_WIDTH * 0.45,
                 paddingHorizontal: 12,
               }}>
-              <View>{renderSeneData(wordInfo.sense)}</View>
-              <View
-                style={{
-                  backgroundColor: '#f8f8f8',
-                  paddingHorizontal: 0,
-                  paddingVertical: 4,
+              <View>{renderSeneData(wordInfo?.sense)}</View>
+              {
+                wordInfo?.idiomInfo.length != 0 &&
+                <View style={{
+                  borderWidth: 2
                 }}>
-                <Text style={{fontSize: 16}}>{`${t('IdiomsText')}`}</Text>
-                <View>{renderIdiomsData(wordInfo.idiomInfo)}</View>
-              </View>
+                  <View
+                    style={{
+                      backgroundColor: '#f8f8f8',
+                      paddingHorizontal: 0,
+                      paddingVertical: 4,
+                    }}>
+                    <Text style={{ fontSize: 16 }}>{`${t('idiomsText')}`}</Text>
+                  </View>
+                  <View>{wordInfo?.idiomInfo && renderIdiomsData(wordInfo?.idiomInfo)}</View>
+                </View>
+              }
             </ScrollView>
           </View>
         </>
       )}
-
-      {/* {wordInfo?.sense && wordInfo?.senseExample && (
-        <>
-          <View
-            style={{
-              backgroundColor: '#f8f8f8',
-              paddingHorizontal: 16,
-              paddingVertical: 4,
-            }}>
-            <Text style={{fontSize: 16}}>{`${t('idiomsText')}`}</Text>
-          </View>
-          <View style={{backgroundColor: 'white'}}>
-            <ScrollView
-              contentInsetAdjustmentBehavior="automatic"
-              style={{
-                marginBottom: Sizes.WINDOW_WIDTH * 0.45,
-                paddingHorizontal: 12,
-              }}>
-              <View>{renderSeneData(wordInfo.sense)}</View>
-            </ScrollView>
-          </View>
-        </>
-      )} */}
     </View>
   );
 };

@@ -156,7 +156,7 @@ const HomeScreen = (props) => {
   };
 
   function getWordData(text) {
-    console.log('data searching')
+    
     setSearchdata([]);
     const query =
       `SELECT w.id, w.lemma, w.partofspeech, w.origin,
@@ -177,9 +177,9 @@ const HomeScreen = (props) => {
       LEFT JOIN words_en ON words_en.id = w.id
       GROUP BY w.id  
       ORDER by w.lemma`
-
+      //console.log(query)
     db.transaction((tx) => {
-      // console.log(sql)
+      //console.log(tx)
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);

@@ -324,7 +324,6 @@ const NewCardScreen = (props) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-
                 <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("ExamplesText")}`}</Text></View>
                 {examplesInputs.map((input, key) => (
                     <View style={styles.inputContainer} key={key}>

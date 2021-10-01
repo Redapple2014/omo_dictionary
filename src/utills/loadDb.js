@@ -1,12 +1,12 @@
-import { openDatabase } from 'react-native-sqlite-storage';
+import {openDatabase} from 'react-native-sqlite-storage';
 
 // open database
 const db = openDatabase(
-  { name: 'omo_test.db', createFromLocation: 1 },
+  {name: 'omo_en_v1.db', createFromLocation: 1},
   openCB,
   errorCB,
 );
- 
+
 // open database failed
 function errorCB(err) {
   console.log('SQL Error: ' + err);

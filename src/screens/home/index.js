@@ -159,7 +159,27 @@ const HomeScreen = (props) => {
   function getWordData(text) {
     console.log('data searching');
     setSearchdata([]);
-    const query = `SELECT w.id, w.lemma, w.partofspeech, w.origin,
+    const engQuery = `SELECT words_info.id, words_info.lemma, words_info.partofspeech, words_info.origin,
+          JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
+          AS sense,
+
+          JSON_GROUP_ARRAY(DISTINCT(json_object('lemma', words_app.lemma, 'writtenForm', words_app.writtenForm))) 
+          AS wordForm
+      FROM (
+      SELECT *
+        FROM en_search
+        WHERE en_lm MATCH "${text}" 
+        COLLATE NOCASE
+        GROUP BY id
+      ) as w 
+
+      INNER JOIN words_info ON words_info.id = w.id
+      LEFT JOIN words_app ON words_app.id = w.id
+      LEFT JOIN words_en ON words_en.id = w.id
+      GROUP BY words_info.id  
+      ORDER by words_info.lemma;`;
+
+    const koreanQuery = `SELECT w.id, w.lemma, w.partofspeech, w.origin,
           JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
           AS sense,
 
@@ -178,8 +198,16 @@ const HomeScreen = (props) => {
       GROUP BY w.id  
       ORDER by w.lemma`;
 
+    let query = '';
+    if (isKoreanWord(text)) {
+      console.log('korean word====');
+      query = koreanQuery;
+    } else {
+      console.log('english word====');
+      query = engQuery;
+    }
+
     db.transaction((tx) => {
-      //console.log(tx)
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);
@@ -192,8 +220,6 @@ const HomeScreen = (props) => {
       });
     });
   }
-
-  // console.log(searchedData);
 
   useEffect(() => {
     loadAllJsons();

@@ -112,6 +112,7 @@ const ProfileScreen = (props) => {
             .once("value", function(snapshot) {
               if (snapshot.val() != null) {
                     const userData = snapshot.val()
+                    console.log(userData)
                     setUserdata(userData)
               }
             });
@@ -268,7 +269,7 @@ const ProfileScreen = (props) => {
         } catch (e) {
             console.log(e)
         }
-    })
+    },[])
 
     return (
         <View style={{ flex: 1, }}>
@@ -288,7 +289,7 @@ const ProfileScreen = (props) => {
                     <Text style={styles.textStyle}>{`${t("ProfileText")}`}</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
                 {
                     userData && auth().currentUser?.uid ? <View style={{ paddingHorizontal: 12, justifyContent: 'space-between', flexDirection: 'row' }}>
 

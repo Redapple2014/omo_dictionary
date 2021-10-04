@@ -29,8 +29,6 @@
         "CancelText":"Cancel",
         "EmailInvalidText":"Email Id is invalid",
         "PasswordInvalidText":"Password is invalid",
-        "NoRecentDataAvalibleText":"No recent search data available",
-        "NodataFoundText":"No data found",
         "SearchText":"Search",
         "LoginText":"Login",
         "SigninAlertText":"Enter details to sign in",
@@ -124,6 +122,8 @@
         "OldPasswordMismatch":"Old Password is incorrect",
         "VersionText":"Version",
         "IdiomsText":"Idioms & Proverbs",
-        "SentenceText":"Sentence"
+        "SentenceText":"Sentence",
+        "NoRecentDataAvalibleText":"No recent searches",
+        "NodataFoundText":"No results were found"
     }
 }

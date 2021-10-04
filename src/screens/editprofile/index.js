@@ -97,13 +97,13 @@ const EditProfileScreen = (props) => {
                         setName(userData.displayName);
                         setUsername(userData.username)
                         setEmail(userData.email)
-                        setPassword(base64.decode(userData.password))
+                        //setPassword(base64.decode(userData.password))
 
                     }
                 });
         }
     }
-
+console.log(userData)
 //update user data (displayname, userName)
     const updateUserData = () => {
         var uid = auth()?.currentUser.uid;

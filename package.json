@@ -25,6 +25,7 @@
     "axios": "^0.21.1",
     "base-64": "^1.0.0",
     "events": "^3.3.0",
+    "hangul-romanization": "^1.0.0",
     "i18next": "^20.4.0",
     "pouchdb-adapter-cordova-sqlite": "^2.0.8",
     "pouchdb-adapter-http": "^7.2.2",

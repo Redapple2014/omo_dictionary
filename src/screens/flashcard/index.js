@@ -193,7 +193,7 @@ const FlashcardScreen = (props) => {
                             fontSize: 18,
                             paddingLeft: editMode ? 48 : 28
                         }}>{item?.doc?.name}</Text>
-                        <Text style={{paddingLeft: editMode ? 48 : 28}}>{item?.doc?.cards.length} {`${t("CardsText")}`}</Text>
+                        <Text style={{paddingLeft: editMode ? 48 : 28,paddingVertical:4}}>{item?.doc?.cards.length} {`${t("CardsText")}`}</Text>
                         </View>  
                     </View>
                     <View style={{ marginLeft: 12 }}>

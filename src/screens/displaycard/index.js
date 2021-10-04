@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet,Image } from 'react-native';
 import Constants from '../../utills/Constants';
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -276,16 +276,15 @@ const DisplayCardScreen = (props) => {
                                             Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
                                         }
                                     }}>
-                                        <AntDesign name="sound" size={19} color={Constants.appColors.BLACK} />
-
+                                        <Image source={require('../../assets/logo/audio-black-icon.png')} style={{width:18,height:18}}/>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={styles.TextStyle}>
+                                <Text style={[styles.TextStyle,{marginVertical:4}]}>
                                     {item?.koreanHeadWord}
                                     {item?.englishHeadWord && `(${item?.englishHeadWord})`}
                                 </Text>
-                                <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12 }]}>{item?.speech}</Text>
-                                {/* 
+                                <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12,paddingVertical:4 }]}>{item?.speech}</Text>
+{/*                                 
                                 <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
                                     {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
                                 </View> */}

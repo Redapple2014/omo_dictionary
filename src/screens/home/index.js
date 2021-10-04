@@ -28,6 +28,7 @@ import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 import { defaultSettings } from '../../utills/userdata';
 import db from '../../utills/loadDb';
+import { NavigationState } from 'react-navigation';
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
@@ -51,6 +52,7 @@ const HomeScreen = (props) => {
   // const [ids, setIDS] = useState([]);
   // const [newData, setNewData] = useState([]);
 
+
   async function loadFile(index) {
     if (index == 1) {
       userDB
@@ -66,19 +68,32 @@ const HomeScreen = (props) => {
   }
 
 
-  function handleBackButtonClick (){
-    backHandlerClickCount += 1;
-    if ((backHandlerClickCount < 2)) {
-        isKeyboardVisible ?  Keyboard.dismiss : setSearchText('')
-        Toast.show("Press back twice to close app")
-    } else {
-        BackHandler.exitApp();
+  const getActiveRouteState = (route) => {
+    if (!route.routes || route.routes.length === 0 || route.index >= route.routes.length) {
+      return route;
     }
-    setTimeout(() => {
+    const childActiveRoute = route.routes[route.index];
+    return getActiveRouteState(childActiveRoute);
+  }
+
+  function handleBackButtonClick() {
+    console.log('data : ', props.navigation.state.routeName)
+    // let name = getActiveRouteState(props.navigation.state)
+    if (props.navigation.state.routeName == "HomeScreen") {
+      backHandlerClickCount += 1;
+      if ((backHandlerClickCount < 2)) {
+        isKeyboardVisible ? Keyboard.dismiss : setSearchText('')
+        Toast.show("Press back twice to close app")
+      } else {
+        BackHandler.exitApp();
+      }
+      setTimeout(() => {
         backHandlerClickCount = 0;
-    }, 500);
-    
-    return true;
+      }, 500);
+
+      return true;
+    }
+    return false
   }
 
 
@@ -254,6 +269,7 @@ const HomeScreen = (props) => {
           let row = results.rows.item(i);
           temp.push(row);
         }
+        // console.log(temp)
         setSearchdata(temp);
       });
     });
@@ -380,14 +396,17 @@ const HomeScreen = (props) => {
                         Toast.show('No Audio File Found', Toast.SHORT);
                       }
                     }}>
-                    <AntDesign
-                      name="sound"
-                      size={19}
-                      color={Constants.appColors.BLACK}
-                    />
+                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18 }} />
                   </TouchableOpacity>
                 </View>
               )}
+              {item?.vocabularyLevel &&
+                <View
+                  style={{ position: 'absolute', zIndex: 3, right: 20, top: 36, flexDirection: 'row' }}>{
+                    [...Array(item?.vocabularyLevel)].map((e, i) => <Image key={i} style={{ width: 10, height: 10 }} source={require('../../assets/logo/star.png')} />)
+                  }
+                </View>
+              }
               <Text style={styles.TextStyle}>
                 <Text style={{ fontWeight: 'bold' }}>{item?.lemma}</Text>
                 <Text>{item?.origin && `(${item?.origin})`}</Text>
@@ -439,11 +458,11 @@ const HomeScreen = (props) => {
             <View
               style={{
                 backgroundColor: 'white',
-                borderBottomWidth: 0.5,
-                borderColor: Constants.appColors.LIGHTGRAY,
-                paddingVertical: 4,
+                paddingVertical: 8,
                 paddingHorizontal: 8,
-                borderWidth: 0.5,
+                marginVertical: 6,
+                marginHorizontal: 8,
+                borderRadius: 10,
                 height: 'auto',
                 justifyContent: 'center',
               }}>
@@ -466,18 +485,27 @@ const HomeScreen = (props) => {
                   />
                 </TouchableOpacity>
               </View>
+              {item?.vocabularyLevel &&
+                <View
+                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 36, flexDirection: 'row' }}>{
+                    [...Array(item?.vocabularyLevel)].map((e, i) => <Image key={i} style={{ width: 10, height: 10 }} source={require('../../assets/logo/star.png')} />)
+                  }
+                </View>
+              }
               <Text style={styles.TextStyle}>
                 {item?.lemma}
                 {item?.origin && `(${item?.origin})`}
               </Text>
-              <Text
-                style={[
-                  styles.TextStyle,
-                  { color: Constants.appColors.GRAY, fontSize: 12 },
-                ]}>
-                {item?.partofspeech ?? item?.partOfSpeech}
-              </Text>
-
+              {item?.partofspeech || item?.partOfSpeech ?
+                (<Text
+                  style={[
+                    styles.TextStyle,
+                    { color: Constants.appColors.GRAY, fontSize: 12 },
+                  ]}>
+                  {item?.partofspeech ?? item?.partOfSpeech}
+                </Text>)
+                : <></>
+              }
               <View
                 key={index}
                 style={{
@@ -578,6 +606,7 @@ const HomeScreen = (props) => {
                 position: 'absolute',
                 alignSelf: 'center',
               }}
+              showCancel={true}
               inputStyle={{ color: 'black' }}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}

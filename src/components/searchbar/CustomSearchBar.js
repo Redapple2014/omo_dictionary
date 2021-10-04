@@ -14,7 +14,7 @@ const CustomSearchBar = React.forwardRef((props, ref) => (
     inputStyle={[styles.inputStyle, props.inputStyle]}
     placeholder={props.placeholder}
     onSubmitEditing={props.onSubmitEditing}
-    showCancel
+    showCancel={props.showCancel}
     onClear={props.onClear}
   />
 ));

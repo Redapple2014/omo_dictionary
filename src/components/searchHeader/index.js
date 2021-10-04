@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform
+  Image
 } from 'react-native';
 import Constants from '../../utills/Constants';
 import Icon from "react-native-vector-icons/Ionicons";
@@ -30,12 +30,13 @@ const SearchHeader = (props) => {
       }
       <Text style={styles.textStyle}>{props.title}</Text>
       { props.show && 
-        <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: .4 }}>
+        <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: .35 }}>
           <TouchableOpacity onPress={() => console.log('plus press')}>
             <EIcons name="plus" size={23} color={Constants.appColors.WHITE} />
+            {/* <Image source={require('../../assets/logo/white-bookmark.png')} style={styles.imageStyle}/> */}
           </TouchableOpacity>
           <TouchableOpacity onPress={props.onSoundPlay}>
-            <AntDesign name="sound" size={23} color={Constants.appColors.WHITE} />
+            <Image source={require('../../assets/logo/audio-white-icon.png')} style={styles.imageStyle}/>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => console.log('up press')}>
             <EIcons name="arrow-bold-up" size={23} color={Constants.appColors.WHITE} />
@@ -67,6 +68,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  imageStyle:{
+    width:24,
+    height:24
   },
   addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
 })

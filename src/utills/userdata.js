@@ -76,13 +76,100 @@ export const defaultSettings = {
         showKoreanDefinition: false,
         showExamples: false,
         displayRomaja: false,
-        displayTranslatorExample:false
+        displayTranslatorExample: false
     },
-    Flashcard:{
-        defaultFlashcard:'',
-        defaultCategoryTapHoldSection:false,
-        promptForCategory:false,
-        dailyPracticeReminder:true,
-        reminderTime:'17:00'
+    Flashcard: {
+        defaultFlashcard: '',
+        defaultCategoryTapHoldSection: false,
+        promptForCategory: false,
+        dailyPracticeReminder: true,
+        reminderTime: '17:00'
     }
+}
+
+
+
+export const lexicalUnit = {
+    "구": "phrase",
+    "단어": "word",
+    "문법‧표현": "grammar / expression",
+    "관용구": "idiom",
+    "속담": "proverb"
+}
+
+export const partofspeech = {
+    "감탄사": "interjection",
+    "관형사": "determiner",
+    "대명사": "pronoun",
+    "동사": "verb",
+    "명사": "noun",
+    "보조 동사": "auxiliary verb",
+    "보조 형용사": "auxiliary adjective",
+    "부사": "adverb",
+    "수사": "numeral",
+    "어미": "word ending",
+    "의존 명사": "dependent noun",
+    "접사": "affix",
+    "조사": "preposition",
+    "품사 없음": "none",
+    "형용사": "adjective"
+}
+
+export const vocabularyLevel = {
+    "고급": 1,
+    "없음": 0,
+    "중급": 2,
+    "초급": 3
+}
+
+export const wordForm = {
+    "발음": "pronunciation",
+    "활용": "application"
+}
+
+
+export const formRepresentation = {
+    "준말": "abbreviation"
+}
+
+export const relatedForm = {
+    "파생어": "derivative",
+    "가봐라": "go on"
+}
+
+export const senseRelation = {
+    "유의어": "synonym",
+    "반대말": "antonym",
+    "참고어": "reference",
+    "큰말": "heavy",
+    "본말": "original",
+    "작은말": "light",
+    "낮춤말": "familiar",
+    "준말": "abbreviation",
+    "높임말": "honorific",
+    "센말": "emphatic",
+    "여린말": "soft"
+}
+
+
+export const senseExample = {
+    "구": "word",
+    "문장": "sentence",
+    "대화": "conversation",
+    "1": "none"
+}
+
+
+export const language = {
+    "몽골어": "Mongolian",
+    "베트남어": "Vietnamese",
+    "타이어": "Thai",
+    "인도네시아어": "Indonesian",
+    "러시아어": "Russian",
+    "영어": "English",
+    "일본어": "Japanese",
+    "프랑스어": "French",
+    "스페인어": "Spanish",
+    "아랍어": "Arabic",
+    "중국어": "Chinese",
 }

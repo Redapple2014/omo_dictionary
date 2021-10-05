@@ -11,14 +11,13 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   StyleSheet,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
@@ -28,7 +27,8 @@ import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
 import { defaultSettings } from '../../utills/userdata';
 import db from '../../utills/loadDb';
-import { NavigationState } from 'react-navigation';
+import { partofspeech } from '../../utills/userdata';
+
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
@@ -49,6 +49,7 @@ const HomeScreen = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
+  const [ids, setIds] = useState([])
   // const [ids, setIDS] = useState([]);
   // const [newData, setNewData] = useState([]);
 
@@ -82,7 +83,7 @@ const HomeScreen = (props) => {
     if (props.navigation.state.routeName == "HomeScreen") {
       backHandlerClickCount += 1;
       if ((backHandlerClickCount < 2)) {
-        isKeyboardVisible ? Keyboard.dismiss : setSearchText('')
+        isKeyboardVisible ? Keyboard.dismiss() : setSearchText('')
         Toast.show("Press back twice to close app")
       } else {
         BackHandler.exitApp();
@@ -209,6 +210,11 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
+  const onCancel = () => {
+    setSearchText('')
+    Keyboard.dismiss()
+  }
+
   function getWordData(text) {
     console.log('data searching');
     setSearchdata([]);
@@ -265,11 +271,13 @@ const HomeScreen = (props) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);
         var temp = [];
+        var ids = []
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
           temp.push(row);
+          ids.push(row.id)
         }
-        // console.log(temp)
+        setIds(ids)
         setSearchdata(temp);
       });
     });
@@ -346,7 +354,7 @@ const HomeScreen = (props) => {
               <Text
                 style={{
                   fontSize: 16,
-                  color: Constants.appColors.GRAY,
+                  color: Constants.appColors.BLACK,
                   paddingLeft: 12,
                 }}>
                 {item}
@@ -384,7 +392,7 @@ const HomeScreen = (props) => {
                 marginHorizontal: 8,
                 borderRadius: 10
               }}>
-              {item?.lemma && (
+              {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <View
                   style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
                   <TouchableOpacity
@@ -396,7 +404,7 @@ const HomeScreen = (props) => {
                         Toast.show('No Audio File Found', Toast.SHORT);
                       }
                     }}>
-                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18 }} />
+                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18, resizeMode: 'contain' }} />
                   </TouchableOpacity>
                 </View>
               )}
@@ -411,14 +419,16 @@ const HomeScreen = (props) => {
                 <Text style={{ fontWeight: 'bold' }}>{item?.lemma}</Text>
                 <Text>{item?.origin && `(${item?.origin})`}</Text>
               </Text>
-              <Text
-                style={[
-                  styles.TextStyle,
-                  { color: Constants.appColors.GRAY, fontSize: 12 },
-                ]}>
-                {item?.partofspeech ?? item?.partOfSpeech}
-              </Text>
-
+              {
+                (item?.partofspeech ?? item?.partOfSpeech) &&
+                <Text
+                  style={[
+                    styles.TextStyle,
+                    { color: Constants.appColors.GRAY, fontSize: 12 },
+                  ]}>
+                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ?? (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
+                </Text>
+              }
               <View
                 key={index}
                 style={{
@@ -441,9 +451,10 @@ const HomeScreen = (props) => {
   // render recently searched data list
   function renderSearchData() {
     return (
-
       <FlatList
         keyboardShouldPersistTaps={'handled'}
+        // keyboardShouldPersistTaps={'never'}
+        onScrollEndDrag={() => Keyboard.dismiss()}
         keyboardDismissMode={'on-drag'}
         renderItem={({ item, index }) => (
           <TouchableOpacity
@@ -452,7 +463,7 @@ const HomeScreen = (props) => {
               console.log(item)
               storeRecentlyViewedData(item);
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                searchResultData: item,
+                searchResultData: item, ids
               });
             }}>
             <View
@@ -466,25 +477,23 @@ const HomeScreen = (props) => {
                 height: 'auto',
                 justifyContent: 'center',
               }}>
-              <View
-                style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    try {
-                      Tts.setDefaultLanguage('ko-KR');
-                      Tts.speak(item?.lemma);
-                    } catch (e) {
-                      //console.log(`cannot play the sound file`, e)
-                      Toast.show('No Audio File Found', Toast.SHORT);
-                    }
-                  }}>
-                  <AntDesign
-                    name="sound"
-                    size={19}
-                    color={Constants.appColors.BLACK}
-                  />
-                </TouchableOpacity>
-              </View>
+              {(item?.partofspeech ?? item?.partOfSpeech) &&
+                <View
+                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      try {
+                        Tts.setDefaultLanguage('ko-KR');
+                        Tts.speak(item?.lemma);
+                      } catch (e) {
+                        //console.log(`cannot play the sound file`, e)
+                        Toast.show('No Audio File Found', Toast.SHORT);
+                      }
+                    }}>
+                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18, resizeMode: 'contain' }} />
+                  </TouchableOpacity>
+                </View>
+              }
               {item?.vocabularyLevel &&
                 <View
                   style={{ position: 'absolute', zIndex: 3, right: 16, top: 36, flexDirection: 'row' }}>{
@@ -502,7 +511,7 @@ const HomeScreen = (props) => {
                     styles.TextStyle,
                     { color: Constants.appColors.GRAY, fontSize: 12 },
                   ]}>
-                  {item?.partofspeech ?? item?.partOfSpeech}
+                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ?? (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
                 </Text>)
                 : <></>
               }
@@ -521,7 +530,6 @@ const HomeScreen = (props) => {
         keyExtractor={(item, index) => index.toString()}
         data={searchedData}
         numColumns={1}
-        // style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
       />
 
@@ -573,38 +581,45 @@ const HomeScreen = (props) => {
               </View>
             )}
           </View>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={false}>
+          <View style={{
+            zIndex: 1,
+            backgroundColor: Constants.appColors.TRANSPARENT,
+            marginTop: Sizes.statusBarHeight,
+            top: isKeyboardVisible
+              ? Sizes.WINDOW_HEIGHT * 0.01
+              : searchText.length > 0
+                ? Sizes.WINDOW_HEIGHT * 0.01
+                : Sizes.WINDOW_HEIGHT * 0.29,
+            position: 'absolute',
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignSelf: 'center',
+            width: '95%'
+          }}>
+            {/* <TouchableWithoutFeedback
+              onPress={Keyboard.dismiss}
+              accessible={false}> */}
             <CustomSearchBar
               ref={inputEl}
               lightTheme
               value={searchText}
               onChangeText={(value) => {
                 setSearchText(value);
-                //searchResult(value);
                 getWordData(value);
               }}
               inputContainerStyle={{
-                backgroundColor: Constants.appColors.WHITE,
+                backgroundColor: Constants.appColors.TRANSPARENT,
                 height: 48,
-                borderRadius: 10,
-                top: -1,
+                borderRadius: 14,
+                top: -3
               }}
               containerStyle={{
+                borderRadius: 20,
+                height: 45,
+                flex: isKeyboardVisible ? .99 : 1,
                 padding: 0,
                 margin: 0,
-                borderRadius: 18,
-                height: 45,
-                width: '95%',
-                marginTop: Sizes.statusBarHeight,
-                top: isKeyboardVisible
-                  ? Sizes.WINDOW_HEIGHT * 0.01
-                  : searchText.length > 0
-                    ? Sizes.WINDOW_HEIGHT * 0.01
-                    : Sizes.WINDOW_HEIGHT * 0.29,
-                position: 'absolute',
-                alignSelf: 'center',
+                backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
               showCancel={true}
               inputStyle={{ color: 'black' }}
@@ -612,8 +627,12 @@ const HomeScreen = (props) => {
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}
             />
-          </TouchableWithoutFeedback>
 
+            {/* </TouchableWithoutFeedback> */}
+            {
+              isKeyboardVisible && <TouchableOpacity onPress={onCancel}><View style={{ alignItems: 'center', paddingHorizontal: 12 }}><Text style={{ color: Constants.appColors.WHITE, fontWeight: '600', fontSize: 15 }}>{`${t("CancelText")}`}</Text></View></TouchableOpacity>
+            }
+          </View>
           {isKeyboardVisible &&
             searchText.length == 0 &&
             reacientlySearchedData.length != 0 ? (
@@ -688,7 +707,9 @@ const HomeScreen = (props) => {
             <></>
           )}
           {searchText.length > 0 && searchedData.length != 0 ? (
-            <>{renderSearchData()}</>
+            <>
+              {renderSearchData()}
+            </>
           ) : searchedData.length == 0 && searchText.length > 0 ? (
             <View
               style={{

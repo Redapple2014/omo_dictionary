@@ -14,6 +14,7 @@
   "dependencies": {
     "@craftzdog/pouchdb-core-react-native": "^7.2.2",
     "@craftzdog/pouchdb-replication-react-native": "^7.0.0",
+    "@eliav2/react-native-collapsible-view": "^1.4.0",
     "@fawazahmed/react-native-read-more": "^2.1.1",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/checkbox": "^0.5.8",
@@ -54,6 +55,7 @@
     "react-native-sqlite-2": "^3.4.1",
     "react-native-sqlite-storage": "^5.0.0",
     "react-native-status-bar-height": "^2.6.0",
+    "react-native-svg": "^12.1.1",
     "react-native-tts": "^4.1.0",
     "react-native-vector-icons": "^8.1.0",
     "react-navigation": "^4.4.4",

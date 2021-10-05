@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, TransitionPresets } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Constants, { forgetPasswordText } from '../utills/Constants';
 
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import AntIcons from 'react-native-vector-icons/AntDesign';
+// import TransitionConfiguration from './TransitionConfiguration';
 
 import HomeScreen from '../screens/home';
 import FlashcardScreen from '../screens/flashcard';
@@ -71,6 +72,7 @@ const shouldTabBarVisible = (navigation) => {
   }
 };
 
+
 const HomeStack = createStackNavigator(
   {
     [NAVIGATION_HOME_SCREEN_PATH]: HomeScreen,
@@ -83,6 +85,9 @@ const HomeStack = createStackNavigator(
         fontSize: 18,
         alignSelf: 'center'
       }
+    },
+    defaultNavigationOptions: {
+      ...TransitionPresets.SlideFromRightIOS,
     }
   },
   {

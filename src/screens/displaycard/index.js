@@ -276,7 +276,7 @@ const DisplayCardScreen = (props) => {
                                             Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
                                         }
                                     }}>
-                                        <Image source={require('../../assets/logo/audio-black-icon.png')} style={{width:18,height:18}}/>
+                                        <Image source={require('../../assets/logo/audio-black-icon.png')} style={{width:18,height:18,resizeMode:'contain'}}/>
                                     </TouchableOpacity>
                                 </View>
                                 <Text style={[styles.TextStyle,{marginVertical:4}]}>

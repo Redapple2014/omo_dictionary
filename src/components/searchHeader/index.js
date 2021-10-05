@@ -38,11 +38,11 @@ const SearchHeader = (props) => {
           <TouchableOpacity onPress={props.onSoundPlay}>
             <Image source={require('../../assets/logo/audio-white-icon.png')} style={styles.imageStyle}/>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('up press')}>
-            <EIcons name="arrow-bold-up" size={23} color={Constants.appColors.WHITE} />
+          <TouchableOpacity onPress={props.upArrowFunction} disabled={props.upArrowStyle ? false:true}>
+            <EIcons name="arrow-bold-up" size={23} color={props.upArrowStyle ? Constants.appColors.WHITE : `rgba(245, 243, 244, 0.3)`} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('down press')}>
-            <EIcons name="arrow-bold-down" size={23} color={Constants.appColors.WHITE} />
+          <TouchableOpacity onPress={props.downArrowFunction} disabled={props.downArrowStyle ? false:true}>
+            <EIcons name="arrow-bold-down" size={23} color={props.downArrowStyle ? Constants.appColors.WHITE : `rgba(245, 243, 244, 0.3)`} />
           </TouchableOpacity>
         </View>
       }

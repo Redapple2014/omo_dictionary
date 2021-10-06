@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,34 +8,34 @@ import {
   ScrollView,
   NativeModules,
   NativeEventEmitter,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import SearchHeader from '../../components/searchHeader';
-import { NavigationActions } from 'react-navigation';
-import { useTranslation } from 'react-i18next';
+import {NavigationActions} from 'react-navigation';
+import {useTranslation} from 'react-i18next';
 import Tts from 'react-native-tts';
 import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
-import { partofspeech, vocabularyLevel } from '../../utills/userdata';
-import CollapsibleView from "@eliav2/react-native-collapsible-view";
+import {partofspeech, vocabularyLevel} from '../../utills/userdata';
+import CollapsibleView from '@eliav2/react-native-collapsible-view';
 import PouchDB from 'pouchdb-react-native';
-import { NavigationEvents } from 'react-navigation';
+import {NavigationEvents} from 'react-navigation';
 var hangulRomanization = require('hangul-romanization');
 var userDB = new PouchDB('usersettings');
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
-  const ids = props.navigation.getParam('ids', [])
-  const { t, i18n } = useTranslation();
+  const ids = props.navigation.getParam('ids', []);
+  const {t, i18n} = useTranslation();
   const [initData, setInitdata] = useState(data.id);
-  const [userSettings, setUserSettings] = useState({})
+  const [userSettings, setUserSettings] = useState({});
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
-  ee.addListener('tts-start', () => { });
-  ee.addListener('tts-finish', () => { });
-  ee.addListener('tts-cancel', () => { });
+  ee.addListener('tts-start', () => {});
+  ee.addListener('tts-finish', () => {});
+  ee.addListener('tts-cancel', () => {});
 
   const [wordInfo, setWordInfo] = useState([]);
 
@@ -89,7 +89,13 @@ const SearchResultScreen = (props) => {
               JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', idioms_def.sense_id,'lemma', idioms_def.lemma,  'syntacticPattern', idioms_def.syntacticPattern)))
               FROM idioms_def where idioms_def.id = ${initData}
               )
-              AS idiomsDef
+              AS idiomsDef,
+
+              (select 
+              JSON_GROUP_ARRAY(DISTINCT(json_object('sense_id', trans_en.sense_id,'lemma', trans_en.lemma, 'example_id', trans_en.example_id,  'example_1', trans_en.trans_en_1, 'example_2', trans_en.trans_en_2 )))
+              FROM trans_en where trans_en.id = ${initData}
+              )
+              AS translate
           
             FROM words_info 
             WHERE  words_info.id = ${initData} `;
@@ -106,29 +112,25 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-
-
-//load user setting 
-async function fetchUserSettings() {
-  userDB.allDocs(
+  //load user setting
+  async function fetchUserSettings() {
+    userDB.allDocs(
       {
-          include_docs: true,
-          attachments: true,
+        include_docs: true,
+        attachments: true,
       },
       function (err, response) {
-          if (err) {
-              setUserSettings({})
-              return console.log(err);
-          }
+        if (err) {
+          setUserSettings({});
+          return console.log(err);
+        }
 
-          // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
-          setUserSettings(response.rows[0].doc.Dictionary)
-          return response.rows[0];
-
+        // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
+        setUserSettings(response.rows[0].doc.Dictionary);
+        return response.rows[0];
       },
-  );
-}
-
+    );
+  }
 
   //detect if the user put is korean
   const isKoreanWord = (text) => {
@@ -145,9 +147,17 @@ async function fetchUserSettings() {
           return (
             <View key={`${i + data?.example_1}`}>
               {data?.example_1 && <Text>{`${data.example_1}`}</Text>}
-              {userSettings.displayTranslatorExample &&  <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_1)}</Text>}
+              {userSettings.displayTranslatorExample && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_1)}
+                </Text>
+              )}
               {data?.example_2 && <Text>{`${data.example_2}`}</Text>}
-              {userSettings.displayTranslatorExample &&  <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_2)}</Text>}
+              {userSettings.displayTranslatorExample && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_2)}
+                </Text>
+              )}
             </View>
           );
         } else {
@@ -166,7 +176,7 @@ async function fetchUserSettings() {
         if (data.sense_id === id) {
           return (
             <View key={`${i + data?.en_lm}`}>
-              <View style={{ flexDirection: 'column' }}>
+              <View style={{flexDirection: 'column'}}>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
@@ -177,7 +187,16 @@ async function fetchUserSettings() {
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              <View style={{ marginLeft: 0,height:'auto', paddingVertical: 4, borderBottomWidth: .4, marginBottom: 4, paddingBottom: 8, borderBottomColor: Constants.appColors.LIGHTGRAY }}>
+              <View
+                style={{
+                  marginLeft: 0,
+                  height: 'auto',
+                  paddingVertical: 4,
+                  borderBottomWidth: 0.4,
+                  marginBottom: 4,
+                  paddingBottom: 8,
+                  borderBottomColor: Constants.appColors.LIGHTGRAY,
+                }}>
                 {renderIdiomsSenseSample(
                   wordInfo.idiomsSenseSample,
                   data.sense_id,
@@ -194,7 +213,6 @@ async function fetchUserSettings() {
     }
   };
 
-
   //render idioms from sense
   const renderIdiomsData = (idioms) => {
     try {
@@ -203,9 +221,9 @@ async function fetchUserSettings() {
         return (
           <>
             <View
-              style={{ flexDirection: 'row', marginVertical: 4, marginLeft: 6 }}
+              style={{flexDirection: 'row', marginVertical: 4, marginLeft: 6}}
               key={`${i + data?.lemma}`}>
-              <Text style={{ fontSize: 17 }}>{i + 1} </Text>
+              <Text style={{fontSize: 17}}>{i + 1} </Text>
               <View>
                 <Text
                   style={{
@@ -217,7 +235,7 @@ async function fetchUserSettings() {
               </View>
             </View>
             {data?.syntacticPattern && (
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <View
                   style={{
                     backgroundColor: '#3D9CE0',
@@ -235,7 +253,7 @@ async function fetchUserSettings() {
                       marginHorizontal: 8,
                     }}>{`${t('SentenceText')}`}</Text>
                 </View>
-                <Text style={{ marginTop: 3 }}>{data?.syntacticPattern}</Text>
+                <Text style={{marginTop: 3}}>{data?.syntacticPattern}</Text>
               </View>
             )}
           </>
@@ -254,15 +272,22 @@ async function fetchUserSettings() {
         return (
           <>
             <View
-              style={{ flexDirection: 'row', marginVertical: 4, marginLeft: 6, alignItems: 'center' }}
+              style={{
+                flexDirection: 'row',
+                marginVertical: 4,
+                marginLeft: 6,
+                alignItems: 'center',
+              }}
               key={`${i + data?.en_lm}`}>
-              <Text style={{ fontSize: 17, textAlign: 'center' }}>{data.sense_id} </Text>
+              <Text style={{fontSize: 17, textAlign: 'center'}}>
+                {data.sense_id}{' '}
+              </Text>
               {/* <View> */}
               <Text
                 style={{
                   color: Constants.appColors.PRIMARY_COLOR,
                   fontSize: 17,
-                  textAlign: 'center'
+                  textAlign: 'center',
                 }}>{`${data?.en_lm}; `}</Text>
               {/* </View> */}
             </View>
@@ -283,15 +308,33 @@ async function fetchUserSettings() {
         if (data.sense_id === sense_id) {
           return (
             <View key={`${i + data?.en_def}`}>
-              <View style={{ flexDirection: 'column', marginVertical: 4, marginLeft: 22, }}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  marginVertical: 4,
+                  marginLeft: 22,
+                }}>
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              <View style={{ marginTop: 2, paddingBottom: 8, borderBottomWidth: .4, borderBottomColor: Constants.appColors.LIGHTGRAY }}>
-                <CollapsibleView initExpanded={data?.sense_id == 1 ? true : false} touchableWrapperStyle={{ alignItems: 'flex-start' }} noArrow title=' '>
-                  {renderSenseExampleData(wordInfo.senseExample, data?.sense_id)}
+              <View
+                style={{
+                  marginTop: 2,
+                  paddingBottom: 8,
+                  borderBottomWidth: 0.4,
+                  borderBottomColor: Constants.appColors.LIGHTGRAY,
+                }}>
+                <CollapsibleView
+                  initExpanded={data?.sense_id == 1 ? true : false}
+                  touchableWrapperStyle={{alignItems: 'flex-start'}}
+                  noArrow
+                  title=" ">
+                  {renderSenseExampleData(
+                    wordInfo.senseExample,
+                    data?.sense_id,
+                  )}
                 </CollapsibleView>
               </View>
             </View>
@@ -321,7 +364,6 @@ async function fetchUserSettings() {
                 borderLeftWidth: 2,
                 borderLeftColor: Constants.appColors.PRIMARY_COLOR,
                 marginLeft: 8,
-
               }}>
               {data?.example_1 && (
                 <Text
@@ -329,14 +371,22 @@ async function fetchUserSettings() {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_1}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_1 && <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_1)}</Text>}
+              {userSettings.displayTranslatorExample && data?.example_1 && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_1)}
+                </Text>
+              )}
               {data?.example_2 && (
                 <Text
                   style={{
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_2}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_2 && <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_2)}</Text>}
+              {userSettings.displayTranslatorExample && data?.example_2 && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_2)}
+                </Text>
+              )}
             </View>
           );
         } else {
@@ -361,7 +411,7 @@ async function fetchUserSettings() {
               data?.writtenForm && (
                 <View
                   key={i + data?.p}
-                  style={{ marginHorizontal: 2, marginTop: 3 }}>
+                  style={{marginHorizontal: 2, marginTop: 3}}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -370,11 +420,11 @@ async function fetchUserSettings() {
             return <Text></Text>;
           }
         } else if (type == 2) {
-         // console.log('Derivatives : ', arr);
+          // console.log('Derivatives : ', arr);
           if (data?.type != 'undefined' || data?.type != 'null') {
             return (
               data?.writtenForm && (
-                <View key={i} style={{ marginHorizontal: 2 }}>
+                <View key={i} style={{marginHorizontal: 2}}>
                   <Text>{`${data && data?.writtenForm},`}</Text>
                 </View>
               )
@@ -392,7 +442,7 @@ async function fetchUserSettings() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <NavigationEvents onDidFocus={(payload) => fetchUserSettings()} />
       <View
         style={{
@@ -410,8 +460,16 @@ async function fetchUserSettings() {
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
-          upArrowStyle={((ids.indexOf(initData) && ids) || ids.length == 0) == 0 ? false : true}
-          downArrowStyle={(ids.indexOf(initData) || ids.length == 0) == ids.length - 1 ? false : true}
+          upArrowStyle={
+            ((ids.indexOf(initData) && ids) || ids.length == 0) == 0
+              ? false
+              : true
+          }
+          downArrowStyle={
+            (ids.indexOf(initData) || ids.length == 0) == ids.length - 1
+              ? false
+              : true
+          }
           onSoundPlay={() => {
             try {
               Tts.setDefaultLanguage('ko-KR');
@@ -423,24 +481,24 @@ async function fetchUserSettings() {
           }}
           upArrowFunction={() => {
             if (ids.length > 0) {
-              var pos = ids.indexOf(initData)
+              var pos = ids.indexOf(initData);
               //console.log(initData)
               if (pos == 0) {
-                return
+                return;
               } else {
-                pos--
-                setInitdata(ids[pos])
+                pos--;
+                setInitdata(ids[pos]);
               }
             }
           }}
           downArrowFunction={() => {
             if (ids.length > 0) {
-              var pos = ids.indexOf(initData)
+              var pos = ids.indexOf(initData);
               if (pos == ids.length - 1) {
-                return
+                return;
               } else {
-                pos++
-                setInitdata(ids[pos])
+                pos++;
+                setInitdata(ids[pos]);
               }
             }
           }}
@@ -453,39 +511,49 @@ async function fetchUserSettings() {
           backgroundColor: Constants.appColors.WHITE,
           paddingHorizontal: 8,
         }}>
-        <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
+        <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
           <View
             style={{
               paddingVertical: 10,
             }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
                 {wordInfo?.lemma}
               </Text>
-              <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
+              <Text style={{fontSize: 24, color: 'black', fontWeight: '500'}}>
                 {wordInfo?.origin && `(${wordInfo?.origin})`}
               </Text>
             </View>
-            {
-              userSettings.displayRomaja && wordInfo?.lemma && <Text style={{marginVertical:4,color:Constants.appColors.GRAY}}>{hangulRomanization.convert(wordInfo?.lemma)}</Text>
-            }
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              
-              {
-                (wordInfo?.partofspeech ?? wordInfo?.partOfSpeech) &&
+            {userSettings.displayRomaja && wordInfo?.lemma && (
+              <Text
+                style={{marginVertical: 4, color: Constants.appColors.GRAY}}>
+                {hangulRomanization.convert(wordInfo?.lemma)}
+              </Text>
+            )}
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {(wordInfo?.partofspeech ?? wordInfo?.partOfSpeech) && (
                 <Text
-                  style={{ paddingRight: 6,color:Constants.appColors.GRAY }}>
-                  {(wordInfo?.partofspeech && partofspeech[wordInfo?.partofspeech]) ?? (wordInfo?.partOfSpeech && partofspeech[wordInfo?.partOfSpeech])}
+                  style={{paddingRight: 6, color: Constants.appColors.GRAY}}>
+                  {(wordInfo?.partofspeech &&
+                    partofspeech[wordInfo?.partofspeech]) ??
+                    (wordInfo?.partOfSpeech &&
+                      partofspeech[wordInfo?.partOfSpeech])}
                 </Text>
-              }
+              )}
 
-              {vocabularyLevel[wordInfo?.vocabularyLevel] != 0 &&
-                <View
-                  style={{ flexDirection: 'row' }}>{
-                    [...Array(vocabularyLevel[wordInfo.vocabularyLevel])].map((e, i) => <Image key={i} style={{ width: 14, height: 14 }} source={require('../../assets/logo/star.png')} />)
-                  }
+              {vocabularyLevel[wordInfo?.vocabularyLevel] != 0 && (
+                <View style={{flexDirection: 'row'}}>
+                  {[...Array(vocabularyLevel[wordInfo.vocabularyLevel])].map(
+                    (e, i) => (
+                      <Image
+                        key={i}
+                        style={{width: 14, height: 14}}
+                        source={require('../../assets/logo/star.png')}
+                      />
+                    ),
+                  )}
                 </View>
-              }
+              )}
             </View>
           </View>
 
@@ -531,8 +599,6 @@ async function fetchUserSettings() {
               </View>
             </View>
           )} */}
-
-
         </View>
         {wordInfo?.sense && wordInfo?.senseExample && (
           <>
@@ -540,11 +606,14 @@ async function fetchUserSettings() {
               style={{
                 backgroundColor: '#f8f8f8',
                 paddingHorizontal: 8,
-                paddingVertical: 4
+                paddingVertical: 4,
               }}>
-              <Text style={{ fontSize: 16,color:Constants.appColors.GRAY }}>{`${t('DefinitionText')}`}</Text>
+              <Text
+                style={{fontSize: 16, color: Constants.appColors.GRAY}}>{`${t(
+                'DefinitionText',
+              )}`}</Text>
             </View>
-            <View style={{ backgroundColor: 'white', flex: 1 }}>
+            <View style={{backgroundColor: 'white', flex: 1}}>
               <View>{renderSeneData(wordInfo?.sense)}</View>
               {wordInfo?.idiomsDef.length > 2 && (
                 <View>
@@ -554,9 +623,9 @@ async function fetchUserSettings() {
                       paddingHorizontal: 8,
                       paddingVertical: 4,
                     }}>
-                    <Text style={{ fontSize: 16 }}>{`${t('IdiomsText')}`}</Text>
+                    <Text style={{fontSize: 16}}>{`${t('IdiomsText')}`}</Text>
                   </View>
-                  <View style={{ paddingRight: 12, }}>
+                  <View style={{paddingRight: 12}}>
                     {wordInfo?.idiomsDef &&
                       renderIdiomsData(wordInfo?.idiomsDef)}
                   </View>
@@ -576,7 +645,10 @@ SearchResultScreen.navigationOptions = {
 
 export default SearchResultScreen;
 
-
 const styles = StyleSheet.create({
-  exampleStyle:{color:Constants.appColors.GRAY,fontStyle:'italic',fontSize:13}
-})
+  exampleStyle: {
+    color: Constants.appColors.GRAY,
+    fontStyle: 'italic',
+    fontSize: 13,
+  },
+});

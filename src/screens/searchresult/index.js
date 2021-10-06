@@ -8,6 +8,7 @@ import {
   ScrollView,
   NativeModules,
   NativeEventEmitter,
+  StyleSheet
 } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
@@ -20,12 +21,17 @@ import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
 import { partofspeech, vocabularyLevel } from '../../utills/userdata';
 import CollapsibleView from "@eliav2/react-native-collapsible-view";
+import PouchDB from 'pouchdb-react-native';
+import { NavigationEvents } from 'react-navigation';
+var hangulRomanization = require('hangul-romanization');
+var userDB = new PouchDB('usersettings');
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
   const ids = props.navigation.getParam('ids', [])
   const { t, i18n } = useTranslation();
-  const [initData, setInitdata] = useState(data.id)
+  const [initData, setInitdata] = useState(data.id);
+  const [userSettings, setUserSettings] = useState({})
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
   ee.addListener('tts-start', () => { });
   ee.addListener('tts-finish', () => { });
@@ -102,7 +108,27 @@ const SearchResultScreen = (props) => {
 
 
 
-  // console.log(ids.indexOf(initData))
+//load user setting 
+async function fetchUserSettings() {
+  userDB.allDocs(
+      {
+          include_docs: true,
+          attachments: true,
+      },
+      function (err, response) {
+          if (err) {
+              setUserSettings({})
+              return console.log(err);
+          }
+
+          // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
+          setUserSettings(response.rows[0].doc.Dictionary)
+          return response.rows[0];
+
+      },
+  );
+}
+
 
   //detect if the user put is korean
   const isKoreanWord = (text) => {
@@ -118,8 +144,10 @@ const SearchResultScreen = (props) => {
         if (data.sense_id === id) {
           return (
             <View key={`${i + data?.example_1}`}>
-              {data?.example_1 && <Text>{`${data.example_1} ,`}</Text>}
-              {data?.example_2 && <Text>{`${data.example_2} ,`}</Text>}
+              {data?.example_1 && <Text>{`${data.example_1}`}</Text>}
+              {userSettings.displayTranslatorExample &&  <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_1)}</Text>}
+              {data?.example_2 && <Text>{`${data.example_2}`}</Text>}
+              {userSettings.displayTranslatorExample &&  <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_2)}</Text>}
             </View>
           );
         } else {
@@ -149,7 +177,7 @@ const SearchResultScreen = (props) => {
                     width: Sizes.WINDOW_WIDTH - 64,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              <View style={{ marginLeft: 0, paddingVertical: 4, borderBottomWidth: .4, marginBottom: 4, paddingBottom: 8, borderBottomColor: Constants.appColors.LIGHTGRAY }}>
+              <View style={{ marginLeft: 0,height:'auto', paddingVertical: 4, borderBottomWidth: .4, marginBottom: 4, paddingBottom: 8, borderBottomColor: Constants.appColors.LIGHTGRAY }}>
                 {renderIdiomsSenseSample(
                   wordInfo.idiomsSenseSample,
                   data.sense_id,
@@ -301,12 +329,14 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_1}`}</Text>
               )}
+              {userSettings.displayTranslatorExample && data?.example_1 && <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_1)}</Text>}
               {data?.example_2 && (
                 <Text
                   style={{
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_2}`}</Text>
               )}
+              {userSettings.displayTranslatorExample && data?.example_2 && <Text style={styles.exampleStyle}>{hangulRomanization.convert(data?.example_2)}</Text>}
             </View>
           );
         } else {
@@ -325,7 +355,7 @@ const SearchResultScreen = (props) => {
     if (arr != 'undefined') {
       return arr.map((data, i) => {
         if (type == 1) {
-          console.log('Applications : ', arr);
+          //console.log('Applications : ', arr);
           if (data?.lemma != 'undefined' || data?.lemma != 'null') {
             return (
               data?.writtenForm && (
@@ -340,7 +370,7 @@ const SearchResultScreen = (props) => {
             return <Text></Text>;
           }
         } else if (type == 2) {
-          console.log('Derivatives : ', arr);
+         // console.log('Derivatives : ', arr);
           if (data?.type != 'undefined' || data?.type != 'null') {
             return (
               data?.writtenForm && (
@@ -363,6 +393,7 @@ const SearchResultScreen = (props) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <NavigationEvents onDidFocus={(payload) => fetchUserSettings()} />
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -393,7 +424,7 @@ const SearchResultScreen = (props) => {
           upArrowFunction={() => {
             if (ids.length > 0) {
               var pos = ids.indexOf(initData)
-              console.log(initData)
+              //console.log(initData)
               if (pos == 0) {
                 return
               } else {
@@ -435,11 +466,15 @@ const SearchResultScreen = (props) => {
                 {wordInfo?.origin && `(${wordInfo?.origin})`}
               </Text>
             </View>
+            {
+              userSettings.displayRomaja && wordInfo?.lemma && <Text style={{marginVertical:4,color:Constants.appColors.GRAY}}>{hangulRomanization.convert(wordInfo?.lemma)}</Text>
+            }
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              
               {
                 (wordInfo?.partofspeech ?? wordInfo?.partOfSpeech) &&
                 <Text
-                  style={{ paddingRight: 6 }}>
+                  style={{ paddingRight: 6,color:Constants.appColors.GRAY }}>
                   {(wordInfo?.partofspeech && partofspeech[wordInfo?.partofspeech]) ?? (wordInfo?.partOfSpeech && partofspeech[wordInfo?.partOfSpeech])}
                 </Text>
               }
@@ -453,7 +488,8 @@ const SearchResultScreen = (props) => {
               }
             </View>
           </View>
-          {wordInfo?.wordForm?.writtenForm && wordInfo?.wordForm?.relatedForm && (
+
+          {/* {wordInfo?.wordForm?.writtenForm && wordInfo?.wordForm?.relatedForm && (
             <View style={{ marginVertical: 10 }}>
               <View style={{ flexDirection: 'row' }}>
                 <View
@@ -491,10 +527,12 @@ const SearchResultScreen = (props) => {
                       marginHorizontal: 8,
                     }}>{`${t('DerivativesText')}`}</Text>
                 </View>
-                {/* {data?.r && renderData(2, data?.w)} */}
+                {data?.r && renderData(2, data?.w)}
               </View>
             </View>
-          )}
+          )} */}
+
+
         </View>
         {wordInfo?.sense && wordInfo?.senseExample && (
           <>
@@ -504,7 +542,7 @@ const SearchResultScreen = (props) => {
                 paddingHorizontal: 8,
                 paddingVertical: 4
               }}>
-              <Text style={{ fontSize: 16 }}>{`${t('DefinitionText')}`}</Text>
+              <Text style={{ fontSize: 16,color:Constants.appColors.GRAY }}>{`${t('DefinitionText')}`}</Text>
             </View>
             <View style={{ backgroundColor: 'white', flex: 1 }}>
               <View>{renderSeneData(wordInfo?.sense)}</View>
@@ -537,3 +575,8 @@ SearchResultScreen.navigationOptions = {
 };
 
 export default SearchResultScreen;
+
+
+const styles = StyleSheet.create({
+  exampleStyle:{color:Constants.appColors.GRAY,fontStyle:'italic',fontSize:13}
+})

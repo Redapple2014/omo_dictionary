@@ -248,7 +248,11 @@ const DisplayCardScreen = (props) => {
                                     paddingVertical: 4,
                                     paddingRight: 8,
                                     borderWidth: 0.5,
-                                    paddingLeft: editMode ? 48 : 8
+                                    paddingLeft: editMode ? 48 : 8,
+                                    paddingHorizontal: 8,
+                                    marginVertical: 6,
+                                    marginHorizontal: 8,
+                                    borderRadius: 10
                                 }}>
                                 {
                                     editMode &&

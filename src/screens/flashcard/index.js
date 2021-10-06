@@ -160,16 +160,23 @@ const FlashcardScreen = (props) => {
                 }
                 onLongPress={move}
                 onPressOut={moveEnd}>
-                <View key ={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View key ={index} style={{ 
+                    flexDirection: 'row', 
+                    alignItems: 'center',
+                    backgroundColor: 'white',
+                    paddingVertical: 8,
+                    paddingHorizontal: 8,
+                    marginVertical: 4,
+                    marginHorizontal: 8,
+                    borderRadius: 10,
+                    }}>
                     <View
                         style={{
-                            width: editMode ? Sizes.WINDOW_WIDTH - 48 : Sizes.WINDOW_WIDTH,
+                            width: editMode ? Sizes.WINDOW_WIDTH - 64 : Sizes.WINDOW_WIDTH-30,
                             backgroundColor: isActive ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.WHITE,
                             alignItems: 'center',
                             paddingVertical: 8,
                             flexDirection: 'row',
-                            borderBottomWidth: 0.5,
-                            borderBottomColor: Constants.appColors.LIGHTGRAY
                         }}>
                         {
                             editMode &&

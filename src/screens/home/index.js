@@ -460,7 +460,7 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              console.log(item)
+             // console.log(item)
               storeRecentlyViewedData(item);
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
                 searchResultData: item, ids

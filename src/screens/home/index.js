@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Platform,
@@ -17,17 +17,18 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import { useTranslation } from 'react-i18next';
-import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
+import {useTranslation} from 'react-i18next';
+import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
-import { defaultSettings } from '../../utills/userdata';
+import {defaultSettings} from '../../utills/userdata';
 import db from '../../utills/loadDb';
-import { partofspeech } from '../../utills/userdata';
+import {partofspeech} from '../../utills/userdata';
+import * as Animatable from 'react-native-animatable';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
@@ -45,14 +46,22 @@ const HomeScreen = (props) => {
   const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const { t, i18n } = useTranslation();
+  const {t, i18n} = useTranslation();
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
-  const [ids, setIds] = useState([])
+  const searchView = useRef(null);
+  const [ids, setIds] = useState([]);
+
+  let position = isKeyboardVisible
+    ? Sizes.WINDOW_HEIGHT * 0.016
+    : searchText.length > 0
+    ? Sizes.WINDOW_HEIGHT * 0.01
+    : Sizes.WINDOW_HEIGHT * 0.29;
+  const [topPositon, setTopPositon] = useState(position);
+
   // const [ids, setIDS] = useState([]);
   // const [newData, setNewData] = useState([]);
-
 
   async function loadFile(index) {
     if (index == 1) {
@@ -68,23 +77,26 @@ const HomeScreen = (props) => {
     }
   }
 
-
   const getActiveRouteState = (route) => {
-    if (!route.routes || route.routes.length === 0 || route.index >= route.routes.length) {
+    if (
+      !route.routes ||
+      route.routes.length === 0 ||
+      route.index >= route.routes.length
+    ) {
       return route;
     }
     const childActiveRoute = route.routes[route.index];
     return getActiveRouteState(childActiveRoute);
-  }
+  };
 
   function handleBackButtonClick() {
-    console.log('data : ', props.navigation.state.routeName)
+    console.log('data : ', props.navigation.state.routeName);
     // let name = getActiveRouteState(props.navigation.state)
-    if (props.navigation.state.routeName == "HomeScreen") {
+    if (props.navigation.state.routeName == 'HomeScreen') {
       backHandlerClickCount += 1;
-      if ((backHandlerClickCount < 2)) {
-        isKeyboardVisible ? Keyboard.dismiss() : setSearchText('')
-        Toast.show("Press back twice to close app")
+      if (backHandlerClickCount < 2) {
+        isKeyboardVisible ? Keyboard.dismiss() : setSearchText('');
+        Toast.show('Press back twice to close app');
       } else {
         BackHandler.exitApp();
       }
@@ -94,15 +106,63 @@ const HomeScreen = (props) => {
 
       return true;
     }
-    return false
+    return false;
   }
 
+  function getSearchBarPostion() {
+    return isKeyboardVisible
+      ? Sizes.WINDOW_HEIGHT * 0.016
+      : searchText.length > 0
+      ? Sizes.WINDOW_HEIGHT * 0.01
+      : Sizes.WINDOW_HEIGHT * 0.29;
+  }
 
+  function moveUp() {
+    let pos = getSearchBarPostion();
+    const translate = {
+      from: {
+        translateY: pos,
+      },
+      to: {
+        translateY: 10,
+      },
+    };
+    searchView.current?.animate(translate, 200);
+  }
+
+  function moveDown() {
+    let pos = getSearchBarPostion();
+
+    const translate = {
+      from: {
+        translateY: 10,
+      },
+      to: {
+        translateY: pos,
+      },
+    };
+    searchView.current?.animate(translate, 200);
+  }
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+
+    let pos = getSearchBarPostion();
+
+    const translate = {
+      from: {
+        translateY: 10,
+      },
+      to: {
+        translateY: pos,
+      },
+    };
+    searchView.current?.animate(translate, 5);
     return () => {
-      BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
     };
   }, []);
 
@@ -146,7 +206,6 @@ const HomeScreen = (props) => {
           if (from === 'search_data') {
             setReacientlySearchedStatus(`${t('NoRecentDataAvalibleText')}`);
           } else {
-
           }
 
           //console.log('no data found on recent search')
@@ -161,11 +220,10 @@ const HomeScreen = (props) => {
       .catch((error) => console.log('error!'));
   }
 
-
   const onClear = () => {
-    onSearchSubmit()
-    setSearchText('')
-  }
+    onSearchSubmit();
+    setSearchText('');
+  };
 
   // search the entered data
   function onSearchSubmit() {
@@ -211,9 +269,9 @@ const HomeScreen = (props) => {
   };
 
   const onCancel = () => {
-    setSearchText('')
-    Keyboard.dismiss()
-  }
+    setSearchText('');
+    Keyboard.dismiss();
+  };
 
   function getWordData(text) {
     console.log('data searching');
@@ -271,13 +329,13 @@ const HomeScreen = (props) => {
         var len = results.rows.length;
         console.log('Query completed : ', len);
         var temp = [];
-        var ids = []
+        var ids = [];
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
           temp.push(row);
-          ids.push(row.id)
+          ids.push(row.id);
         }
-        setIds(ids)
+        setIds(ids);
         setSearchdata(temp);
       });
     });
@@ -292,12 +350,14 @@ const HomeScreen = (props) => {
       'keyboardDidShow',
       () => {
         setKeyboardVisible(true);
+        moveUp();
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
         setKeyboardVisible(false);
+        moveDown();
       },
     );
 
@@ -315,8 +375,13 @@ const HomeScreen = (props) => {
       return arr.map((data, i) => {
         // if (data.l == '몽골어') {
         return (
-          <View key={`${i}`} style={{ flexDirection: 'row' }}>
-            <Text style={{ fontSize: 15, marginTop: 2, color: Constants.appColors.BLACK }}>{`${i + 1} `}</Text>
+          <View key={`${i}`} style={{flexDirection: 'row'}}>
+            <Text
+              style={{
+                fontSize: 15,
+                marginTop: 2,
+                color: Constants.appColors.BLACK,
+              }}>{`${i + 1} `}</Text>
             <Text
               style={{
                 color: Constants.appColors.BLACK,
@@ -337,7 +402,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
             <View
               style={{
@@ -349,7 +414,7 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 marginVertical: 6,
                 marginHorizontal: 8,
-                borderRadius: 10
+                borderRadius: 10,
               }}>
               <Text
                 style={{
@@ -375,7 +440,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
@@ -390,11 +455,11 @@ const HomeScreen = (props) => {
                 paddingHorizontal: 8,
                 marginVertical: 6,
                 marginHorizontal: 8,
-                borderRadius: 10
+                borderRadius: 10,
               }}>
               {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <View
-                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
+                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
                   <TouchableOpacity
                     onPress={() => {
                       try {
@@ -404,31 +469,45 @@ const HomeScreen = (props) => {
                         Toast.show('No Audio File Found', Toast.SHORT);
                       }
                     }}>
-                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18, resizeMode: 'contain' }} />
+                    <Image
+                      source={require('../../assets/logo/audio-black-icon.png')}
+                      style={{width: 18, height: 18, resizeMode: 'contain'}}
+                    />
                   </TouchableOpacity>
                 </View>
               )}
-              {item?.vocabularyLevel &&
+              {item?.vocabularyLevel && (
                 <View
-                  style={{ position: 'absolute', zIndex: 3, right: 20, top: 36, flexDirection: 'row' }}>{
-                    [...Array(item?.vocabularyLevel)].map((e, i) => <Image key={i} style={{ width: 10, height: 10 }} source={require('../../assets/logo/star.png')} />)
-                  }
+                  style={{
+                    position: 'absolute',
+                    zIndex: 3,
+                    right: 20,
+                    top: 36,
+                    flexDirection: 'row',
+                  }}>
+                  {[...Array(item?.vocabularyLevel)].map((e, i) => (
+                    <Image
+                      key={i}
+                      style={{width: 10, height: 10}}
+                      source={require('../../assets/logo/star.png')}
+                    />
+                  ))}
                 </View>
-              }
+              )}
               <Text style={styles.TextStyle}>
-                <Text style={{ fontWeight: 'bold' }}>{item?.lemma}</Text>
+                <Text style={{fontWeight: 'bold'}}>{item?.lemma}</Text>
                 <Text>{item?.origin && `(${item?.origin})`}</Text>
               </Text>
-              {
-                (item?.partofspeech ?? item?.partOfSpeech) &&
+              {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <Text
                   style={[
                     styles.TextStyle,
-                    { color: Constants.appColors.GRAY, fontSize: 12 },
+                    {color: Constants.appColors.GRAY, fontSize: 12},
                   ]}>
-                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ?? (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
+                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
+                    (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
                 </Text>
-              }
+              )}
               <View
                 key={index}
                 style={{
@@ -456,14 +535,15 @@ const HomeScreen = (props) => {
         // keyboardShouldPersistTaps={'never'}
         onScrollEndDrag={() => Keyboard.dismiss()}
         keyboardDismissMode={'on-drag'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
              // console.log(item)
               storeRecentlyViewedData(item);
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                searchResultData: item, ids
+                searchResultData: item,
+                ids,
               });
             }}>
             <View
@@ -477,9 +557,9 @@ const HomeScreen = (props) => {
                 height: 'auto',
                 justifyContent: 'center',
               }}>
-              {(item?.partofspeech ?? item?.partOfSpeech) &&
+              {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <View
-                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
+                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
                   <TouchableOpacity
                     onPress={() => {
                       try {
@@ -490,31 +570,47 @@ const HomeScreen = (props) => {
                         Toast.show('No Audio File Found', Toast.SHORT);
                       }
                     }}>
-                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18, resizeMode: 'contain' }} />
+                    <Image
+                      source={require('../../assets/logo/audio-black-icon.png')}
+                      style={{width: 18, height: 18, resizeMode: 'contain'}}
+                    />
                   </TouchableOpacity>
                 </View>
-              }
-              {item?.vocabularyLevel &&
+              )}
+              {item?.vocabularyLevel && (
                 <View
-                  style={{ position: 'absolute', zIndex: 3, right: 16, top: 36, flexDirection: 'row' }}>{
-                    [...Array(item?.vocabularyLevel)].map((e, i) => <Image key={i} style={{ width: 10, height: 10 }} source={require('../../assets/logo/star.png')} />)
-                  }
+                  style={{
+                    position: 'absolute',
+                    zIndex: 3,
+                    right: 16,
+                    top: 36,
+                    flexDirection: 'row',
+                  }}>
+                  {[...Array(item?.vocabularyLevel)].map((e, i) => (
+                    <Image
+                      key={i}
+                      style={{width: 10, height: 10}}
+                      source={require('../../assets/logo/star.png')}
+                    />
+                  ))}
                 </View>
-              }
+              )}
               <Text style={styles.TextStyle}>
                 {item?.lemma}
                 {item?.origin && `(${item?.origin})`}
               </Text>
-              {item?.partofspeech || item?.partOfSpeech ?
-                (<Text
+              {item?.partofspeech || item?.partOfSpeech ? (
+                <Text
                   style={[
                     styles.TextStyle,
-                    { color: Constants.appColors.GRAY, fontSize: 12 },
+                    {color: Constants.appColors.GRAY, fontSize: 12},
                   ]}>
-                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ?? (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
-                </Text>)
-                : <></>
-              }
+                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
+                    (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
+                </Text>
+              ) : (
+                <></>
+              )}
               <View
                 key={index}
                 style={{
@@ -532,12 +628,11 @@ const HomeScreen = (props) => {
         numColumns={1}
         showsVerticalScrollIndicator={false}
       />
-
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -573,32 +668,30 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
+              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
                 <Image
                   source={require('../../assets/logo/home-logo.png')}
-                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
+                  style={{width: 300, height: 100, resizeMode: 'contain'}}
                 />
               </View>
             )}
           </View>
-          <View style={{
-            zIndex: 1,
-            backgroundColor: Constants.appColors.TRANSPARENT,
-            marginTop: Sizes.statusBarHeight,
-            top: isKeyboardVisible
-              ? Sizes.WINDOW_HEIGHT * 0.01
-              : searchText.length > 0
-                ? Sizes.WINDOW_HEIGHT * 0.01
-                : Sizes.WINDOW_HEIGHT * 0.29,
-            position: 'absolute',
-            flexDirection: 'row',
-            alignItems: 'center',
-            alignSelf: 'center',
-            width: '95%'
-          }}>
+          <Animatable.View
+            ref={searchView}
+            style={{
+              zIndex: 1,
+              backgroundColor: Constants.appColors.TRANSPARENT,
+              marginTop: Sizes.statusBarHeight,
+              position: 'absolute',
+              flexDirection: 'row',
+              alignItems: 'center',
+              alignSelf: 'center',
+              width: '95%',
+            }}>
             {/* <TouchableWithoutFeedback
               onPress={Keyboard.dismiss}
               accessible={false}> */}
+            {/* <View style={{marginTop: 5,}}> */}
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -611,31 +704,44 @@ const HomeScreen = (props) => {
                 backgroundColor: Constants.appColors.TRANSPARENT,
                 height: 48,
                 borderRadius: 14,
-                top: -3
+                marginTop: 0,
+                //top: -3,
               }}
               containerStyle={{
                 borderRadius: 20,
                 height: 45,
-                flex: isKeyboardVisible ? .99 : 1,
+                flex: isKeyboardVisible ? 0.99 : 1,
                 padding: 0,
-                margin: 0,
+                // margin: 0,
+                marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
               showCancel={true}
-              inputStyle={{ color: 'black' }}
+              onCancel={() => alert('ff')}
+              inputStyle={{color: 'black'}}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}
             />
+            {/* </View> */}
 
             {/* </TouchableWithoutFeedback> */}
-            {
-              isKeyboardVisible && <TouchableOpacity onPress={onCancel}><View style={{ alignItems: 'center', paddingHorizontal: 12 }}><Text style={{ color: Constants.appColors.WHITE, fontWeight: '600', fontSize: 15 }}>{`${t("CancelText")}`}</Text></View></TouchableOpacity>
-            }
-          </View>
+            {isKeyboardVisible && (
+              <TouchableOpacity onPress={onCancel}>
+                <View style={{alignItems: 'center', paddingHorizontal: 12}}>
+                  <Text
+                    style={{
+                      color: Constants.appColors.WHITE,
+                      fontWeight: '600',
+                      fontSize: 15,
+                    }}>{`${t('CancelText')}`}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </Animatable.View>
           {isKeyboardVisible &&
-            searchText.length == 0 &&
-            reacientlySearchedData.length != 0 ? (
+          searchText.length == 0 &&
+          reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -644,7 +750,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{`${t(
+                <Text style={{fontWeight: 'bold'}}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -653,7 +759,7 @@ const HomeScreen = (props) => {
                     style={{
                       fontWeight: '400',
                       textDecorationLine: 'underline',
-                      fontStyle: 'italic'
+                      fontStyle: 'italic',
                     }}>
                     {`${t('ClearHistoryText')}`}
                   </Text>
@@ -661,23 +767,28 @@ const HomeScreen = (props) => {
               </View>
               {renderRecentSearchData()}
             </>
-          ) : reacientlySearchedData.length == 0 && isKeyboardVisible && searchText.length == 0 ? (
+          ) : reacientlySearchedData.length == 0 &&
+            isKeyboardVisible &&
+            searchText.length == 0 ? (
             <View
               style={{
                 width: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginTop: Sizes.WINDOW_HEIGHT * .20
+                marginTop: Sizes.WINDOW_HEIGHT * 0.2,
               }}>
-              <Image source={require('../../assets/logo/recent-icon.png')} style={{ width: 60, height: 60 }} />
-              <Text style={{ paddingTop: 4 }}>{reacientlySearchedStatus}</Text>
+              <Image
+                source={require('../../assets/logo/recent-icon.png')}
+                style={{width: 60, height: 60}}
+              />
+              <Text style={{paddingTop: 4}}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
           {!isKeyboardVisible &&
-            searchText.length == 0 &&
-            reacientlyViewedDataSet.length != 0 ? (
+          searchText.length == 0 &&
+          reacientlyViewedDataSet.length != 0 ? (
             <>
               <View
                 style={{
@@ -686,7 +797,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{`${t(
+                <Text style={{fontWeight: 'bold'}}>{`${t(
                   'RecentlyViewedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -695,7 +806,7 @@ const HomeScreen = (props) => {
                     style={{
                       fontWeight: '400',
                       textDecorationLine: 'underline',
-                      fontStyle: 'italic'
+                      fontStyle: 'italic',
                     }}>
                     {`${t('ClearHistoryText')}`}
                   </Text>
@@ -707,19 +818,20 @@ const HomeScreen = (props) => {
             <></>
           )}
           {searchText.length > 0 && searchedData.length != 0 ? (
-            <>
-              {renderSearchData()}
-            </>
+            <>{renderSearchData()}</>
           ) : searchedData.length == 0 && searchText.length > 0 ? (
             <View
               style={{
                 width: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginTop: Sizes.WINDOW_HEIGHT * .20
+                marginTop: Sizes.WINDOW_HEIGHT * 0.2,
               }}>
-              <Image source={require('../../assets/logo/search-icon.png')} style={{ width: 50, height: 50 }} />
-              <Text style={{ paddingTop: 4 }}>{`${t('NodataFoundText')}`}</Text>
+              <Image
+                source={require('../../assets/logo/search-icon.png')}
+                style={{width: 50, height: 50}}
+              />
+              <Text style={{paddingTop: 4}}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

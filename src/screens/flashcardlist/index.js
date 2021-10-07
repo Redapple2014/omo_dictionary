@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, TouchableOpacity, FlatList,StyleSheet,Switch } from 'react-native';
+import { View, Text, StatusBar, Platform, TouchableOpacity, FlatList, StyleSheet, Switch,TextInput } from 'react-native';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -9,53 +9,61 @@ import CustomButton from "../../components/button/CustomButton";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FA5Icons from 'react-native-vector-icons/FontAwesome5';
 import MIcons from 'react-native-vector-icons/MaterialIcons';
+
 const FlashcardListScreen = () => {
 
     const { t, i18n } = useTranslation();
     const [buttonSelected, setButtonSelected] = useState(1);
     const [dailyPracticeReminder, setDailyPracticeReminder] = useState(false);
+    const [defaultCategoryTapHoldSection, setDefaultCategoryTapHoldSection] = useState(false);
+    const [promptForCategory, setPromptForCategory] = useState(false);
+    const [updated, setUpdated] = useState(false)
+    const [maxLength,setMaxLength] = useState(10)
 
 
 
-        //toggle user settings data 
-        const toggleSwitch = (id) => {
-            if (id == 1) {
-                setDefaultCategoryTapHoldSection(previousState => !previousState)
-                setUpdated(true)
-            }
-            else if (id == 2) {
-                setPromptForCategory(previousState => !previousState)
-                setUpdated(true)
-            }
-            else if (id == 3) {
-                setDailyPracticeReminder(previousState => !previousState)
-                setUpdated(true)
-            }
-        };
-
-        //handel reset scores data of the user
-        const handelResetButton = () => {
-            console.log('reset settings')
-            // Alert.alert(
-            //     `${t("ResetSpacedRepetitionScoresTitleText")}`,
-            //     `${t("ResetSpacedRepetitionScoresDecsText")}`,
-            //     [
-            //         {
-            //             text: `${t("CancelText")}`,
-            //             onPress: () => console.log("Cancel Pressed"),
-            //             style: "cancel"
-            //         },
-            //         { text: `${t("ResetScoresText")}`, onPress: () => console.log("Reset scores Pressed") }
-            //     ])
+    console.log(maxLength)
+    //toggle user settings data 
+    const toggleSwitch = (id) => {
+        if (id == 1) {
+            setDailyPracticeReminder(previousState => !previousState)
+            setUpdated(true)
         }
+        else if (id == 2) {
+            setDefaultCategoryTapHoldSection(previousState => !previousState)
+            setUpdated(true)
+        }
+        else if (id == 3) {
+            setPromptForCategory(previousState => !previousState)
+            setUpdated(true)
+        }
+    };
 
-    const renderItem = ({ item, index, move, moveEnd, isActive }) => {
+    const onStartTestPress = () => {
+        console.log("Start Test Press")
+    }
+
+    //handel reset scores data of the user
+    const handelResetButton = () => {
+        console.log('reset settings')
+        // Alert.alert(
+        //     `${t("ResetSpacedRepetitionScoresTitleText")}`,
+        //     `${t("ResetSpacedRepetitionScoresDecsText")}`,
+        //     [
+        //         {
+        //             text: `${t("CancelText")}`,
+        //             onPress: () => console.log("Cancel Pressed"),
+        //             style: "cancel"
+        //         },
+        //         { text: `${t("ResetScoresText")}`, onPress: () => console.log("Reset scores Pressed") }
+        //     ])
+    }
+
+    const renderItem = ({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => console.log(buttonSelected)
-                }
-                onLongPress={move}
-                onPressOut={moveEnd}>
+                }>
                 <View key={index} style={{
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -63,12 +71,11 @@ const FlashcardListScreen = () => {
                     paddingVertical: 8,
                     marginVertical: 4,
                     borderRadius: 10,
-
                 }}>
                     <View
                         style={{
                             width: Sizes.WINDOW_WIDTH - 64,
-                            backgroundColor: isActive ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.WHITE,
+                            backgroundColor: Constants.appColors.WHITE,
                             alignItems: 'center',
                             flexDirection: 'row',
                         }}>
@@ -95,36 +102,73 @@ const FlashcardListScreen = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => `${item.details}`}
         />
-                        <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
-                    <View style={[styles.itemStyle, { marginBottom: 8 }]}>
-                        <Text style={styles.textStyle2}>{`${t("DailyPracticeReminderText")}`}</Text>
+            <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
+                <View style={[styles.itemStyle, { marginBottom: 8 }]}>
+                    <Text style={styles.textStyle2}>{`Limit Max Test Length?`}</Text>
+                    <Switch
+                        trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
+                        thumbColor={Constants.appColors.WHITE}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={() => toggleSwitch(1)}
+                        value={dailyPracticeReminder}
+                        style={{ position: 'absolute', right: 0, top: 2 }}
+                    />
+                </View>
+                <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
+                    <Text style={[styles.textStyle2, { zIndex: 4 }]}>{`Max Test Length`}</Text>
+                    <View style={{flex:.5,borderWidth:2}}>
+            <TextInput
+            onChangeText={(val)=>setMaxLength(val)}
+            value={maxLength}
+            defaultValue={`${maxLength}`}
+            keyboardType='numeric'
+            />
+                    </View>
+                </View>
+            </View>
+            {buttonSelected == 1 &&
+                <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
+                    <View style={[styles.itemStyle, {
+                        marginBottom: 0, borderBottomWidth: 0,
+                        paddingVertical: 8,
+                    }]}>
+                        <Text style={styles.textStyle2}>{`Limit New cards?`}</Text>
                         <Switch
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
                             ios_backgroundColor="#3e3e3e"
-                            onValueChange={() => toggleSwitch(3)}
-                            value={dailyPracticeReminder}
+                            onValueChange={() => toggleSwitch(2)}
+                            value={defaultCategoryTapHoldSection}
                             style={{ position: 'absolute', right: 0, top: 2 }}
                         />
                     </View>
-                    <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
-                        <Text style={[styles.textStyle2, { zIndex: 4 }]}>{`${t("ReminderTimeText")}`}</Text>
-                        <Text style={{ marginRight: 8, fontWeight: 'bold', color: Constants.appColors.BLACK, fontSize: 16 }}>17:00</Text>
-                    </View>
                 </View>
-                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
-                    <CustomButton
-                        style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
-                        title={`${t("ResetToDefaultSettingsText")}`}
-                        titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
-                        onPress={handelResetButton}
+            }
+            <View style={{ marginTop: 12, backgroundColor: Constants.appColors.WHITE, padding: 8, borderRadius: 10 }}>
+                <View style={[styles.itemStyle, {
+                    marginBottom: 0, borderBottomWidth: 0,
+                    paddingVertical: 8,
+                }]}>
+                    <Text style={styles.textStyle2}>{`Review Incorrect at Test End?`}</Text>
+                    <Switch
+                        trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
+                        thumbColor={Constants.appColors.WHITE}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={() => toggleSwitch(3)}
+                        value={promptForCategory}
+                        style={{ position: 'absolute', right: 0, top: 2 }}
                     />
                 </View>
+            </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
+                <CustomButton
+                    style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                    title={`Reset Test Settings to Default`}
+                    titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
+                    onPress={handelResetButton}
+                />
+            </View>
         </>)
-    }
-
-    const onStartTestPress = () => {
-        console.log("Start Test Press")
     }
 
     return (
@@ -134,7 +178,7 @@ const FlashcardListScreen = () => {
                 <CustomHeader
                     title={`${t("FlashcardListPageTitle")}`}
                 />
-                <TouchableOpacity style={{ width: 120, position: 'absolute', marginTop: Platform.OS =='ios' ? 55 :12 }} onPress={onStartTestPress}><Text style={{ marginLeft: 12, color: Constants.appColors.WHITE, fontSize: 18, fontWeight: '400' }}>Start Test</Text></TouchableOpacity>
+                <TouchableOpacity style={{ width: 120, position: 'absolute', marginTop: Platform.OS == 'ios' ? 55 : 12 }} onPress={onStartTestPress}><Text style={{ marginLeft: 12, color: Constants.appColors.WHITE, fontSize: 18, fontWeight: '400' }}>Start Test</Text></TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
                 <View style={{
@@ -177,7 +221,7 @@ const FlashcardListScreen = () => {
                     </View>
                 </View>
                 <View style={{ marginHorizontal: 16, marginTop: 10 }}>
-                {renderList()}
+                    {renderList()}
                 </View>
 
             </View>

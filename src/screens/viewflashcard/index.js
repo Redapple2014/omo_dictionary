@@ -20,7 +20,7 @@ const ViewFlashcardDataScreen = (props) => {
 
 
     const data = props.navigation.getParam('item', 'nothing sent');
-    // console.log('mydata: ',data)
+    console.log('mydata: ',data)
     const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
     ee.addListener('tts-start', () => { });
     ee.addListener('tts-finish', () => { });
@@ -64,7 +64,7 @@ const ViewFlashcardDataScreen = (props) => {
                 />
             </View>
             <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
-                <View style={{ borderBottomWidth: .5, borderBottomColor: Constants.appColors.LIGHTGRAY, paddingVertical: 10 }}>
+                <View style={{ paddingVertical: 10 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.koreanHeadWord}</Text>
                         <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.englishHeadWord && `(${data?.englishHeadWord})`}</Text>

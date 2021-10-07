@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet,Image } from 'react-native';
+import { View, StatusBar, FlatList, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
 import Constants from '../../utills/Constants';
 import { NavigationActions } from 'react-navigation';
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -19,6 +19,8 @@ import PouchDB from 'pouchdb-react-native';
 import { NAVIGATION_NEW_CARD_SCREEN_PATH } from '../../navigations/Routes';
 import { NavigationEvents } from 'react-navigation';
 import CustomPopup from '../../components/popup/CustomPopup';
+import CustomButton from "../../components/button/CustomButton";
+import DraggableFlatList from 'react-native-draggable-dynamic-flatlist';
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -39,11 +41,13 @@ const DisplayCardScreen = (props) => {
     const [myData, setMyData] = useState([]);
     const [catDetails, setCatDetails] = useState({})
     const [category, setCategory] = useState('');
-
+    const [myCardData, setMyCardData] = useState(data?.cards);
     const { t, i18n } = useTranslation();
 
 
-//Function to check if the item is checked or not
+
+    // console.log('myCardData : ',myCardData)
+    //Function to check if the item is checked or not
     const isChecked = (itemId) => {
         try {
             const isThere = items.includes(itemId);
@@ -54,7 +58,7 @@ const DisplayCardScreen = (props) => {
     };
 
 
-//Function to toggle the item(check and uncheck)
+    //Function to toggle the item(check and uncheck)
     const toggleChecked = (itemId, item) => {
         const x = [itemId, ...items]
         const y = [item, ...newSet]
@@ -68,21 +72,28 @@ const DisplayCardScreen = (props) => {
     }
 
 
-//function handle the delete fash card items
+    //function handle the delete fash card items
     const handelDelete = () => {
+        let x = leftItems.filter(i => !newSet.some(j => i.koreanHeadWord === j.koreanHeadWord))
 
-        let x = leftItems.filter(i => !newSet.some(j => i.englishHeadWord === j.englishHeadWord))
-        if(newSet.length!=0){
+
+        console.log('all : ', leftItems)
+        console.log('selected : ', newSet)
+        console.log('will keep : ', data)
+        console.log('will keep : ', x)
+
+        if (newSet.length != 0) {
             const newObj = Object.assign({}, data, { "cards": x })
             console.log(JSON.stringify(newObj))
             localDB.put(newObj).then((response) => {
                 console.log('responcen : ', response)
                 localDB.get(newObj["_id"]).then(function (doc) {
                     setData(doc)
+                    setMyCardData(doc.cards)
                     setEditMode(!editMode)
                 }).catch((e) => console.log(e))
             }).catch((e) => console.log(e))
-        }else{
+        } else {
             Toast.show(`${t("SelectItemToDeleteText")}`, Toast.SHORT)
         }
 
@@ -93,11 +104,12 @@ const DisplayCardScreen = (props) => {
         localDB.get(data1?.doc["_id"]).then(function (doc) {
             console.log(doc)
             setData(doc)
+            setMyCardData(doc.cards)
         }).catch((e) => console.log(e))
     }
 
 
-//Function responceble to drag items
+    //Function responceble to drag items
     const moveHandel = () => {
         if (category) {
             const x = Object.assign({}, catDetails?.doc, { "cards": [...catDetails?.doc?.cards, ...newSet] })
@@ -110,12 +122,73 @@ const DisplayCardScreen = (props) => {
                     setOverlayActive(!isOverlayActive)
                 }).catch((e) => console.log(e))
             }).catch((e) => console.log(e))
-            
+
         } else {
             Toast.show(`${t("SelectCategoryToMove")}`, Toast.SHORT)
         }
-
     }
+
+const renderItem = ({ item, index, move, moveEnd, isActive }) => (
+    <TouchableOpacity
+    onLongPress={move}
+    onPressOut={moveEnd}
+    onPress={() => { !editMode && props.navigation.navigate(NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH, { item }) }}>
+        <View
+            style={{
+                backgroundColor: 'white',
+                paddingVertical: 4,
+                paddingRight: 8,
+                paddingLeft: editMode ? 48 : 8,
+                paddingHorizontal: 8,
+                marginVertical: 6,
+                marginHorizontal: 8,
+                borderRadius: 10
+            }}>
+            {
+                editMode &&
+                <View style={{ position: 'absolute', left: -4, zIndex: 4 }}>
+                    <CheckBox
+                        checkedColor={Constants.appColors.PRIMARY_COLOR}
+                        containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, zIndex: 4 }}
+                        size={20}
+                        title=""
+                        checkedIcon="check-square"
+                        uncheckedIcon="square"
+                        checked={isChecked(index)}
+                        onPress={() => toggleChecked(index, item)}
+                    />
+                </View>
+            }
+
+            <View style={{ position: 'absolute', zIndex: 3, right: editMode ? 42 : 16, top: 8 }}>
+                <TouchableOpacity onPress={() => {
+                    try {
+                        Tts.setDefaultLanguage('ko-KR');
+                        Tts.speak(item?.speech)
+                    } catch (e) {
+                        console.log(`cannot play the sound file`, e)
+                        Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
+                    }
+                }}>
+                    <Image source={require('../../assets/logo/audio-black-icon.png')} style={{ width: 18, height: 18, resizeMode: 'contain' }} />
+                </TouchableOpacity>
+            </View>
+            <Text style={[styles.TextStyle, { marginVertical: 4 }]}>
+                {item?.koreanHeadWord}
+                {item?.englishHeadWord && `(${item?.englishHeadWord})`}
+            </Text>
+            <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12, paddingVertical: 4 }]}>{item?.speech}</Text>
+            {
+                editMode &&
+                <View style={{ marginLeft: 12, position: 'absolute', right: 8, top: 16 }}>
+                    <MIcons name="view-headline" size={22} color={Constants.appColors.PRIMARY_COLOR} />
+                </View>
+            }
+        </View>
+    </TouchableOpacity>
+
+)
+
 
     //fetch falshcard data using sorting by category name
     async function fetchCatData() {
@@ -146,9 +219,16 @@ const DisplayCardScreen = (props) => {
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
                     <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
-                        <TouchableOpacity onPress={() => { setEditMode(!editMode); props.navigation.dispatch(NavigationActions.back()) }}>
-                            <Text style={{ fontSize: 20, color: 'white' }}>{`${t("BackText")}`}</Text>
-                        </TouchableOpacity>
+                        {
+                            editMode ?
+                                <TouchableOpacity onPress={() => { setEditMode(!editMode); setItems([]) }}>
+                                    <Text style={{ fontSize: 20, color: 'white' }}>{`${t("CancelText")}`}</Text>
+                                </TouchableOpacity>
+                                :
+
+                                <TouchableOpacity onPress={() => { setEditMode(!editMode); props.navigation.dispatch(NavigationActions.back()) }}>
+                                    <Text style={{ fontSize: 20, color: 'white' }}>{`${t("BackText")}`}</Text>
+                                </TouchableOpacity>}
                     </View>
                     <Text style={[styles.textStyle2]}>{data?.name}</Text>
                     <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 0 }}>
@@ -167,11 +247,9 @@ const DisplayCardScreen = (props) => {
                                     <MIcons name="edit" size={23} color={Constants.appColors.WHITE} />
                                 </TouchableOpacity></>
                                 :
-                                <>
+                                <View style={{ width: 100, flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <TouchableOpacity onPress={handelDelete}>
-                                        <View style={{ marginHorizontal: 12 }}>
-                                            <MIcons name="delete" size={23} color={Constants.appColors.WHITE} />
-                                        </View>
+                                        <MIcons name="delete" size={23} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         console.log('Move')
@@ -182,11 +260,12 @@ const DisplayCardScreen = (props) => {
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         console.log('save press')
+                                        setItems([])
                                         setEditMode(!editMode)
                                     }}>
                                         <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>
-                                </>
+                                </View>
                         }
                     </View>
                 </View>
@@ -203,13 +282,12 @@ const DisplayCardScreen = (props) => {
                         }}
                     >
                         <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
-                        <View style={{flexDirection:"row",justifyContent:'space-between'}}>
-                        <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t("SelectCategoryText")}`}</Text>
-                        <TouchableOpacity onPress={() => setOverlayActive(!isOverlayActive)}>
-                            <Icon name='closecircle' size={24} color={Constants.appColors.PRIMARY_COLOR}/>
-                        </TouchableOpacity>
-                        </View>
-                            
+                            <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t("SelectCategoryText")}`}</Text>
+                                <TouchableOpacity onPress={() => setOverlayActive(!isOverlayActive)}>
+                                    <Icon name='closecircle' size={24} color={Constants.appColors.PRIMARY_COLOR} />
+                                </TouchableOpacity>
+                            </View>
                             <FlatList
                                 keyboardShouldPersistTaps={'handled'}
                                 renderItem={({ item, index }) => (
@@ -217,8 +295,8 @@ const DisplayCardScreen = (props) => {
                                         setCategory(item?.doc?.name);
                                         setCatDetails(item);
                                     }}>
-                                        <View style={{ borderWidth: .5, backgroundColor: item?.doc?.name == category ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.TRANSPARENT }}>
-                                            <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8, color: item?.doc?.name == category ? Constants.appColors.WHITE : Constants.appColors.BLACK }}>{item?.doc?.name}</Text>
+                                        <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 10, borderColor: Constants.appColors.LIGHTGRAY }}>
+                                            <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8, color: item?.doc?.name == category ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.BLACK }}>{item?.doc?.name}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 )}
@@ -227,83 +305,39 @@ const DisplayCardScreen = (props) => {
                                 numColumns={1}
                                 showsVerticalScrollIndicator={false}
                             />
-                            <TouchableOpacity onPress={moveHandel}>
-                                <View style={{ borderWidth: .8, height: 45, justifyContent: 'center' }}>
-                                    <Text style={{ textAlign: "center", fontWeight: 'bold', fontSize: 20 }}>{`${t("MoveText")}`}</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: Platform.OS == 'ios' ? 20 : 12 }}>
+                                <CustomButton
+                                    style={{ height: 40, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.TRANSPARENT, borderWidth: 1, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                                    title={`${t("MoveText")}`}
+                                    titleStyle={{ fontSize: 14, color: Constants.appColors.DARKGRAY, fontWeight: 'bold' }}
+                                    onPress={moveHandel}
+                                />
+                            </View>
+
                         </View>
                     </CustomPopup>}
             </View>
             <View style={{ flex: 1 }}>
-                <FlatList
-                    keyboardShouldPersistTaps={'handled'}
-                    renderItem={({ item, index }) => (
-                        <TouchableOpacity onPress={() => { !editMode && props.navigation.navigate(NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH, { item }) }}>
-                            <View
-                                style={{
-                                    backgroundColor: 'white',
-                                    borderBottomWidth: 0.5,
-                                    borderColor: Constants.appColors.LIGHTGRAY,
-                                    paddingVertical: 4,
-                                    paddingRight: 8,
-                                    borderWidth: 0.5,
-                                    paddingLeft: editMode ? 48 : 8,
-                                    paddingHorizontal: 8,
-                                    marginVertical: 6,
-                                    marginHorizontal: 8,
-                                    borderRadius: 10
-                                }}>
-                                {
-                                    editMode &&
-                                    <View style={{ position: 'absolute', left: 0 }}>
-                                        <CheckBox
-                                            checkedColor={Constants.appColors.PRIMARY_COLOR}
-                                            containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, zIndex: 4 }}
-                                            size={20}
-                                            title=""
-                                            checkedIcon="check-square"
-                                            uncheckedIcon="square"
-                                            checked={isChecked(index)}
-                                            onPress={() => toggleChecked(index, item)}
-                                        />
-                                    </View>
-                                }
-
-                                <View style={{ position: 'absolute', zIndex: 3, right: 16, top: 8 }}>
-                                    <TouchableOpacity onPress={() => {
-                                        try {
-                                            Tts.setDefaultLanguage('ko-KR');
-                                            Tts.speak(item?.speech)
-                                        } catch (e) {
-                                            console.log(`cannot play the sound file`, e)
-                                            Toast.show(`${t("NoAudioFileFoundText")}`, Toast.SHORT);
-                                        }
-                                    }}>
-                                        <Image source={require('../../assets/logo/audio-black-icon.png')} style={{width:18,height:18,resizeMode:'contain'}}/>
-                                    </TouchableOpacity>
-                                </View>
-                                <Text style={[styles.TextStyle,{marginVertical:4}]}>
-                                    {item?.koreanHeadWord}
-                                    {item?.englishHeadWord && `(${item?.englishHeadWord})`}
-                                </Text>
-                                <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12,paddingVertical:4 }]}>{item?.speech}</Text>
-{/*                                 
-                                <View key={index} style={{ marginHorizontal: 4, flexDirection: 'row', paddingLeft: 12, }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${index + 1} `}</Text>
-                                    {item?.Sense[0]?.Equivalent && renderEquivalent(item?.Sense[0]?.Equivalent)}
-                                </View> */}
-                                {/* {
-                        !editMode && <View style={{position:'absolute',right:16}}><AntDesign name='right' color={Constants.appColors.PRIMARY_COLOR} size={20}/></View>
-                    } */}
-                            </View>
-                        </TouchableOpacity>
-
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
+                {
+                    editMode ? 
+                    <DraggableFlatList
                     data={data?.cards}
-                    numColumns={1}
-                    showsVerticalScrollIndicator={false}
-                />
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => `draggable-item-${item.englishHeadWord}`}
+                            scrollPercent={5}
+                            onMoveEnd={({ data }) => setMyCardData(data)}
+                        />
+                        :
+                        <FlatList
+                        keyboardShouldPersistTaps={'handled'}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => `draggable-item-${item.englishHeadWord}`}
+                        data={myCardData}
+                        numColumns={1}
+                        showsVerticalScrollIndicator={false}
+                    />
+                }
+
                 {
                     data?.cards.length == 0 && <Text style={{ position: 'absolute', top: Sizes.WINDOW_HEIGHT * .35 - 32, left: Sizes.WINDOW_WIDTH / 2 - 48 }}>{`${t("NoCardFoundText")}`}</Text>
                 }

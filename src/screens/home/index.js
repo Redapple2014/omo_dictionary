@@ -145,7 +145,7 @@ const HomeScreen = (props) => {
   }
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    //BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
     let pos = getSearchBarPostion();
 
@@ -630,6 +630,7 @@ const HomeScreen = (props) => {
       />
     );
   }
+  console.log(searchText.length > 0 && isKeyboardVisible)
 
   return (
     <View style={{flex: 1}}>
@@ -706,6 +707,7 @@ const HomeScreen = (props) => {
                 borderRadius: 14,
                 marginTop: 0,
                 //top: -3,
+                
               }}
               containerStyle={{
                 borderRadius: 20,

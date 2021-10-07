@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar,Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationActions } from 'react-navigation';
@@ -115,7 +115,11 @@ const ChooseLanguageScreen = (props) => {
                                 <View style={styles.MenuItems} key={`${item.id}`}>
                                     <Text style={{ marginLeft: 12, fontWeight: 'bold', color: Constants.appColors.BLACK, fontSize: 16 }}>{item.label}</Text>
                                     {
-                                        languageSelected && languageSelected.id == item.id && <View style={styles.MenuItemIconStyle}><AntDesign name='checkcircle' color={Constants.appColors.PRIMARY_COLOR} size={18} /></View>
+                                        languageSelected && languageSelected.id == item.id && <View style={styles.MenuItemIconStyle}><Image source={require('../../../assets/logo/check_icon.png')} style={{
+                                            width:16,
+                                            height:16,
+                                    resizeMode:'contain'
+                                          }}/></View>
                                     }
                                 </View>
                             </TouchableOpacity>

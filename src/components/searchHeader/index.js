@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
   },
   imageStyle:{
     width:24,
-    height:24
+    height:24,
+    resizeMode:'contain'
   },
   addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
 })

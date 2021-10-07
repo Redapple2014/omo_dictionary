@@ -11,6 +11,7 @@ import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import CustomPopup from '../../components/popup/CustomPopup';
 import Sizes from '../../utills/Size';
+import { partofspeech } from '../../utills/userdata';
 
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -38,7 +39,7 @@ const NewCardScreen = (props) => {
     const [partOfSpeech, setPartOfSpeech] = useState('');
     const [hanja, setHanja] = useState('');
     const [englishHandWord, setEnglishHandWord] = useState('');
-    const [category, setCategory] = useState(pathFrom ? pathFrom?.doc?.name : `${t("SelectaCategoryText")}`);
+    const [category, setCategory] = useState(pathFrom ? pathFrom?.doc?.name : `Uncategorized`);
     const [definitionsInputs, setDefinitionsInputs] = useState([{ key: '', value: '' }]);
     const [examplesInputs, setExamplesInputs] = useState([{ key: '', value: '' }]);
     const [catDetails, setCatDetails] = useState(pathFrom ? pathFrom : {})
@@ -102,12 +103,40 @@ const NewCardScreen = (props) => {
         }
     }
 
-//handel save flashcard data to a category
-    const handleDone = () => {
-        if (koreanHandWord.length > 0 && partOfSpeech.length > 0 && hanja.length > 0 && englishHandWord.length > 0 && definitionsInputs.length > 0 && examplesInputs.length > 0) {
-            if (category !== `${t("SelectaCategoryText")}`) {
-                if (definitionsInputs[0].value.length > 0 && examplesInputs[0].value.length > 0) {
 
+    const checkInit = async () => {
+        localDB
+            .find({
+                selector: {
+                    'name': { $eq: `Uncategorized` },
+                },
+                limit: 20,
+            })
+            .then(function (result) {
+                console.log('data record: ', result)
+                let x = {
+                    docs: result?.docs,
+                    id: result?.docs[0]._id
+                }
+                console.log(x)
+                if(pathFrom.length == 0){
+                    setCatDetails(x)
+                }
+                    
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+
+    useEffect(() => {
+        checkInit()
+    }, [])
+
+    //handel save flashcard data to a category
+    const handleDone = () => {
+        if (koreanHandWord.length > 0 && englishHandWord.length > 0) {
+            if (category !== `${t("SelectaCategoryText")}`) {
                     localDB.get(catDetails.id).then(function (doc) {
                         // console.log(doc)
                         const docObj = doc
@@ -120,19 +149,15 @@ const NewCardScreen = (props) => {
                             "examples": examplesInputs,
                         }
                         const newObj = Object.assign({}, docObj, { "cards": [...doc.cards, newCardObject] })
-                        console.log(JSON.stringify(newObj))
+                        //console.log(JSON.stringify(newObj))
                         localDB.put(newObj).then((response) => {
-                            console.log('responcen : ', response)
+                            //console.log('responcen : ', response)
                             goBack()
                         }).catch((e) => console.log('ERORor: ', e))
 
                     }).catch(function (err) {
                         console.log('EROR : ', err);
                     });
-
-                } else {
-                    Toast.show(`${t("ProvideDefinitionExampleText")}`, Toast.SHORT)
-                }
             } else {
                 Toast.show(`${t("SelectaCategoryText")}`, Toast.SHORT)
             }
@@ -144,8 +169,8 @@ const NewCardScreen = (props) => {
     useEffect(() => {
         fetchData()
     }, [])
-    
-//go back handeller
+
+    //go back handeller
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
     return (
@@ -174,19 +199,19 @@ const NewCardScreen = (props) => {
                     leftIconContainerStyle={{ marginRight: 16 }}
                     placeholderTextColor={Constants.appColors.LIGHTGRAY}
                     placeholderFontSize={1}
-                    containerStyle={{ height: 40, marginTop: 8 }}
+                    containerStyle={{ height: 30, marginTop: 8 }}
                     value={koreanHandWord}
                     onChangeText={
                         value => {
                             setKoreanHandWord(value);
                         }
                     }
-                    onSubmitEditing={() => partOfSpeechRef.current.focus()}
+                    onSubmitEditing={() => hanjaRef.current.focus()}
                 />
-                <View style={{ marginLeft: 12, marginTop: 36 }}><Text>{`${t("PartOfSpeechText")}`}</Text></View>
+                <View style={{ marginLeft: 12, marginTop: 48 }}><Text>{`${t("PartOfSpeechText")}`}</Text></View>
                 <TouchableOpacity onPress={() => setPopOverlayActive(true)}>
                     <View style={{ height: 40, marginTop: 8, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
-                        <Text style={{ paddingLeft: 4, color: Constants.appColors.GRAY }}>{partOfSpeech.length == 0 ? `${t("SelectPartSpeechText")}` : partOfSpeech}</Text>
+                        <Text style={{ paddingLeft: 4, color: Constants.appColors.BLACK }}>{partOfSpeech.length == 0 ? `${t("SelectPartSpeechText")}` : partOfSpeech}</Text>
                     </View>
                 </TouchableOpacity>
                 <CustomPopup
@@ -210,9 +235,9 @@ const NewCardScreen = (props) => {
                         <FlatList
                             keyboardShouldPersistTaps={'handled'}
                             renderItem={({ item, index }) => (
-                                <TouchableOpacity onPress={() => { setPopOverlayActive(!isPoPOverlayActive); setPartOfSpeech(item) }}>
-                                    <View style={{ borderWidth: .5,marginVertical:4,borderRadius:10,borderColor:Constants.appColors.LIGHTGRAY }}>
-                                        <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{item}</Text>
+                                <TouchableOpacity onPress={() => { setPopOverlayActive(!isPoPOverlayActive); setPartOfSpeech(partofspeech[item]) }}>
+                                    <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 10, borderColor: Constants.appColors.LIGHTGRAY }}>
+                                        <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{partofspeech[item]}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )}
@@ -291,8 +316,8 @@ const NewCardScreen = (props) => {
                                 <FlatList
                                     keyboardShouldPersistTaps={'handled'}
                                     renderItem={({ item, index }) => (
-                                        <TouchableOpacity onPress={() => { setCategory(item?.doc?.name); setCatDetails(item); setOverlayActive(!isOverlayActive); console.log(item) }}>
-                                            <View style={{ borderWidth: .5,marginVertical:4,borderRadius:10,borderColor:Constants.appColors.LIGHTGRAY }}>
+                                        <TouchableOpacity onPress={() => { setCategory(item?.doc?.name); setCatDetails(item); setOverlayActive(!isOverlayActive); }}>
+                                            <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 10, borderColor: Constants.appColors.LIGHTGRAY }}>
                                                 <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{item?.doc?.name}</Text>
                                             </View>
                                         </TouchableOpacity>
@@ -346,7 +371,7 @@ const NewCardScreen = (props) => {
                 <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("CategoryText")}`}</Text></View>
                 <TouchableOpacity onPress={() => setOverlayActive(true)}>
                     <View style={{ height: 40, marginTop: 8, marginBottom: 48, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
-                        <Text style={{ paddingLeft: 4, color: Constants.appColors.GRAY }}>{category}</Text>
+                        <Text style={{ paddingLeft: 4, color: Constants.appColors.BLACK }}>{category}</Text>
                     </View>
                 </TouchableOpacity>
             </ScrollView>

@@ -108,7 +108,7 @@ const FlashcardListsScreen = (props) => {
 
     }
 
-    updated && updateUserSettings()
+    useEffect(()=>updateUserSettings(),[updated])
 
     return (
         <View style={{ flex: 1 }}>

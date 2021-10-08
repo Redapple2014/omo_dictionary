@@ -3,8 +3,7 @@ import { View, Text, StatusBar, Platform, TouchableOpacity, StyleSheet, FlatList
 import PouchDB from 'pouchdb-react-native';
 import Constants from '../../../utills/Constants';
 import Icon from "react-native-vector-icons/Ionicons";
-import { NavigationActions } from 'react-navigation';
-import { NavigationEvents } from 'react-navigation';
+import { NavigationActions, NavigationEvents } from 'react-navigation';
 import Sizes from '../../../utills/Size'
 import MIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from "react-native-vector-icons/AntDesign";

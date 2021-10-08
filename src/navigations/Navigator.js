@@ -27,7 +27,8 @@ import FlashcardListsScreen from '../screens/settings/flashcards';
 import FlashcardListRenderScreen from '../screens/settings/flashcardlist';
 import EditProfileScreen from '../screens/editprofile';
 import AboutScreen from '../screens/about';
-
+import TestCategoryScreen from '../screens/testcategories';
+import FrontDisplayScreen from '../screens/frontdisplay';
 import {
   BOTTOM_TAB_NAVIGATOR,
 
@@ -52,6 +53,8 @@ import {
 
   NAVIGATION_FLASHCARD_STACK_PATH,
   NAVIGATION_FLASHCARD_SCREEN_PATH,
+  NAVIGATION_TEST_CATEGORY_SCREEN_PATH,
+  NAVIGATION_FRONT_DISPLAY_SCREEN_PATH,
 
   NAVIGATION_SIGNUP_SCREEN_PATH,
   NAVIGATION_LOGIN_SCREEN_PATH,
@@ -125,6 +128,8 @@ const FlashcardsStack = createStackNavigator(
 const FlashcardlistStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_LIST_SCREEN_PATH]: FlashcardListScreen,
+    [NAVIGATION_TEST_CATEGORY_SCREEN_PATH]: TestCategoryScreen,
+    [NAVIGATION_FRONT_DISPLAY_SCREEN_PATH]: FrontDisplayScreen
   },
   {
     initialRouteName: NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
@@ -193,11 +198,11 @@ export const MainAppNavigator = createBottomTabNavigator(
     },
     [NAVIGATION_FLASHCARD_LIST_STACK_PATH]: {
       screen: FlashcardlistStack,
-      navigationOptions: () => ({
+      navigationOptions: ({navigation,route}) => ({
         tabBarIcon: ({ focused, tintColor }) => {
           return <AntIcons name="edit" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
-        tabBarVisible: true
+        tabBarVisible: navigation.state.index == 1 ? false : true
       })
     },
     [NAVIGATION_PROFILE_STACK_PATH]: {

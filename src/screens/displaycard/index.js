@@ -77,10 +77,10 @@ const DisplayCardScreen = (props) => {
         let x = leftItems.filter(i => !newSet.some(j => i.koreanHeadWord === j.koreanHeadWord))
 
 
-        console.log('all : ', leftItems)
-        console.log('selected : ', newSet)
-        console.log('will keep : ', data)
-        console.log('will keep : ', x)
+        // console.log('all : ', leftItems)
+        // console.log('selected : ', newSet)
+        // console.log('will keep : ', data)
+        // console.log('will keep : ', x)
 
         if (newSet.length != 0) {
             const newObj = Object.assign({}, data, { "cards": x })
@@ -128,7 +128,16 @@ const DisplayCardScreen = (props) => {
         }
     }
 
-const renderItem = ({ item, index, move, moveEnd, isActive }) => (
+    const renderDef = (data) => {
+        return data.map((item, i) => {
+              return (
+                    <Text style={[styles.TextStyle,{fontSize:12}]}>{item.value && `${i+1} ${item.value}`}</Text>
+              );
+          });
+    }
+const renderItem = ({ item, index, move, moveEnd, isActive }) => {
+    console.log(item)
+    return (
     <TouchableOpacity
     onLongPress={move}
     onPressOut={moveEnd}
@@ -179,6 +188,9 @@ const renderItem = ({ item, index, move, moveEnd, isActive }) => (
             </Text>
             <Text style={[styles.TextStyle, { color: Constants.appColors.GRAY, fontSize: 12, paddingVertical: 4 }]}>{item?.speech}</Text>
             {
+                item.definition.length > 0 && renderDef(item.definition)
+            }
+            {
                 editMode &&
                 <View style={{ marginLeft: 12, position: 'absolute', right: 8, top: 16 }}>
                     <MIcons name="view-headline" size={22} color={Constants.appColors.PRIMARY_COLOR} />
@@ -187,7 +199,7 @@ const renderItem = ({ item, index, move, moveEnd, isActive }) => (
         </View>
     </TouchableOpacity>
 
-)
+)}
 
 
     //fetch falshcard data using sorting by category name

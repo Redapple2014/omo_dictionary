@@ -173,3 +173,33 @@ export const language = {
     "아랍어": "Arabic",
     "중국어": "Chinese",
 }
+
+
+
+export const forntDisplay = [
+    {
+        id:1,
+        name:'Korean Hangul Handword',
+        value:true
+    },
+    {
+        id:2,
+        name:'Hanja Handword',
+        value:false
+    },
+    {
+        id:3,
+        name:'Part of Speech',
+        value:false
+    },
+    {
+        id:4,
+        name:'Audio',
+        value:false
+    },
+    {
+        id:5,
+        name:'Definition',
+        value:false
+    }
+]

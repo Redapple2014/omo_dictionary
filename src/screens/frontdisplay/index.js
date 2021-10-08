@@ -23,7 +23,12 @@ const FrontDisplayScreen = (props) => {
 
     const [myData, setData] = useState([]);
     const { t, i18n } = useTranslation();
-    const [updated, setUpdated] = useState(false)
+    const [updated, setUpdated] = useState(false);
+    const [koreanHandword,setKoreanHandword] = useState(true);
+    const [hanjaHandword,setHanjaHandword] = useState(true);
+    const [partofspeech,setPartofspeech] = useState(true);
+    const [audio,setAudio] = useState(true);
+    const [definition,setDefinition] = useState(true);
 
     
     //go back handeller
@@ -51,26 +56,26 @@ const FrontDisplayScreen = (props) => {
 
     const toggleSwitch = (id) => {
         if (id == 1) {
-            setShowKoreanDefinition(previousState => !previousState)
+            setKoreanHandword(previousState => !previousState)
             setUpdated(true)
 
         }
         else if (id == 2) {
-            setShowExamples(previousState => !previousState)
+            setHanjaHandword(previousState => !previousState)
             setUpdated(true)
 
         }
         else if (id == 3) {
-            setDisplayRomaja(previousState => !previousState)
+            setPartofspeech(previousState => !previousState)
             setUpdated(true)
 
         }
         else if (id == 4) {
-            setDisplayTranslatorExample(previousState => !previousState)
+            setAudio(previousState => !previousState)
             setUpdated(true)
 
         }else if (id == 5) {
-            setDisplayTranslatorExample(previousState => !previousState)
+            setDefinition(previousState => !previousState)
             setUpdated(true)
 
         }
@@ -105,7 +110,7 @@ const FrontDisplayScreen = (props) => {
                             trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
                             thumbColor={Constants.appColors.WHITE}
                             ios_backgroundColor="#3e3e3e"
-                            onValueChange={() => toggleSwitch(item.id)}
+                            onValueChange={() => {toggleSwitch(item.id); setUpdated(true)}}
                             value={item.value}
                         />
                  </View>

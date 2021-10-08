@@ -110,9 +110,10 @@ const HomeScreen = (props) => {
   }
 
   function getSearchBarPostion() {
+    const text = inputEl.current.props.value;
     return isKeyboardVisible
       ? Sizes.WINDOW_HEIGHT * 0.016
-      : searchText.length > 0
+      : text.length > 0
       ? Sizes.WINDOW_HEIGHT * 0.01
       : Sizes.WINDOW_HEIGHT * 0.29;
   }
@@ -539,7 +540,7 @@ const HomeScreen = (props) => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-             // console.log(item)
+              // console.log(item)
               storeRecentlyViewedData(item);
               props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
                 searchResultData: item,
@@ -630,7 +631,7 @@ const HomeScreen = (props) => {
       />
     );
   }
-  console.log(searchText.length > 0 && isKeyboardVisible)
+  console.log(searchText.length > 0 && isKeyboardVisible);
 
   return (
     <View style={{flex: 1}}>
@@ -707,7 +708,6 @@ const HomeScreen = (props) => {
                 borderRadius: 14,
                 marginTop: 0,
                 //top: -3,
-                
               }}
               containerStyle={{
                 borderRadius: 20,

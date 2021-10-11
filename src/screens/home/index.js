@@ -729,7 +729,7 @@ const HomeScreen = (props) => {
               }}
               showCancel={true}
               onCancel={() => alert('ff')}
-              inputStyle={{color: 'black', marginLeft: -2}}
+              inputStyle={{color: 'black', marginLeft: -2, marginTop: 4}}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}

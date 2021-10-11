@@ -704,17 +704,16 @@ const HomeScreen = (props) => {
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 48,
+                height: 43,
                 borderRadius: 14,
-                marginTop: 0,
+                marginTop: -10,
                 //top: -3,
               }}
               containerStyle={{
                 borderRadius: 20,
-                height: 45,
+                height: 30,
                 flex: isKeyboardVisible ? 0.99 : 1,
                 padding: 0,
-                // margin: 0,
                 marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}

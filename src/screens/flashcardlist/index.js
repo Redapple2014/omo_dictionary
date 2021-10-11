@@ -10,7 +10,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import CustomStepper from '../../components/stepper/CustomStepper';
 import {
     NAVIGATION_TEST_CATEGORY_SCREEN_PATH,
-    NAVIGATION_FRONT_DISPLAY_SCREEN_PATH
+    NAVIGATION_FRONT_DISPLAY_SCREEN_PATH,
+    NAVIGATION_START_TEST_SCREEN_PATH
 } from '../../navigations/Routes';
 import { Input } from 'react-native-elements';
 import Toast from 'react-native-simple-toast';
@@ -46,7 +47,7 @@ const FlashcardListScreen = (props) => {
     };
 
     const onStartTestPress = () => {
-        console.log("Start Test Press")
+        props.navigation.navigate(NAVIGATION_START_TEST_SCREEN_PATH)
     }
 
     //handel reset scores data of the user

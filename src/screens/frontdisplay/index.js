@@ -99,9 +99,9 @@ const FrontDisplayScreen = (props) => {
                             height:52
                         }}>
                             <Text style={{
-                                fontWeight: '700',
+                                fontWeight: '600',
                                 color: Constants.appColors.BLACK,
-                                fontSize: 18,
+                                fontSize: 16,
                                 paddingLeft: 16
                             }}>{item.name}</Text>
                  

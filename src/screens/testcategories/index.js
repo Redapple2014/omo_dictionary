@@ -19,8 +19,6 @@ PouchDB.plugin(require('pouchdb-find'));
 //db instance with db_name
 var localDB = new PouchDB('flashcard');
 
-const listOfpartofSpeech = ['감탄사', '관형사', '대명사', '동사', '명사', '보조 동사', '보조 형용사', '부사', '수사', '어미', '의존 명사', '접사', '조사', '품사 없음', '형용사']
-
 const TestCategoryScreen = (props) => {
 
     const [myData, setData] = useState([]);
@@ -29,7 +27,7 @@ const TestCategoryScreen = (props) => {
     const [categoryName, setCategoryName] = useState('')
     const [updated, setUpdated] = useState(false)
     const [items, setItems] = useState([]);
-    
+
     //go back handeller
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
@@ -53,32 +51,31 @@ const TestCategoryScreen = (props) => {
         );
     }
 
-        //Function to check if the item is checked or not
-        const isChecked = (itemId) => {
-            try {
-                const isThere = items.includes(itemId);
-                return isThere;
-            } catch (e) {
-                console.log(e)
-            }
-        };
-    
-        //Function to toggle the item(check and uncheck)
-        const toggleChecked = (itemId) => {
-            const x = [itemId, ...items]
-    
-            if (isChecked(itemId)) {
-                setItems(items.filter((id) => id !== itemId))
-            } else {
-                setItems(x)
-            }
+    //Function to check if the item is checked or not
+    const isChecked = (itemId) => {
+        try {
+            const isThere = items.includes(itemId);
+            return isThere;
+        } catch (e) {
+            console.log(e)
         }
+    };
+
+    //Function to toggle the item(check and uncheck)
+    const toggleChecked = (itemId) => {
+        const x = [itemId, ...items]
+
+        if (isChecked(itemId)) {
+            setItems(items.filter((id) => id !== itemId))
+        } else {
+            setItems(x)
+        }
+    }
 
     const renderItem = ({ item, index }) => {
-        // console.log(categoryName ,  item.doc.name)
         return (
-            <TouchableOpacity
-                onPress={() => { setUpdated(true); setCategoryName(item.doc.name) }}>
+            // <TouchableOpacity
+            //     onPress={() => { setUpdated(true); setCategoryName(item.doc.name) }}>
                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View
                         style={{
@@ -87,12 +84,11 @@ const TestCategoryScreen = (props) => {
                             alignItems: 'center',
                             paddingVertical: 4,
                             flexDirection: 'row',
-                            paddingHorizontal:2,
+                            paddingHorizontal: 2,
                             marginVertical: 4,
                             marginHorizontal: 8,
                             borderRadius: 10,
                         }}>
-
                         <View>
                             <Text style={{
                                 fontWeight: '700',
@@ -100,25 +96,24 @@ const TestCategoryScreen = (props) => {
                                 fontSize: 18,
                                 paddingLeft: 16
                             }}>{item?.doc?.name}</Text>
-                            <Text style={{ paddingLeft: 16,marginVertical:6 }}>{item?.doc?.cards.length}{` ${t("CardsText")}`}</Text>
+                            <Text style={{ paddingLeft: 16, marginVertical: 6 }}>{item?.doc?.cards.length}{` ${t("CardsText")}`}</Text>
                         </View>
                     </View>
-                 <View style={{ position: 'absolute', right: 8 }}>
-                 <CheckBox
-                                    checkedColor={Constants.appColors.PRIMARY_COLOR}
-                                    containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, padding: 0, margin: 0 }}
-                                    size={20}
-                                    title=""
-                                    checkedIcon="check-square"
-                                    checked={isChecked(item?.id)}
-                                    uncheckedIcon='square'
-                                    uncheckedColor={Constants.appColors.LIGHTGRAY}
-                                    onPress={() => toggleChecked(item?.id)}
-                                />
-                 </View>
-                    
+                    <View style={{ position: 'absolute', right: 8 }}>
+                        <CheckBox
+                            checkedColor={Constants.appColors.PRIMARY_COLOR}
+                            containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, padding: 0, margin: 0 }}
+                            size={20}
+                            title=""
+                            checkedIcon="check-square"
+                            checked={isChecked(item?.id)}
+                            uncheckedIcon='square'
+                            uncheckedColor={Constants.appColors.LIGHTGRAY}
+                            onPress={() => {toggleChecked(item?.id);setUpdated(true); setCategoryName(item.doc.name)}}
+                        />
+                    </View>
                 </View>
-            </TouchableOpacity>
+            // </TouchableOpacity>
         )
     }
 
@@ -133,14 +128,14 @@ const TestCategoryScreen = (props) => {
                     onPressleftIcon={goBack}
                 />
             </View>
-            <View style={{ flex: 1 }}>
-            {
+            <View style={{ flex: 1,marginTop:6 }}>
+                {
                     myData.length > 0 ?
-                    <FlatList
-                        data={myData}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => `${item.key}`}
-                    />
+                        <FlatList
+                            data={myData}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => `${item.key}`}
+                        />
                         : (<>
                             <Text style={{ textAlign: 'center', marginTop: 24 }}>{`${t("NoCategoryFoundText")}`}</Text>
                             <TouchableOpacity onPress={() => console.log('tap')}>

@@ -112,6 +112,9 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
+
+console.log(wordInfo)
+
   //load user setting
   async function fetchUserSettings() {
     userDB.allDocs(

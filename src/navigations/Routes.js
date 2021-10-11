@@ -14,6 +14,8 @@ export const NAVIGATION_FLASHCARD_LIST_STACK_PATH = 'FlashCardList';
 export const NAVIGATION_FLASHCARD_LIST_SCREEN_PATH = 'FlashcardListScreen';
 export const NAVIGATION_TEST_CATEGORY_SCREEN_PATH = 'TestCategoryScreen';
 export const NAVIGATION_FRONT_DISPLAY_SCREEN_PATH = 'FrontDisplayScreen';
+export const NAVIGATION_START_TEST_SCREEN_PATH = 'StartTestScreen';
+export const NAVIGATION_TEST_RESULT_SCREEN_PATH = 'TestResultScreen';
 
 
 export const NAVIGATION_PROFILE_STACK_PATH = 'Profile';

@@ -124,6 +124,7 @@
         "IdiomsText":"Idioms & Proverbs",
         "SentenceText":"Sentence",
         "NoRecentDataAvalibleText":"No recent searches",
-        "NodataFoundText":"No results were found"
+        "NodataFoundText":"No results were found",
+        "ExitText":"Exit"
     }
 }

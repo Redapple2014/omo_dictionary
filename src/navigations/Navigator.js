@@ -29,6 +29,9 @@ import EditProfileScreen from '../screens/editprofile';
 import AboutScreen from '../screens/about';
 import TestCategoryScreen from '../screens/testcategories';
 import FrontDisplayScreen from '../screens/frontdisplay';
+import StartTestScreen from '../screens/starttest';
+import TestResultScreen from '../screens/testresult';
+
 import {
   BOTTOM_TAB_NAVIGATOR,
 
@@ -55,6 +58,8 @@ import {
   NAVIGATION_FLASHCARD_SCREEN_PATH,
   NAVIGATION_TEST_CATEGORY_SCREEN_PATH,
   NAVIGATION_FRONT_DISPLAY_SCREEN_PATH,
+  NAVIGATION_START_TEST_SCREEN_PATH,
+  NAVIGATION_TEST_RESULT_SCREEN_PATH,
 
   NAVIGATION_SIGNUP_SCREEN_PATH,
   NAVIGATION_LOGIN_SCREEN_PATH,
@@ -129,7 +134,9 @@ const FlashcardlistStack = createStackNavigator(
   {
     [NAVIGATION_FLASHCARD_LIST_SCREEN_PATH]: FlashcardListScreen,
     [NAVIGATION_TEST_CATEGORY_SCREEN_PATH]: TestCategoryScreen,
-    [NAVIGATION_FRONT_DISPLAY_SCREEN_PATH]: FrontDisplayScreen
+    [NAVIGATION_FRONT_DISPLAY_SCREEN_PATH]: FrontDisplayScreen,
+    [NAVIGATION_START_TEST_SCREEN_PATH]: StartTestScreen,
+    [NAVIGATION_TEST_RESULT_SCREEN_PATH]: TestResultScreen
   },
   {
     initialRouteName: NAVIGATION_FLASHCARD_LIST_SCREEN_PATH,
@@ -202,7 +209,7 @@ export const MainAppNavigator = createBottomTabNavigator(
         tabBarIcon: ({ focused, tintColor }) => {
           return <AntIcons name="edit" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
-        tabBarVisible: navigation.state.index == 1 ? false : true
+        tabBarVisible: (navigation.state.index == 1 || navigation.state.index == 2) ? false : true
       })
     },
     [NAVIGATION_PROFILE_STACK_PATH]: {

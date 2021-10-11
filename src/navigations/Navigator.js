@@ -31,6 +31,7 @@ import TestCategoryScreen from '../screens/testcategories';
 import FrontDisplayScreen from '../screens/frontdisplay';
 import StartTestScreen from '../screens/starttest';
 import TestResultScreen from '../screens/testresult';
+import BuyProScreen from '../screens/buypro';
 
 import {
   BOTTOM_TAB_NAVIGATOR,
@@ -53,6 +54,7 @@ import {
   NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH,
   NAVIGATION_EDIT_PROFILE_SCREEN_PATH,
   NAVIGATION_ABOUT_SCREEN_PATH,
+  NAVIGATION_BUY_PRO_SCREEN_PATH,
 
   NAVIGATION_FLASHCARD_STACK_PATH,
   NAVIGATION_FLASHCARD_SCREEN_PATH,
@@ -69,17 +71,6 @@ import {
   NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH
 
 } from './Routes';
-
-
-const shouldTabBarVisible = (navigation) => {
-  console.log(navigation.route.state.index)
-  try {
-    return navigation.route.state.index < 1;
-  } catch (e) {
-    return true;
-  }
-};
-
 
 const HomeStack = createStackNavigator(
   {
@@ -165,7 +156,8 @@ const ProfileStack = createStackNavigator(
     [NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH]:FlashcardListsScreen,
     [NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH]: FlashcardListRenderScreen,
     [NAVIGATION_EDIT_PROFILE_SCREEN_PATH]: EditProfileScreen,
-    [NAVIGATION_ABOUT_SCREEN_PATH]:AboutScreen
+    [NAVIGATION_ABOUT_SCREEN_PATH]:AboutScreen,
+    [NAVIGATION_BUY_PRO_SCREEN_PATH]:BuyProScreen
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,

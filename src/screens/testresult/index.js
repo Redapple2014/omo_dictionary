@@ -16,8 +16,9 @@ import { forntDisplay } from '../../utills/userdata';
 import { CheckBox } from 'react-native-elements';
 import CollapsibleView from '@eliav2/react-native-collapsible-view';
 import CustomButton from "../../components/button/CustomButton";
-import EIcons from 'react-native-vector-icons/Entypo';
+import CustomBar from '../../components/progressbar'
 var hangulRomanization = require('hangul-romanization');
+
 PouchDB.plugin(require('pouchdb-find'));
 
 
@@ -41,11 +42,50 @@ const TestResultScreen = (props) => {
     <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
         <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
-        <CustomHeader title="Test Results"/>
+        <CustomHeader title="Test Results" />
       </View>
-      <View style={{ flex: 1,borderWidth:1 }}>
-
-
+      <View style={{ flex: 1 }}>
+        <View style={{ paddingHorizontal:12,paddingVertical:8,borderRadius: 10, marginTop: 12, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
+          <View style={{ flexDirection: 'row',borderBottomColor:Constants.appColors.LIGHTGRAY,borderBottomWidth:.5,paddingBottom:8 }}>
+            <Text style={styles.headerTextStyle}>Total Cards Reviewed: </Text>
+            <Text style={styles.headerTextStyle}>100</Text>
+          </View>
+          <Text style={{textAlign:'center',paddingVertical:12,fontWeight:'bold',fontSize:16,color:Constants.appColors.BLACK}}>Results Breakdown</Text>
+          <View style={{justifyContent:'center',paddingHorizontal:12}}>
+          <View style={{flexDirection:'row'}}>
+          <View style={{width:110}}>
+            <Text style={{marginRight:12,color:Constants.appColors.DARKGRAY,fontWeight:'bold'}}>{`1. Perfect`}</Text>
+            </View>
+        <CustomBar style={{height:20,width:150}} color={`#54E346`} complete={60}/>
+        </View>
+        <View style={{flexDirection:'row'}}>
+        <View style={{width:110}}>
+            <Text style={{marginRight:12,color:Constants.appColors.DARKGRAY,fontWeight:'bold'}}>{`2. Recalled`}</Text>
+        </View>
+        <CustomBar style={{height:20,width:150}} color={`#9EDE73`} complete={20}/>
+        </View>
+        <View style={{flexDirection:'row'}}>
+          <View style={{width:110}}>
+            <Text style={{marginRight:12,color:Constants.appColors.DARKGRAY,fontWeight:'bold'}}>{`3. Barely`}</Text>
+            </View>
+        <CustomBar style={{height:20,width:150}} color={`#FFB344`} complete={14}/>
+        </View>
+        <View style={{flexDirection:'row'}}>
+        <View style={{width:110}}>
+            <Text style={{marginRight:12,color:Constants.appColors.DARKGRAY,fontWeight:'bold'}}>{`4. Incorrect`}</Text>
+            </View>
+        <CustomBar style={{height:20,width:150}} color={`#DF2E2E`} complete={30} />
+        </View>
+          </View>
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
+          <CustomButton
+            style={{ height: 40, width: Sizes.WINDOW_WIDTH - 24, backgroundColor: Constants.appColors.WHITE, borderWidth: 1, borderColor: Constants.appColors.LIGHTGRAY, borderRadius: 10 }}
+            title={`Complete Session`}
+            titleStyle={{ fontSize: 15, color: `#54E346`, fontWeight: 'bold' }}
+            onPress={() => { }}
+          />
+        </View>
       </View>
     </View>
   )
@@ -131,5 +171,6 @@ const styles = StyleSheet.create({
     color: Constants.appColors.GRAY,
     fontStyle: 'italic',
     fontSize: 13,
-  }
+  },
+  headerTextStyle: { fontWeight: 'bold', color: Constants.appColors.BLACK, fontSize: 17 }
 });

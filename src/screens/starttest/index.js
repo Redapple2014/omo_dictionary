@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StatusBar, StyleSheet, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { View, StatusBar, StyleSheet, Text, TouchableOpacity, ScrollView, Image, Alert, Platform } from 'react-native';
 import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
 import { NavigationActions, NavigationEvents } from 'react-navigation';
@@ -18,13 +18,13 @@ import CollapsibleView from '@eliav2/react-native-collapsible-view';
 import CustomButton from "../../components/button/CustomButton";
 import EIcons from 'react-native-vector-icons/Entypo';
 import {
-NAVIGATION_TEST_RESULT_SCREEN_PATH
+  NAVIGATION_TEST_RESULT_SCREEN_PATH
 } from '../../navigations/Routes';
 
 var hangulRomanization = require('hangul-romanization');
 PouchDB.plugin(require('pouchdb-find'));
 
-
+const status = 'reveal2'
 
 const data = { "annotation": null, "homonym_number": 0, "id": 17866, "idiomInfo": "[]", "idiomsDef": "[]", "idiomsSense": "[]", "idiomsSenseSample": "[]", "lemma": "여보세요", "lexicalUnit": "단어", "origin": null, "partofspeech": "감탄사", "relatedForm": "[]", "sense": "[{\"sense_id\":2,\"en_lm\":\"hello; hi; hey there\",\"en_def\":\"An exclamation used to call another person who is nearby.\"},{\"sense_id\":1,\"en_lm\":\"hello\",\"en_def\":\"An exclamation used to call the other person on the phone.\"}]", "senseExample": "[{\"sense_id\":2,\"type\":\"문장\",\"example_1\":\"여보세요, 아무도 안 계세요?\",\"example_2\":null},{\"sense_id\":2,\"type\":\"문장\",\"example_1\":\"여보세요, 뭐 좀 여쭤 볼게요.\",\"example_2\":null},{\"sense_id\":2,\"type\":\"문장\",\"example_1\":\"여보세요, 여기 물 한 잔만 주세요.\",\"example_2\":null},{\"sense_id\":2,\"type\":\"대화\",\"example_1\":\"여보세요, 서울 가려면 여기서 버스 타면 되나요?\",\"example_2\":\"아니요, 건너편 가서 타셔야 돼요.\"},{\"sense_id\":1,\"type\":\"문장\",\"example_1\":\"여보세요, 제 말 들리세요?\",\"example_2\":null},{\"sense_id\":1,\"type\":\"문장\",\"example_1\":\"여보세요, 전화 바꿨습니다.\",\"example_2\":null},{\"sense_id\":1,\"type\":\"문장\",\"example_1\":\"여보세요, 거기 이 선생님 계세요?\",\"example_2\":null},{\"sense_id\":1,\"type\":\"대화\",\"example_1\":\"여보세요, 거기 김 사장님 댁입니까?\",\"example_2\":\"네, 맞는데 누구신가요?\"}]", "translate": "[{\"sense_id\":2,\"lemma\":\"여보세요\",\"example_id\":1,\"example_1\":\"Hello, is anyone here?\",\"example_2\":null},{\"sense_id\":2,\"lemma\":\"여보세요\",\"example_id\":2,\"example_1\":\"Hello, let me ask you something.\",\"example_2\":null},{\"sense_id\":2,\"lemma\":\"여보세요\",\"example_id\":3,\"example_1\":\"Hello, just a glass of water, please.\",\"example_2\":null},{\"sense_id\":2,\"lemma\":\"여보세요\",\"example_id\":4,\"example_1\":\"Hello, can I take a bus from here to Seoul?\",\"example_2\":\"No, you have to go across the street and get on.\"},{\"sense_id\":1,\"lemma\":\"여보세요\",\"example_id\":1,\"example_1\":\"Hello, can you hear me?\",\"example_2\":null},{\"sense_id\":1,\"lemma\":\"여보세요\",\"example_id\":2,\"example_1\":\"Hello, I changed my phone.\",\"example_2\":null},{\"sense_id\":1,\"lemma\":\"여보세요\",\"example_id\":3,\"example_1\":\"Hello, is this teacher there?\",\"example_2\":null},{\"sense_id\":1,\"lemma\":\"여보세요\",\"example_id\":4,\"example_1\":\"Hello, is that Mr. Kim's house?\",\"example_2\":\"Yes, that's right. Who are you?\"}]", "vocabularyLevel": "초급", "wordForm": "[]" }
 
@@ -35,25 +35,25 @@ const StartTestScreen = (props) => {
 
   const { t, i18n } = useTranslation();
 
-
+  //exit test handler
   const exitTest = () => {
     Alert.alert(
       `Exit Test`,
       `Would you like to exit this test session? Any progress will be saved.`,
       [
-          {
-              text: `${t("CancelText")}`,
-              onPress: () => console.log("Cancel Pressed"),
-              // style: "cancel"
-          },
-          { text: `Yes`, onPress: () => props.navigation.navigate(NAVIGATION_TEST_RESULT_SCREEN_PATH),style: "yes" }
+        {
+          text: `${t("CancelText")}`,
+          onPress: () => console.log("Cancel Pressed"),
+          // style: "cancel"
+        },
+        { text: `Yes`, onPress: () => props.navigation.navigate(NAVIGATION_TEST_RESULT_SCREEN_PATH), style: "yes" }
       ])
   }
 
   //go back handeller
   const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
-
+  //render idioms examples
   const renderIdiomsSenseSample = (idiomsSenseSample, id) => {
     try {
       let arr = JSON.parse(idiomsSenseSample);
@@ -317,7 +317,7 @@ const StartTestScreen = (props) => {
       <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
         <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
         <View style={styles.container}>
-          <View style={{ paddingHorizontal:8,width: 85, left: 0, height: 30, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+          <View style={{ paddingHorizontal: 8, width: 85, left: 0, height: 30, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
             <TouchableOpacity onPress={() => { }}>
               <View style={{ flexDirection: 'row' }}>
                 <EIcons name='arrow-bold-left' size={26} color={Constants.appColors.WHITE} />
@@ -331,7 +331,7 @@ const StartTestScreen = (props) => {
           </View>
           <Text style={styles.textStyle}>{`100/100`}</Text>
 
-          <View style={{ width: 120,paddingRight:4, right: -0, height: 30, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+          <View style={{ width: 120, paddingRight: 4, right: -0, height: 30, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
             <TouchableOpacity onPress={() => { }}>
               <View style={{ flexDirection: 'row' }}>
                 <FeatherIcons name='search' size={20} color={Constants.appColors.WHITE} />
@@ -339,12 +339,12 @@ const StartTestScreen = (props) => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => { }}>
               <View style={{ flexDirection: 'row' }}>
-              <Image source={require('../../assets/logo/audio-white-icon.png')} style={{width:24,height:24,resizeMode:'contain'}}/>
+                <Image source={require('../../assets/logo/audio-white-icon.png')} style={{ width: 24, height: 24, resizeMode: 'contain' }} />
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={exitTest}>
               <View style={{ flexDirection: 'row' }}>
-                <Text style={{color:Constants.appColors.WHITE,fontSize:16,fontWeight:'600'}}>{`${t("ExitText")}`}</Text>
+                <Text style={{ color: Constants.appColors.WHITE, fontSize: 16, fontWeight: '600' }}>{`${t("ExitText")}`}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -352,7 +352,7 @@ const StartTestScreen = (props) => {
       </View>
       <View style={{ flex: 1 }}>
         <ScrollView style={{
-          backgroundColor: Constants.appColors.WHITE,
+          backgroundColor: Constants.appColors.LIGHTGRAY,
           paddingHorizontal: 8,
           height: Sizes.WINDOW_HEIGHT * .415,
         }}
@@ -485,14 +485,64 @@ const StartTestScreen = (props) => {
             </>
           )}
         </ScrollView>
-        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1,backgroundColor:'white',borderTopWidth:.5,borderTopColor:Constants.appColors.LIGHTGRAY }}>
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12, bottom: 0, position: 'absolute' }}>
-            <CustomButton
-              style={{ height: Sizes.WINDOW_HEIGHT * .2, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10, bottom: 24 }}
+            {status == 'reveal' && <View style={{ flexDirection: "row", justifyContent: 'space-between',marginBottom: Platform.OS == 'ios' ? 22 : 16  }}><CustomButton
+              style={{ height: Sizes.WINDOW_HEIGHT * .21, width: Sizes.WINDOW_WIDTH - 32, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10}}
               title={`Reveal Card`}
               titleStyle={{ fontSize: 22, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
               onPress={() => { }}
+            /></View>
+            }
+
+            {status == 'reveal1' && (<View style={{ flexDirection: "row", justifyContent: 'space-between',marginBottom: Platform.OS == 'ios' ? 24 : 18  }}><CustomButton
+              style={{ height: Sizes.WINDOW_HEIGHT * .2, width: Sizes.WINDOW_WIDTH / 2 - 16, marginRight: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+              title={`Correct`}
+              titleStyle={{ fontSize: 22, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+              onPress={() => { }}
             />
+              <CustomButton
+                style={{ height: Sizes.WINDOW_HEIGHT * .2, width: Sizes.WINDOW_WIDTH / 2 - 16, marginLeft: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                title={`Incorrect`}
+                titleStyle={{ fontSize: 22, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+                onPress={() => { }}
+              /></View>
+            )
+            }
+
+            {status == 'reveal2' && (
+              <View style={{ justifyContent: 'space-between', marginBottom: Platform.OS == 'ios' ? 20 : 12 }}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
+                  <CustomButton
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 16, marginRight: 6, marginVertical: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                    title={`1\nPerfect`}
+                    titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+                    onPress={() => { }}
+                  />
+                  <CustomButton
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 16, marginLeft: 6, marginVertical: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10, }}
+                    title={`2\nRecalled`}
+                    titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+                    onPress={() => { }}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
+                  <CustomButton
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 24, marginRight: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10, }}
+                    title={`3\nBarely`}
+                    titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+                    onPress={() => { }}
+                  />
+                  <CustomButton
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 24, marginLeft: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                    title={`4\nIncorrect`}
+                    titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
+                    onPress={() => { }}
+                  />
+                </View>
+              </View>
+            )
+            }
           </View>
         </View>
       </View>

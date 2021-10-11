@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Alert, Share, Linking } from 'react-native';
+import { View, Text, StatusBar, Platform, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, SafeAreaView, Alert, Share, Linking } from 'react-native';
 import CustomButton from "../../components/button/CustomButton";
-import CustomHeader from "../../components/header";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import AsyncStorage from '@react-native-community/async-storage';
 import {
     NAVIGATION_SIGNUP_SCREEN_PATH,
     NAVIGATION_LOGIN_SCREEN_PATH,
@@ -13,7 +11,8 @@ import {
     NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH,
     NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH,
     NAVIGATION_EDIT_PROFILE_SCREEN_PATH,
-    NAVIGATION_ABOUT_SCREEN_PATH
+    NAVIGATION_ABOUT_SCREEN_PATH,
+    NAVIGATION_BUY_PRO_SCREEN_PATH
 } from '../../navigations/Routes';
 import EIcons from 'react-native-vector-icons/Entypo';
 import { useTranslation } from 'react-i18next';
@@ -22,13 +21,11 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import PouchDB from 'pouchdb-react-native';
 import { NavigationEvents } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
-import Icon from "react-native-vector-icons/Ionicons";
 import { launchImageLibrary } from 'react-native-image-picker';
 import Dialog from "react-native-dialog";
 import Rate, { AndroidMarket } from 'react-native-rate';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import base64 from 'react-native-base64';
 const pkg = require('../../../package.json');
 PouchDB.plugin(require('pouchdb-find'));
 
@@ -127,7 +124,7 @@ const ProfileScreen = (props) => {
 
 //Upgrade user account type to pro handller
     const handelProButton = () => {
-        console.log('Upgrage to Pro')
+        props.navigation.navigate(NAVIGATION_BUY_PRO_SCREEN_PATH)
     }
 
 //language change handeller
@@ -289,7 +286,8 @@ const ProfileScreen = (props) => {
                     <Text style={styles.textStyle}>{`${t("ProfileText")}`}</Text>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
+            {/* <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}> */}
+            <SafeAreaView style={{flex: 1}}>
                 {
                     userData && auth().currentUser?.uid ? <View style={{ paddingHorizontal: 12, justifyContent: 'space-between', flexDirection: 'row' }}>
 
@@ -344,6 +342,7 @@ const ProfileScreen = (props) => {
                 <View style={[styles.Settings, { marginTop: userType ? 16 : 0 }]}>
                     <FlatList
                         data={userMenu1}
+                        scrollEnabled={false}
                         keyboardShouldPersistTaps={'handled'}
                         renderItem={({ item, index }) => (
                             <TouchableOpacity onPress={() => handelMenu1Items(item, index)}>
@@ -361,6 +360,7 @@ const ProfileScreen = (props) => {
                 <View style={[styles.Settings, { marginVertical: 12 }]}>
                     <FlatList
                         data={userMenu2}
+                        scrollEnabled={false}
                         keyboardShouldPersistTaps={'handled'}
                         renderItem={({ item, index }) => (
                             <TouchableOpacity onPress={() => handelMenu2Items(item, index)}>
@@ -391,7 +391,8 @@ const ProfileScreen = (props) => {
                         onPress={handelResetButton}
                     />
                 </View>
-            </ScrollView>
+                </SafeAreaView>
+            {/* </ScrollView> */}
         </View>
     )
 }

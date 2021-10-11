@@ -24,103 +24,94 @@ const FrontDisplayScreen = (props) => {
     const [myData, setData] = useState([]);
     const { t, i18n } = useTranslation();
     const [updated, setUpdated] = useState(false);
-    const [koreanHandword,setKoreanHandword] = useState(true);
-    const [hanjaHandword,setHanjaHandword] = useState(true);
-    const [partofspeech,setPartofspeech] = useState(true);
-    const [audio,setAudio] = useState(true);
-    const [definition,setDefinition] = useState(true);
+    const [items, setItems] = useState([]);
 
-    
     //go back handeller
     const goBack = () => props.navigation.dispatch(NavigationActions.back())
 
-    async function fetchData() {
-        localDB.allDocs(
-            {
-                include_docs: true,
-                attachments: true,
-            },
-            function (err, response) {
-                if (err) {
-                    setData([]);
-                    return console.log(err);
-                }
-                // handle result
-                setData(response.rows);
-                // console.log("fetched data ", response.rows)
-                return response.rows;
+    // async function fetchData() {
+    //     localDB.allDocs(
+    //         {
+    //             include_docs: true,
+    //             attachments: true,
+    //         },
+    //         function (err, response) {
+    //             if (err) {
+    //                 setData([]);
+    //                 return console.log(err);
+    //             }
+    //             // handle result
+    //             setData(response.rows);
+    //             // console.log("fetched data ", response.rows)
+    //             return response.rows;
 
-            },
-        );
-    }
+    //         },
+    //     );
+    // }
 
-    const toggleSwitch = (id) => {
-        if (id == 1) {
-            setKoreanHandword(previousState => !previousState)
-            setUpdated(true)
-
+    //Function to check if the item is checked or not
+    
+    
+    
+    const isChecked = (itemId) => {
+        try {
+            const isThere = items.includes(itemId);
+            return isThere;
+        } catch (e) {
+            console.log(e)
         }
-        else if (id == 2) {
-            setHanjaHandword(previousState => !previousState)
-            setUpdated(true)
-
-        }
-        else if (id == 3) {
-            setPartofspeech(previousState => !previousState)
-            setUpdated(true)
-
-        }
-        else if (id == 4) {
-            setAudio(previousState => !previousState)
-            setUpdated(true)
-
-        }else if (id == 5) {
-            setDefinition(previousState => !previousState)
-            setUpdated(true)
-
-        }
-
     };
+
+    //Function to toggle the item(check and uncheck)
+    const toggleChecked = (itemId) => {
+        const x = [itemId, ...items]
+
+        if (isChecked(itemId)) {
+            setItems(items.filter((id) => id !== itemId))
+        } else {
+            setItems(x)
+        }
+    }
 
     const renderItem = ({ item, index }) => {
         return (
-                    <View
-                        style={{
-                            width: Sizes.WINDOW_WIDTH - 32,
-                            backgroundColor: Constants.appColors.WHITE,
-                            alignItems: 'center',
-                            paddingVertical: 4,
-                            flexDirection: 'row',
-                            paddingHorizontal:2,
-                            borderBottomColor:Constants.appColors.LIGHTGRAY,
-                            borderBottomWidth: index == forntDisplay.length-1 ? 0 : .5,
-                            marginHorizontal: 8,
-                            borderRadius: 10,
-                            height:52
-                        }}>
-                            <Text style={{
-                                fontWeight: '600',
-                                color: Constants.appColors.BLACK,
-                                fontSize: 16,
-                                paddingLeft: 16
-                            }}>{item.name}</Text>
-                 
-                 <View style={{ position: 'absolute', right: 8 }}>
-                 <Switch
-                            trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
-                            thumbColor={Constants.appColors.WHITE}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={() => {toggleSwitch(item.id); setUpdated(true)}}
-                            value={item.value}
-                        />
-                 </View>
-</View>
+            <View
+                style={{
+                    width: Sizes.WINDOW_WIDTH - 32,
+                    backgroundColor: Constants.appColors.WHITE,
+                    alignItems: 'center',
+                    paddingVertical: 4,
+                    flexDirection: 'row',
+                    paddingHorizontal: 2,
+                    borderBottomColor: Constants.appColors.LIGHTGRAY,
+                    borderBottomWidth: index == forntDisplay.length - 1 ? 0 : .5,
+                    marginHorizontal: 8,
+                    borderRadius: 10,
+                    height: 52
+                }}>
+                <Text style={{
+                    fontWeight: '600',
+                    color: Constants.appColors.BLACK,
+                    fontSize: 16,
+                    paddingLeft: 16
+                }}>{item.name}</Text>
+
+                <View style={{ position: 'absolute', right: 8 }}>
+                    <Switch
+                        trackColor={{ false: Constants.appColors.LIGHTGRAY, true: Constants.appColors.PRIMARY_COLOR }}
+                        thumbColor={Constants.appColors.WHITE}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={() => { toggleChecked(item?.id); setUpdated(true) }}
+                        value={isChecked(item?.id)}
+                    />
+                </View>
+            </View>
         )
     }
 
     return (
         <View style={{ flex: 1 }}>
-            <NavigationEvents onDidFocus={(payload) => { fetchData(); }} />
+            {/* <NavigationEvents onDidFocus={(payload) => { fetchData(); }} /> */}
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <CustomHeader
@@ -130,17 +121,17 @@ const FrontDisplayScreen = (props) => {
                 />
             </View>
             <View style={{ flex: 1 }}>
-            {
+                {
                     forntDisplay.length > 0 &&
-(                    <View style={{borderRadius:20,marginTop:8,marginHorizontal:8,padding:4,alignItems:'center', backgroundColor:Constants.appColors.WHITE}}>
-                    <FlatList
-                        data={forntDisplay}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => `${item.id}`}
-                    />
+                    (<View style={{ borderRadius: 20, marginTop: 8, marginHorizontal: 8, padding: 4, alignItems: 'center', backgroundColor: Constants.appColors.WHITE }}>
+                        <FlatList
+                            data={forntDisplay}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => `${item.id}`}
+                        />
                     </View>)
                 }
-                
+
             </View>
         </View>
     )

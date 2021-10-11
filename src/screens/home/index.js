@@ -322,7 +322,7 @@ const HomeScreen = (props) => {
         SELECT * FROM (
           SELECT DISTINCT lemma,  id,  partofspeech, origin   FROM words_info WHERE    searchLemma  LIKE "${text}%" COLLATE NOCASE 
           UNION 
-          SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE ORDER by id
+          SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where writtenForm LIKE "${text}%" COLLATE NOCASE ORDER by id
         ) GROUP BY id
       ) as w 
 

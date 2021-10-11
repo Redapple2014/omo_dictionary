@@ -148,6 +148,7 @@ const HomeScreen = (props) => {
   useEffect(() => {
     //BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
+    createIndexes();
     let pos = getSearchBarPostion();
 
     const translate = {
@@ -273,6 +274,20 @@ const HomeScreen = (props) => {
     setSearchText('');
     Keyboard.dismiss();
   };
+
+  function createIndexes() {
+    const query =
+      'CREATE INDEX idx_words_info_searchLemma ON words_info (searchLemma);';
+
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {});
+    });
+
+    const query1 = 'CREATE INDEX idx_words_app_lemma ON words_app (lemma);';
+    db.transaction((tx) => {
+      tx.executeSql(query1, [], (tx, results) => {});
+    });
+  }
 
   function getWordData(text) {
     console.log('data searching');
@@ -690,10 +705,6 @@ const HomeScreen = (props) => {
               alignSelf: 'center',
               width: '95%',
             }}>
-            {/* <TouchableWithoutFeedback
-              onPress={Keyboard.dismiss}
-              accessible={false}> */}
-            {/* <View style={{marginTop: 5,}}> */}
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -704,23 +715,21 @@ const HomeScreen = (props) => {
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 48,
+                height: 38,
                 borderRadius: 14,
-                marginTop: 0,
-                //top: -3,
+                marginTop: -1,
               }}
               containerStyle={{
                 borderRadius: 20,
-                height: 45,
+                height: 38,
                 flex: isKeyboardVisible ? 0.99 : 1,
                 padding: 0,
-                // margin: 0,
                 marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
               showCancel={true}
               onCancel={() => alert('ff')}
-              inputStyle={{color: 'black'}}
+              inputStyle={{color: 'black', marginLeft: -2}}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}

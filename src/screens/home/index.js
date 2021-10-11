@@ -148,6 +148,7 @@ const HomeScreen = (props) => {
   useEffect(() => {
     //BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
+    createIndexes();
     let pos = getSearchBarPostion();
 
     const translate = {
@@ -274,6 +275,20 @@ const HomeScreen = (props) => {
     Keyboard.dismiss();
   };
 
+  function createIndexes() {
+    const query =
+      'CREATE INDEX idx_words_info_searchLemma ON words_info (searchLemma);';
+
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {});
+    });
+
+    const query1 = 'CREATE INDEX idx_words_app_lemma ON words_app (lemma);';
+    db.transaction((tx) => {
+      tx.executeSql(query1, [], (tx, results) => {});
+    });
+  }
+
   function getWordData(text) {
     console.log('data searching');
     setSearchdata([]);
@@ -307,7 +322,7 @@ const HomeScreen = (props) => {
         SELECT * FROM (
           SELECT DISTINCT lemma,  id,  partofspeech, origin   FROM words_info WHERE    searchLemma  LIKE "${text}%" COLLATE NOCASE 
           UNION 
-          SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where lemma LIKE "${text}%" COLLATE NOCASE ORDER by id
+          SELECT lemma, id, NULL as partofspeech, NULL as origin FROM words_app  where writtenForm LIKE "${text}%" COLLATE NOCASE ORDER by id
         ) GROUP BY id
       ) as w 
 
@@ -690,10 +705,6 @@ const HomeScreen = (props) => {
               alignSelf: 'center',
               width: '95%',
             }}>
-            {/* <TouchableWithoutFeedback
-              onPress={Keyboard.dismiss}
-              accessible={false}> */}
-            {/* <View style={{marginTop: 5,}}> */}
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -719,7 +730,7 @@ const HomeScreen = (props) => {
               }}
               showCancel={true}
               onCancel={() => alert('ff')}
-              inputStyle={{color: 'black'}}
+              inputStyle={{color: 'black', marginLeft: -2, marginTop: 4}}
               placeholder={`${t('SearchBarPlaceholderText')}`}
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}

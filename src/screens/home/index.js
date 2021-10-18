@@ -34,7 +34,6 @@ const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
 let backHandlerClickCount = 0;
-// old word database
 var userDB = new PouchDB('usersettings');
 
 const HomeScreen = (props) => {
@@ -53,12 +52,12 @@ const HomeScreen = (props) => {
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
 
-  let position = isKeyboardVisible
-    ? Sizes.WINDOW_HEIGHT * 0.016
-    : searchText.length > 0
-    ? Sizes.WINDOW_HEIGHT * 0.01
-    : Sizes.WINDOW_HEIGHT * 0.29;
-  const [topPositon, setTopPositon] = useState(position);
+  // let position = isKeyboardVisible
+  //   ? Sizes.WINDOW_HEIGHT * 0.016
+  //   : searchText.length > 0
+  //   ? Sizes.WINDOW_HEIGHT * 0.01
+  //   : Sizes.WINDOW_HEIGHT * 0.29;
+  // const [topPositon, setTopPositon] = useState(position);
 
   // const [ids, setIDS] = useState([]);
   // const [newData, setNewData] = useState([]);
@@ -718,7 +717,6 @@ const HomeScreen = (props) => {
                 height: 43,
                 borderRadius: 14,
                 marginTop: -10,
-                //top: -3,
               }}
               containerStyle={{
                 borderRadius: 20,
@@ -731,7 +729,11 @@ const HomeScreen = (props) => {
               showCancel={true}
               onCancel={() => alert('ff')}
               inputStyle={{color: 'black', marginLeft: -2, marginTop: 4}}
-              placeholder={`${t('SearchBarPlaceholderText')}`}
+              placeholder={
+                searchText.length === 0 && isKeyboardVisible === false
+                  ? `${t('SearchBarPlaceholderText')}`
+                  : ''
+              }
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}
             />

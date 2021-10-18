@@ -75,7 +75,7 @@ import {
 const HomeStack = createStackNavigator(
   {
     [NAVIGATION_HOME_SCREEN_PATH]: HomeScreen,
-    [NAVIGATION_SEARCH_RESULT_SCREEN_PATH]:SearchResultScreen
+    [NAVIGATION_SEARCH_RESULT_SCREEN_PATH]: SearchResultScreen
   },
   {
     initialRouteName: NAVIGATION_HOME_SCREEN_PATH,
@@ -102,8 +102,8 @@ const FlashcardsStack = createStackNavigator(
     [NAVIGATION_NEW_CARD_SCREEN_PATH]: NewCardScreen,
     [NAVIGATION_DISPLAY_CARD_SCREEN_PATH]: DisplayCardScreen,
     [NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH]: ViewFlashcardDataScreen,
-    [NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH]:ChangePasswordScreen,
-    
+    [NAVIGATION_CHANGE_PASSWORD_SCREEN_PATH]: ChangePasswordScreen,
+
   },
   {
     initialRouteName: NAVIGATION_FLASHCARD_SCREEN_PATH,
@@ -112,6 +112,9 @@ const FlashcardsStack = createStackNavigator(
         fontSize: 18,
         alignSelf: 'center'
       }
+    },
+    defaultNavigationOptions: {
+      ...TransitionPresets.SlideFromRightIOS,
     }
   },
   {
@@ -152,12 +155,12 @@ const ProfileStack = createStackNavigator(
     [NAVIGATION_SIGNUP_SCREEN_PATH]: SignupScreen,
     [NAVIGATION_FORGET_PASSWORD_SCREEN_PATH]: ForgetPasswordScreen,
     [NAVIGATION_CHOOSE_LANGUAGE_SCREEN_PATH]: ChooseLanguageScreen,
-    [NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH]:DictionaryScreen,
-    [NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH]:FlashcardListsScreen,
+    [NAVIGATION_DICTIONARY_SETTINGS_SCREEN_PATH]: DictionaryScreen,
+    [NAVIGATION_FLASHCARD_LISTS_SCREEN_PATH]: FlashcardListsScreen,
     [NAVIGATION_FLASHCARD_RENDER_LISTS_SCREEN_PATH]: FlashcardListRenderScreen,
     [NAVIGATION_EDIT_PROFILE_SCREEN_PATH]: EditProfileScreen,
-    [NAVIGATION_ABOUT_SCREEN_PATH]:AboutScreen,
-    [NAVIGATION_BUY_PRO_SCREEN_PATH]:BuyProScreen
+    [NAVIGATION_ABOUT_SCREEN_PATH]: AboutScreen,
+    [NAVIGATION_BUY_PRO_SCREEN_PATH]: BuyProScreen
   },
   {
     initialRouteName: NAVIGATION_PROFILE_SCREEN_PATH,
@@ -188,16 +191,19 @@ export const MainAppNavigator = createBottomTabNavigator(
     },
     [NAVIGATION_FLASHCARD_STACK_PATH]: {
       screen: FlashcardsStack,
-      navigationOptions: () => ({
+      navigationOptions: ({ navigation, route }) => {
+        // console.log(navigation?.state?.routes[1]?.routeName , navigation?.state?.routes[2]?.routeName )
+        return ({
         tabBarIcon: ({ focused, tintColor }) => {
+          // console.log(navigation.state)
           return <FeatherIcons name="bookmark" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
-        tabBarVisible: true
-      })
+        tabBarVisible: (navigation?.state?.routes[1]?.routeName == 'NewCardScreen' || navigation?.state?.routes[2]?.routeName == 'NewCardScreen') ? false : true
+      })}
     },
     [NAVIGATION_FLASHCARD_LIST_STACK_PATH]: {
       screen: FlashcardlistStack,
-      navigationOptions: ({navigation,route}) => ({
+      navigationOptions: ({ navigation, route }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
           return <AntIcons name="edit" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
@@ -206,15 +212,15 @@ export const MainAppNavigator = createBottomTabNavigator(
     },
     [NAVIGATION_PROFILE_STACK_PATH]: {
       screen: ProfileStack,
-      navigationOptions:({navigation,route}) => 
+      navigationOptions: ({ navigation, route }) =>
       ({
-               tabBarIcon: ({ focused, tintColor }) => {
+        tabBarIcon: ({ focused, tintColor }) => {
           return <MIcon name="account-outline" size={24} color={focused ? Constants.appColors.PRIMARY_COLOR : Constants.appColors.DARKGRAY} />;
         },
         tabBarVisible: navigation.state.index == 1 ? false : true
       })
     }
-    },
+  },
 
   {
     tabBarOptions: {

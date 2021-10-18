@@ -460,6 +460,7 @@ console.log(wordInfo)
           title=""
           leftIcon={`${t('SearchText')}`}
           show={true}
+          showBookmark={true}
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }

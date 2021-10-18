@@ -39,8 +39,9 @@ const NewCardScreen = (props) => {
     const [partOfSpeech, setPartOfSpeech] = useState('');
     const [hanja, setHanja] = useState('');
     const [englishHandWord, setEnglishHandWord] = useState('');
+    const [definitionsInputs, setDefinitionsInputs] = useState('');
     const [category, setCategory] = useState(pathFrom ? pathFrom?.doc?.name : `Uncategorized`);
-    const [definitionsInputs, setDefinitionsInputs] = useState([{ key: '', value: '' }]);
+    // const [definitionsInputs, setDefinitionsInputs] = useState([{ key: '', value: '' }]);
     const [examplesInputs, setExamplesInputs] = useState([{ key: '', value: '' }]);
     const [catDetails, setCatDetails] = useState(pathFrom ? pathFrom : {})
 
@@ -149,7 +150,7 @@ const NewCardScreen = (props) => {
                             "examples": examplesInputs,
                         }
                         const newObj = Object.assign({}, docObj, { "cards": [...doc.cards, newCardObject] })
-                        //console.log(JSON.stringify(newObj))
+                        console.log(JSON.stringify(newObj))
                         localDB.put(newObj).then((response) => {
                             //console.log('responcen : ', response)
                             goBack()
@@ -190,7 +191,7 @@ const NewCardScreen = (props) => {
                     label={`${t("KoreanHandwordText")}`}
                     ref={koreanHandWordRef}
                     labelStyle={{ fontSize: 13, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder={`${t("KoreanHandwordPlaceholderText")}`}
+                    placeholder={`${t("KoreanHandwordPlaceholderText")}*`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -210,8 +211,8 @@ const NewCardScreen = (props) => {
                 />
                 <View style={{ marginLeft: 12, marginTop: 48 }}><Text>{`${t("PartOfSpeechText")}`}</Text></View>
                 <TouchableOpacity onPress={() => setPopOverlayActive(true)}>
-                    <View style={{ height: 40, marginTop: 8, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
-                        <Text style={{ paddingLeft: 4, color: Constants.appColors.BLACK }}>{partOfSpeech.length == 0 ? `${t("SelectPartSpeechText")}` : partOfSpeech}</Text>
+                    <View style={{ height: 48,borderRadius:6, marginTop: 8, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
+                        <Text style={{ paddingLeft: 4,fontSize:18, color: partOfSpeech.length == 0 ? Constants.appColors.LIGHTGRAY :Constants.appColors.BLACK }}>{partOfSpeech.length == 0 ? `${t("SelectPartSpeechText")}` : ` ${partOfSpeech}`}</Text>
                     </View>
                 </TouchableOpacity>
                 <CustomPopup
@@ -225,7 +226,7 @@ const NewCardScreen = (props) => {
                         maxHeight: Sizes.WINDOW_HEIGHT * .5
                     }}
                 >
-                    <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
+                    <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1,marginBottom:12 }}>
                         <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
                             <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t("SelectPartSpeechText")}`}</Text>
                             <TouchableOpacity onPress={() => setPopOverlayActive(!isPoPOverlayActive)}>
@@ -236,8 +237,8 @@ const NewCardScreen = (props) => {
                             keyboardShouldPersistTaps={'handled'}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity onPress={() => { setPopOverlayActive(!isPoPOverlayActive); setPartOfSpeech(partofspeech[item]) }}>
-                                    <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 10, borderColor: Constants.appColors.LIGHTGRAY }}>
-                                        <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{partofspeech[item]}</Text>
+                                    <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 6, borderColor: Constants.appColors.LIGHTGRAY }}>
+                                        <Text style={{ fontSize: 18, paddingLeft: 16, paddingVertical: 8 }}>{partofspeech[item]}</Text>
                                     </View>
                                 </TouchableOpacity>
                             )}
@@ -275,7 +276,7 @@ const NewCardScreen = (props) => {
                     label={`${t("EnglishHandwordText")}`}
                     ref={englishHandWordRef}
                     labelStyle={{ fontSize: 13, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder={`${t("EnglishHandwordPlaceholderText")}`}
+                    placeholder={`${t("EnglishHandwordPlaceholderText")}*`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -312,13 +313,13 @@ const NewCardScreen = (props) => {
                             </TouchableOpacity>
                         </View>
                         {
-                            myData.length == 0 ? <View><Text style={{ textAlign: 'center' }}>{`${t("NodataFoundText")}`}</Text></View> :
+                            myData.length == 0 ? <View style={{marginBottom:12}}><Text style={{ textAlign: 'center' }}>{`${t("NodataFoundText")}`}</Text></View> :
                                 <FlatList
                                     keyboardShouldPersistTaps={'handled'}
                                     renderItem={({ item, index }) => (
                                         <TouchableOpacity onPress={() => { setCategory(item?.doc?.name); setCatDetails(item); setOverlayActive(!isOverlayActive); }}>
-                                            <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 10, borderColor: Constants.appColors.LIGHTGRAY }}>
-                                                <Text style={{ fontSize: 20, paddingLeft: 4, paddingVertical: 8 }}>{item?.doc?.name}</Text>
+                                            <View style={{ borderWidth: .5, marginVertical: 4, borderRadius: 6, borderColor: Constants.appColors.LIGHTGRAY }}>
+                                                <Text style={{ fontSize: 18, paddingLeft: 16, paddingVertical: 8 }}>{item?.doc?.name}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     )}
@@ -330,29 +331,51 @@ const NewCardScreen = (props) => {
                         }
                     </View>
                 </CustomPopup>
-                <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("DefinitionText")}`}</Text></View>
-                {definitionsInputs.map((input, key) => (
-                    <View style={styles.inputContainer} key={key}>
-                        <TextInput placeholder={`${t("EnterSampleDefinitionText")} ${key + 1}`} value={input.value} onChangeText={(text) => inputHandler('d', text, key)} style />
+                {/* <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("DefinitionText")}`}</Text></View> */}
+                <CustomInput
+                    label={`${t("DefinitionText")}`}
+                    ref={englishHandWordRef}
+                    labelStyle={{ fontSize: 13, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
+                    placeholder={`${t("EnterSampleDefinitionText")}`}
+                    autoCapitalize='none'
+                    returnKeyType='next'
+                    autoCorrect={false}
+                    inputContainerStyle={{ margin: 4, fontSize: 12, backgroundColor: 'white', borderRadius: 6, borderWidth: 0 }}
+                    keyboardType='email-address'
+                    leftIconContainerStyle={{ marginRight: 16 }}
+                    placeholderTextColor={Constants.appColors.LIGHTGRAY}
+                    placeholderFontSize={1}
+                    containerStyle={{ height: 40, marginTop: 8 }}
+                    value={definitionsInputs}
+                    onChangeText={
+                        value => {
+                            setDefinitionsInputs(value);
+                        }
+                    }
+                    onSubmitEditing={() => { }}
+                />
+                {/* {definitionsInputs.map((input, key) => (
+                    <View style={[styles.inputContainer,{height: 48,borderRadius:6,}]} key={key}>
+                        <TextInput placeholder={` ${t("EnterSampleDefinitionText")} ${key + 1}`} value={input.value} onChangeText={(text) => inputHandler('d', text, key)} style={{fontSize:17}} placeholderTextColor={Constants.appColors.LIGHTGRAY}  />
                         <View style={{ position: 'absolute', right: 4 }}>
                             <TouchableOpacity onPress={() => deleteHandler('d', key)}>
                                 <Icon name='minuscircle' size={19} color={Constants.appColors.RED} />
                             </TouchableOpacity>
                         </View>
                     </View>
-                ))}
-                <View style={{ flexDirection: 'row', marginTop: 12, alignItems: 'center', marginLeft: 12 }}>
+                ))} */}
+                {/* <View style={{ flexDirection: 'row', marginTop: 12, alignItems: 'center', marginLeft: 12 }}>
                     <Text>{`${t("AddAnAdditionalDefinitionText")}`}</Text>
                     <View style={{ position: 'absolute', right: 20 }}>
                         <TouchableOpacity onPress={() => addHandler('d')}>
                             <Icon name='pluscircle' size={19} color={Constants.appColors.GREEN} />
                         </TouchableOpacity>
                     </View>
-                </View>
-                <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("ExamplesText")}`}</Text></View>
+                </View> */}
+                <View style={{ marginLeft: 12, marginTop: 36 }}><Text>{`${t("ExamplesText")}`}</Text></View>
                 {examplesInputs.map((input, key) => (
-                    <View style={styles.inputContainer} key={key}>
-                        <TextInput placeholder={`${t("EnterSampleExamplesText")} ${key + 1}`} value={input.value} onChangeText={(text) => inputHandler('e', text, key)} style />
+                    <View style={[styles.inputContainer,{height: 48,borderRadius:6,}]} key={key}>
+                        <TextInput placeholder={` ${t("EnterSampleExamplesText")} ${key + 1}`} value={input.value} onChangeText={(text) => inputHandler('e', text, key)} style={{fontSize:17}} placeholderTextColor={Constants.appColors.LIGHTGRAY} />
                         <View style={{ position: 'absolute', right: 4 }}>
                             <TouchableOpacity onPress={() => deleteHandler('e', key)}>
                                 <Icon name='minuscircle' size={19} color={Constants.appColors.RED} />
@@ -370,8 +393,8 @@ const NewCardScreen = (props) => {
                 </View>
                 <View style={{ marginLeft: 12, marginTop: 8 }}><Text>{`${t("CategoryText")}`}</Text></View>
                 <TouchableOpacity onPress={() => setOverlayActive(true)}>
-                    <View style={{ height: 40, marginTop: 8, marginBottom: 48, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
-                        <Text style={{ paddingLeft: 4, color: Constants.appColors.BLACK }}>{category}</Text>
+                    <View style={{ height: 48,borderRadius:6, marginTop: 8, marginBottom: 48, marginHorizontal: 12, backgroundColor: Constants.appColors.WHITE, justifyContent: 'center' }}>
+                        <Text numberOfLines={1} style={{ paddingLeft: 4,fontSize:17, color: Constants.appColors.BLACK, width:Sizes.WINDOW_WIDTH-70 }}>{` ${category}`}</Text>
                     </View>
                 </TouchableOpacity>
             </ScrollView>

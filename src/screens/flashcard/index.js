@@ -179,9 +179,10 @@ const FlashcardScreen = (props) => {
                     alignItems: 'center',
                     backgroundColor: 'white',
                     paddingVertical: 2,
-                    marginVertical: 4,
+                    marginVertical: 6,
                     marginHorizontal: 8,
                     borderRadius: 10,
+                    marginTop:index == 0 ? 8 : 0
                 }}>
                     <View
                         style={{
@@ -209,7 +210,7 @@ const FlashcardScreen = (props) => {
                             </View>
                         }
                         <View>
-                            <Text style={{
+                            <Text numberOfLines={1} style={{
                                 fontWeight: '700',
                                 color: isActive ? Constants.appColors.WHITE : Constants.appColors.BLACK,
                                 fontSize: 18,
@@ -316,7 +317,7 @@ const FlashcardScreen = (props) => {
                             </TouchableOpacity>
                         </View>
                     }
-                    <Text style={[styles.textStyle]}>{!editMode ? `${t("FlashcardPageTitle")}` : `Edit Cards`}</Text>
+                    <Text style={[styles.textStyle,{top: 4}]}>{!editMode ? `${t("FlashcardPageTitle")}` : `Edit Cards`}</Text>
                     <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 0 }}>
                         {
                             !editMode ? <>
@@ -333,6 +334,7 @@ const FlashcardScreen = (props) => {
                                     setEditMode(!editMode)
                                 }}>
                                     <MIcons name="edit" size={23} color={Constants.appColors.WHITE} />
+                                    
                                 </TouchableOpacity></>
                                 :
                                 <>
@@ -402,7 +404,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 8,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     textStyle: {
         color: Constants.appColors.WHITE,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, Platform, TouchableOpacity, ScrollView, NativeModules, NativeEventEmitter } from 'react-native';
+import { View, Text, StatusBar, Platform, StyleSheet, ScrollView, NativeModules, NativeEventEmitter } from 'react-native';
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
@@ -29,17 +29,15 @@ const ViewFlashcardDataScreen = (props) => {
 
     //render the user's flash card data
     const renderData = () => {
-        const arr = data.definition
-        const arr2 = data.examples
-        console.log(arr)
-            return arr.map((data, i) => {
+        // const arr = data.definition
+        const arr2 = data?.examples
+        // console.log(arr)
+            return arr2.map((data, i) => {
                         return (
-                            <View key={i} style={{ marginHorizontal: 2,marginBottom:6 }}><Text style={{color:Constants.appColors.PRIMARY_COLOR}}>{`${data && data?.value},`}</Text><Text>{`Example- ${data && arr2[i].value}`}</Text></View>
+                            <View key={i} style={{ marginHorizontal: 2, }}><Text>{`${data && arr2[i].value}`}</Text></View>
                         )
                         })
     }
-
-
 
     return (
         <View style={{ flex: 1 }}>
@@ -52,6 +50,7 @@ const ViewFlashcardDataScreen = (props) => {
                     onPressleftIcon={() =>
                         props.navigation.dispatch(NavigationActions.back())
                     }
+                    showBookmark={false}
                     onSoundPlay={() => {
                         try {
                             Tts.setDefaultLanguage('ko-KR');
@@ -70,15 +69,20 @@ const ViewFlashcardDataScreen = (props) => {
                         <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.englishHeadWord && `(${data?.englishHeadWord})`}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }} >
-                        <Text style={{ paddingRight: 6 }}>{data?.speech}</Text>
+                        <Text style={{ paddingRight: 6, }}>{data?.speech}</Text>
                         <Text>{data?.vocabularyLevel}</Text>
                     </View>
                 </View>
             </View>
-            {data?.definition  && <>
+            {!data?.definition  && <>
                 <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}><Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text></View>
                 <View style={{ backgroundColor: 'white' }}>
-                    <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false} style={{  paddingHorizontal: 12 }}>{data?.definition && renderData()}</ScrollView>
+                    <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false} style={{  paddingHorizontal: 12,marginBottom:12,marginTop:6 }}>
+
+                    <Text style={{color:Constants.appColors.PRIMARY_COLOR,marginLeft:2,fontSize:18}}>{data?.definition}</Text>
+                  
+                        {!data?.definition && renderData()}
+                        </ScrollView>
                 </View>
             </>
             }
@@ -92,3 +96,12 @@ ViewFlashcardDataScreen.navigationOptions = {
 }
 
 export default ViewFlashcardDataScreen;
+
+
+const styles =  StyleSheet.create({
+    TextStyle: {
+        fontSize: 16,
+        color: Constants.appColors.BLACK,
+        paddingLeft: 12,
+    }
+})

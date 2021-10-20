@@ -528,13 +528,13 @@ const StartTestScreen = (props) => {
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
                   <CustomButton
-                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 24, marginRight: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10, }}
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 16, marginRight: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10, }}
                     title={`3\nBarely`}
                     titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
                     onPress={() => { }}
                   />
                   <CustomButton
-                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 - 24, marginLeft: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
+                    style={{ height: Sizes.WINDOW_HEIGHT * .1, width: Sizes.WINDOW_WIDTH / 2 -16, marginLeft: 8, backgroundColor: Constants.appColors.LIGHTGRAY, borderColor: Constants.appColors.DARKGRAY, borderRadius: 10 }}
                     title={`4\nIncorrect`}
                     titleStyle={{ fontSize: 18, color: Constants.appColors.BLACK, fontWeight: 'bold' }}
                     onPress={() => { }}

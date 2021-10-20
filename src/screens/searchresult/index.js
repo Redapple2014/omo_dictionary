@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,32 +10,35 @@ import {
   NativeEventEmitter,
   StyleSheet,
 } from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import SearchHeader from '../../components/searchHeader';
-import {NavigationActions} from 'react-navigation';
-import {useTranslation} from 'react-i18next';
+import { NavigationActions } from 'react-navigation';
+import { useTranslation } from 'react-i18next';
 import Tts from 'react-native-tts';
 import db from '../../utills/loadDb';
 import Toast from 'react-native-simple-toast';
-import {partofspeech, vocabularyLevel} from '../../utills/userdata';
+import { partofspeech, vocabularyLevel } from '../../utills/userdata';
 import CollapsibleView from '@eliav2/react-native-collapsible-view';
 import PouchDB from 'pouchdb-react-native';
-import {NavigationEvents} from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 var hangulRomanization = require('hangul-romanization');
 var userDB = new PouchDB('usersettings');
 
 const SearchResultScreen = (props) => {
   const data = props.navigation.getParam('searchResultData', 'nothing sent');
   const ids = props.navigation.getParam('ids', []);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [initData, setInitdata] = useState(data.id);
   const [userSettings, setUserSettings] = useState({});
+  const [update, setUpdate] = useState(false)
+  const [upSet, setUpSet] = useState(false)
   const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
-  ee.addListener('tts-start', () => {});
-  ee.addListener('tts-finish', () => {});
-  ee.addListener('tts-cancel', () => {});
+  ee.addListener('tts-start', () => { });
+  ee.addListener('tts-finish', () => { });
+  ee.addListener('tts-cancel', () => { });
 
   const [wordInfo, setWordInfo] = useState([]);
 
@@ -104,6 +107,7 @@ const SearchResultScreen = (props) => {
       tx.executeSql(query, [], (tx, results) => {
         let row = results.rows.item(0);
         setWordInfo(row);
+        setUpdate(true)
       });
     });
   };
@@ -112,8 +116,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-
-console.log(wordInfo)
+  // console.log(userSettings.showExamples)
 
   //load user setting
   async function fetchUserSettings() {
@@ -130,6 +133,7 @@ console.log(wordInfo)
 
         // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
         setUserSettings(response.rows[0].doc.Dictionary);
+        setUpSet(true)
         return response.rows[0];
       },
     );
@@ -148,217 +152,6 @@ console.log(wordInfo)
       return arr.map((data, i) => {
         if (data.sense_id === id) {
           return (
-            <View key={`${i + data?.example_1}`}>
-              {data?.example_1 && <Text>{`${data.example_1}`}</Text>}
-              {userSettings.displayTranslatorExample && (
-                <Text style={styles.exampleStyle}>
-                  {hangulRomanization.convert(data?.example_1)}
-                </Text>
-              )}
-              {data?.example_2 && <Text>{`${data.example_2}`}</Text>}
-              {userSettings.displayTranslatorExample && (
-                <Text style={styles.exampleStyle}>
-                  {hangulRomanization.convert(data?.example_2)}
-                </Text>
-              )}
-            </View>
-          );
-        } else {
-          return <></>;
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const renderIdiomDefData = (idiomsSense, id) => {
-    try {
-      let arr = JSON.parse(idiomsSense);
-      return arr.map((data, i) => {
-        if (data.sense_id === id) {
-          return (
-            <View key={`${i + data?.en_lm}`}>
-              <View style={{flexDirection: 'column'}}>
-                <Text
-                  style={{
-                    width: Sizes.WINDOW_WIDTH - 64,
-                    color: Constants.appColors.PRIMARY_COLOR,
-                  }}>{`${data?.en_lm}`}</Text>
-                <Text
-                  style={{
-                    width: Sizes.WINDOW_WIDTH - 64,
-                  }}>{`${data?.en_def}`}</Text>
-              </View>
-              <View
-                style={{
-                  marginLeft: 0,
-                  height: 'auto',
-                  paddingVertical: 4,
-                  borderBottomWidth: 0.4,
-                  marginBottom: 4,
-                  paddingBottom: 8,
-                  borderBottomColor: Constants.appColors.LIGHTGRAY,
-                }}>
-                {renderIdiomsSenseSample(
-                  wordInfo.idiomsSenseSample,
-                  data.sense_id,
-                )}
-              </View>
-            </View>
-          );
-        } else {
-          return <></>;
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  //render idioms from sense
-  const renderIdiomsData = (idioms) => {
-    try {
-      let arr = JSON.parse(idioms);
-      return arr.map((data, i) => {
-        return (
-          <>
-            <View
-              style={{flexDirection: 'row', marginVertical: 4, marginLeft: 6}}
-              key={`${i + data?.lemma}`}>
-              <Text style={{fontSize: 17}}>{i + 1} </Text>
-              <View>
-                <Text
-                  style={{
-                    color: Constants.appColors.BLACK,
-                    fontSize: 17,
-                    marginBottom: 8,
-                  }}>{`${data?.lemma}; `}</Text>
-                {renderIdiomDefData(wordInfo.idiomsSense, data.sense_id)}
-              </View>
-            </View>
-            {data?.syntacticPattern && (
-              <View style={{flexDirection: 'row'}}>
-                <View
-                  style={{
-                    backgroundColor: '#3D9CE0',
-                    height: 24,
-                    width: '30%',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                    marginRight: 8,
-                  }}>
-                  <Text
-                    style={{
-                      marginTop: 3,
-                      textAlign: 'center',
-                      color: 'white',
-                      marginHorizontal: 8,
-                    }}>{`${t('SentenceText')}`}</Text>
-                </View>
-                <Text style={{marginTop: 3}}>{data?.syntacticPattern}</Text>
-              </View>
-            )}
-          </>
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  //render Sense leema from sense
-  const renderSeneData = (sense) => {
-    try {
-      let arr = JSON.parse(sense);
-      return arr.map((data, i) => {
-        return (
-          <>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: 4,
-                marginLeft: 6,
-                alignItems: 'center',
-              }}
-              key={`${i + data?.en_lm}`}>
-              <Text style={{fontSize: 17, textAlign: 'center'}}>
-                {data.sense_id}{' '}
-              </Text>
-              {/* <View> */}
-              <Text
-                style={{
-                  color: Constants.appColors.PRIMARY_COLOR,
-                  fontSize: 17,
-                  textAlign: 'center',
-                }}>{`${data?.en_lm}; `}</Text>
-              {/* </View> */}
-            </View>
-            {renderSeneDefData(wordInfo.sense, data.sense_id)}
-          </>
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  //render Sense definations from sense
-  const renderSeneDefData = (sense, sense_id) => {
-    try {
-      let arr = JSON.parse(sense);
-      return arr.map((data, i) => {
-        if (data.sense_id === sense_id) {
-          return (
-            <View key={`${i + data?.en_def}`}>
-              <View
-                style={{
-                  flexDirection: 'column',
-                  marginVertical: 4,
-                  marginLeft: 22,
-                }}>
-                <Text
-                  style={{
-                    width: Sizes.WINDOW_WIDTH - 64,
-                  }}>{`${data?.en_def}`}</Text>
-              </View>
-              <View
-                style={{
-                  marginTop: 2,
-                  paddingBottom: 8,
-                  borderBottomWidth: 0.4,
-                  borderBottomColor: Constants.appColors.LIGHTGRAY,
-                }}>
-                <CollapsibleView
-                  initExpanded={data?.sense_id == 1 ? true : false}
-                  touchableWrapperStyle={{alignItems: 'flex-start'}}
-                  noArrow
-                  title=" ">
-                  {renderSenseExampleData(
-                    wordInfo.senseExample,
-                    data?.sense_id,
-                  )}
-                </CollapsibleView>
-              </View>
-            </View>
-          );
-        } else {
-          return <></>;
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  //render Sense Example from sense
-  const renderSenseExampleData = (senseExample, sense_id) => {
-    try {
-      let arr = JSON.parse(senseExample);
-      return arr.map((data, i) => {
-        if (data.sense_id === sense_id) {
-          return (
-            // <View style={{ height: 40 }} key={`${i + data?.example_1}`}>
             <View
               key={`${i + data?.example_1}`}
               style={{
@@ -401,51 +194,267 @@ console.log(wordInfo)
     }
   };
 
-  //render each item
-  const renderData = (type, dataSet) => {
-    let arr = JSON.parse(dataSet);
-    // console.log(arr)
-    if (arr != 'undefined') {
+  const renderIdiomDefData = (idiomsSense, id) => {
+    try {
+      let arr = JSON.parse(idiomsSense);
       return arr.map((data, i) => {
-        if (type == 1) {
-          //console.log('Applications : ', arr);
-          if (data?.lemma != 'undefined' || data?.lemma != 'null') {
-            return (
-              data?.writtenForm && (
-                <View
-                  key={i + data?.p}
-                  style={{marginHorizontal: 2, marginTop: 3}}>
-                  <Text>{`${data && data?.writtenForm},`}</Text>
+        if (data.sense_id === id) {
+          return (
+            <View key={`${i + data?.en_lm}`}>
+              <View style={{ flexDirection: 'column' }}>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data?.en_lm}`}</Text>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                    marginVertical:2
+                  }}>{`${data?.en_def}`}</Text>
+              </View>
+              {
+                upSet && <View
+                  style={{
+                    marginLeft: 0,
+                    height: 'auto',
+                    paddingVertical: 0,
+                    borderBottomWidth: arr.length == i + 1 ? 0 : 0.4,
+                    marginBottom: 4,
+                    paddingBottom: 4,
+                    borderBottomColor: Constants.appColors.LIGHTGRAY,
+                    left: -16,
+                  }}>
+                  <CollapsibleView
+                    initExpanded={userSettings.showExamples}
+                    touchableWrapperStyle={{ alignItems: 'flex-start' }}
+                    noArrow
+                    title=" ">
+                    {renderIdiomsSenseSample(
+                      wordInfo.idiomsSenseSample,
+                      data.sense_id,
+                    )}
+                  </CollapsibleView>
                 </View>
-              )
-            );
-          } else {
-            return <Text></Text>;
-          }
-        } else if (type == 2) {
-          // console.log('Derivatives : ', arr);
-          if (data?.type != 'undefined' || data?.type != 'null') {
-            return (
-              data?.writtenForm && (
-                <View key={i} style={{marginHorizontal: 2}}>
-                  <Text>{`${data && data?.writtenForm},`}</Text>
-                </View>
-              )
-            );
-          } else {
-            return <Text></Text>;
-          }
+              }
+            </View>
+          );
         } else {
           return <></>;
         }
       });
-    } else {
-      return;
+    } catch (e) {
+      console.log(e);
     }
   };
 
+  //render idioms from sense
+  const renderIdiomsData = (idioms) => {
+    try {
+      let arr = JSON.parse(idioms);
+      return arr.map((data, i) => {
+        return (
+          <>
+            <View
+              style={{ flexDirection: 'row', marginVertical: 4, marginLeft: 6 }}
+              key={`${i + data?.lemma}`}>
+              <Text style={{ fontSize: 17 }}>{i + 1} </Text>
+              <View>
+                <Text
+                  style={{
+                    color: Constants.appColors.BLACK,
+                    fontSize: 17,
+                    marginBottom: 4,
+                  }}>{`${data?.lemma}; `}</Text>
+                {renderIdiomDefData(wordInfo.idiomsSense, data.sense_id)}
+              </View>
+            </View>
+            {data?.syntacticPattern && (
+              <View style={{ flexDirection: 'row', paddingHorizontal: 6 }}>
+                <View
+                  style={{
+                    backgroundColor: '#3D9CE0',
+                    height: 24,
+                    width: '30%',
+                    alignItems: 'center',
+                    borderRadius: 10,
+                    marginRight: 8,
+                  }}>
+                  <Text
+                    style={{
+                      marginTop: 3,
+                      textAlign: 'center',
+                      color: 'white',
+                      marginHorizontal: 8,
+                    }}>{`${t('SentenceText')}`}</Text>
+                </View>
+                <Text style={{ marginTop: 3 }}>{data?.syntacticPattern}</Text>
+              </View>
+            )}
+          </>
+        );
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //render Sense leema from sense
+  const renderSeneData = (sense) => {
+    try {
+      let arr = JSON.parse(sense);
+      return arr.map((data, i) => {
+        return (
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginVertical: 2,
+                marginLeft: 6,
+                alignItems: 'center',
+
+              }}
+              key={`${i + data?.en_lm}`}>
+              <Text style={{ fontSize: 17, textAlign: 'center' }}>
+                {data.sense_id}{' '}
+              </Text>
+              {/* <View> */}
+              <Text
+                style={{
+                  color: Constants.appColors.PRIMARY_COLOR,
+                  fontSize: 17,
+                  textAlign: 'center',
+                }}>{`${data?.en_lm}; `}</Text>
+              {/* </View> */}
+            </View>
+            {renderSeneDefData(wordInfo.sense, data.sense_id)}
+          </>
+        );
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //render Sense definations from sense
+  const renderSeneDefData = (sense, sense_id) => {
+    try {
+      let arr = JSON.parse(sense);
+      return arr.map((data, i) => {
+        if (data.sense_id === sense_id) {
+          return (
+            <View key={`${i + data?.en_def}`}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  marginVertical: 0,
+                  marginLeft: 22,
+                }}>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                  }}>{`${data?.en_def}`}</Text>
+              </View>
+              {
+                upSet && <View
+                  style={{
+                    marginTop: 2,
+                    paddingBottom: 4,
+                    borderBottomWidth: arr.length == i + 1 ? 0 : 0.4,
+                    borderBottomColor: Constants.appColors.LIGHTGRAY,
+                  }}>
+                  <CollapsibleView
+                    initExpanded={userSettings?.showExamples}
+                    touchableWrapperStyle={{ alignItems: 'flex-start' }}
+                    noArrow
+                    title=" ">
+                    {renderSenseExampleData(
+                      wordInfo.senseExample,
+                      data?.sense_id,
+                    )}
+                  </CollapsibleView>
+
+
+                </View>
+              }
+            </View>
+          );
+        } else {
+          return <></>;
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //render Sense Example from sense
+  const renderSenseExampleData = (senseExample, sense_id) => {
+    try {
+      let arr = JSON.parse(senseExample);
+      return arr.map((data, i) => {
+        if (data.sense_id === sense_id) {
+          return (
+            <View
+              key={`${i + data?.example_1}`}
+              style={{
+                marginVertical: 2,
+                paddingLeft: 6,
+                borderLeftWidth: 2,
+                borderLeftColor: Constants.appColors.PRIMARY_COLOR,
+                marginLeft: 8,
+              }}>
+              {data?.example_1 && (
+                <Text
+                  style={{
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data.example_1}`}</Text>
+              )}
+              {userSettings.displayTranslatorExample && data?.example_1 && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_1)}
+                </Text>
+              )}
+              {data?.example_2 && (
+                <Text
+                  style={{
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data.example_2}`}</Text>
+              )}
+              {userSettings.displayTranslatorExample && data?.example_2 && (
+                <Text style={styles.exampleStyle}>
+                  {hangulRomanization.convert(data?.example_2)}
+                </Text>
+              )}
+            </View>
+          );
+        } else {
+          return <></>;
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const redenerToast = (xy) => {
+    const x = xy
+    switch (x) {
+      case 0:
+        return
+      case 1:
+        Toast.show('⭐\nElementary Level', Toast.SHORT)
+      case 2:
+        Toast.show('⭐⭐\nElementary Level', Toast.SHORT)
+      case 3:
+        Toast.show('⭐⭐⭐\nElementary Level', Toast.SHORT)
+    }
+
+    // return()
+  }
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <NavigationEvents onDidFocus={(payload) => fetchUserSettings()} />
       <View
         style={{
@@ -513,127 +522,85 @@ console.log(wordInfo)
         showsVerticalScrollIndicator={false}
         style={{
           backgroundColor: Constants.appColors.WHITE,
-          paddingHorizontal: 8,
+
         }}>
-        <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
+        <View style={{ paddingHorizontal: 16, backgroundColor: 'white', }}>
           <View
             style={{
               paddingVertical: 10,
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
                 {wordInfo?.lemma}
               </Text>
-              <Text style={{fontSize: 24, color: 'black', fontWeight: '500'}}>
+              <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
                 {wordInfo?.origin && `(${wordInfo?.origin})`}
               </Text>
             </View>
             {userSettings.displayRomaja && wordInfo?.lemma && (
               <Text
-                style={{marginVertical: 4, color: Constants.appColors.GRAY}}>
+                style={{ marginVertical: 2, color: Constants.appColors.GRAY }}>
                 {hangulRomanization.convert(wordInfo?.lemma)}
               </Text>
             )}
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: userSettings.displayRomaja ? 2 : 4 }}>
               {(wordInfo?.partofspeech ?? wordInfo?.partOfSpeech) && (
                 <Text
-                  style={{paddingRight: 6, color: Constants.appColors.GRAY}}>
+                  style={{ paddingRight: 6, color: Constants.appColors.GRAY, fontStyle: 'italic', }}>
                   {(wordInfo?.partofspeech &&
                     partofspeech[wordInfo?.partofspeech]) ??
                     (wordInfo?.partOfSpeech &&
                       partofspeech[wordInfo?.partOfSpeech])}
                 </Text>
               )}
-
-              {vocabularyLevel[wordInfo?.vocabularyLevel] != 0 && (
-                <View style={{flexDirection: 'row'}}>
-                  {[...Array(vocabularyLevel[wordInfo.vocabularyLevel])].map(
+              <TouchableOpacity onPress={() => redenerToast(vocabularyLevel[wordInfo.vocabularyLevel])}>
+                <View style={{ flexDirection: 'row' }}>
+                  {update && vocabularyLevel[wordInfo?.vocabularyLevel] != 0 && vocabularyLevel[wordInfo?.vocabularyLevel] != 'undefined' && [...Array(vocabularyLevel[wordInfo.vocabularyLevel])].map(
                     (e, i) => (
                       <Image
                         key={i}
-                        style={{width: 14, height: 14}}
+                        style={{ width: 14, height: 14 }}
                         source={require('../../assets/logo/star.png')}
                       />
-                    ),
+                    )
                   )}
                 </View>
-              )}
+              </TouchableOpacity>
             </View>
           </View>
 
-          {/* {wordInfo?.wordForm?.writtenForm && wordInfo?.wordForm?.relatedForm && (
-            <View style={{ marginVertical: 10 }}>
-              <View style={{ flexDirection: 'row' }}>
-                <View
-                  style={{
-                    backgroundColor: '#3D9CE0',
-                    height: 22,
-                    width: '30%',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                  }}>
-                  <Text
-                    style={{
-                      marginTop: 3,
-                      textAlign: 'center',
-                      color: 'white',
-                      marginHorizontal: 8,
-                    }}>{`${t('ApplicationsText')}`}</Text>
-                </View>
-                {wordInfo?.wordForm && renderData(1, wordInfo?.wordForm)}
-              </View>
-              <View style={{ marginTop: 8, flexDirection: 'row' }}>
-                <View
-                  style={{
-                    backgroundColor: '#5ED65C',
-                    height: 22,
-                    width: '30%',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                  }}>
-                  <Text
-                    style={{
-                      marginRight: 8,
-                      textAlign: 'center',
-                      color: 'white',
-                      marginHorizontal: 8,
-                    }}>{`${t('DerivativesText')}`}</Text>
-                </View>
-                {data?.r && renderData(2, data?.w)}
-              </View>
-            </View>
-          )} */}
         </View>
         {wordInfo?.sense && wordInfo?.senseExample && (
           <>
             <View
               style={{
                 backgroundColor: '#f8f8f8',
-                paddingHorizontal: 8,
+                paddingHorizontal: 16,
                 paddingVertical: 4,
+
               }}>
               <Text
-                style={{fontSize: 16, color: Constants.appColors.GRAY}}>{`${t(
-                'DefinitionText',
-              )}`}</Text>
+                style={{ fontSize: 16, color: Constants.appColors.GRAY }}>{`${t(
+                  'DefinitionText',
+                )}`}</Text>
             </View>
-            <View style={{backgroundColor: 'white', flex: 1}}>
-              <View>{renderSeneData(wordInfo?.sense)}</View>
+            <View style={{ backgroundColor: 'white', flex: 1 }}>
+              <View style={{ paddingHorizontal: 9 }}>{renderSeneData(wordInfo?.sense)}</View>
               {wordInfo?.idiomsDef.length > 2 && (
-                <View>
+                <>
                   <View
                     style={{
                       backgroundColor: '#f8f8f8',
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
+                      paddingHorizontal: 16,
+                      paddingVertical: 4
                     }}>
-                    <Text style={{fontSize: 16}}>{`${t('IdiomsText')}`}</Text>
+                    <Text style={{ fontSize: 16, color: Constants.appColors.GRAY }}>{`${t('IdiomsText')}`}</Text>
                   </View>
-                  <View style={{paddingRight: 12}}>
+                  <View style={{ paddingRight: 12, paddingHorizontal: 10 }}>
                     {wordInfo?.idiomsDef &&
                       renderIdiomsData(wordInfo?.idiomsDef)}
                   </View>
-                </View>
+                </>
               )}
             </View>
           </>

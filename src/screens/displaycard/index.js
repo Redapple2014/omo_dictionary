@@ -138,20 +138,22 @@ const DisplayCardScreen = (props) => {
     const renderItem = ({ item, index, move, moveEnd, isActive }) => {
         return (
             <View style={{
-                flexDirection: 'row',
-                flex: 1,
                 paddingRight: 8,
                 paddingLeft: editMode ? 48 : 8,
                 paddingHorizontal: 8,
-                marginHorizontal: 8,
+                marginHorizontal: 6,
                 borderRadius: 10,
                 backgroundColor: 'white',
-                paddingVertical: 8,
+                paddingVertical: 4,
                 marginVertical: 6,
+                flexDirection: 'row',
+                alignItems: 'center',
+                flex:.5,
+                marginTop:index == 0 ? 6 : 0
             }}>
                 {
                     editMode &&
-                    <View style={{ left: -50, alignItems: 'center',zIndex:3,width:40 }}>
+                    <View style={{ left: -50, alignItems: 'center',zIndex:3,width:40,height:50 }}>
                         <CheckBox
                             checkedColor={Constants.appColors.PRIMARY_COLOR}
                             containerStyle={{ backgroundColor: Constants.appColors.TRANSPARENT, zIndex: 4 }}
@@ -171,7 +173,8 @@ const DisplayCardScreen = (props) => {
                     <View
                         style={{
                               width: editMode ? Sizes.WINDOW_WIDTH-70 :Sizes.WINDOW_WIDTH-32,
-                              left:editMode?-45:0
+                              left:editMode?-45:0,
+                          
                         }}>
 
 
@@ -239,7 +242,7 @@ const DisplayCardScreen = (props) => {
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
-                    <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
+                    <View style={{ alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 4,top:6 }}>
                         {
                             editMode ?
                                 <TouchableOpacity onPress={() => { setEditMode(!editMode); setItems([]) }}>
@@ -251,8 +254,8 @@ const DisplayCardScreen = (props) => {
                                     <Text style={{ fontSize: 20, color: 'white', top: 2 }}>{`${t("BackText")}`}</Text>
                                 </TouchableOpacity>}
                     </View>
-                    <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.textStyle2, { top: 4, width: 150, }]}>{!editMode ? data?.name : `Edit Cards`}</Text>
-                    <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 0 }}>
+                    <Text ellipsizeMode='tail' numberOfLines={1} style={[styles.textStyle2,,{borderWidth:0, width: 150}]}>{!editMode ? data?.name : `Edit Cards`}</Text>
+                    <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute',  borderWidth:0,right: 4,top:2 }}>
                         {
                             !editMode ? <>
                                 <TouchableOpacity onPress={() => props.navigation.navigate(NAVIGATION_NEW_CARD_SCREEN_PATH, { path: data1 })}>
@@ -277,7 +280,7 @@ const DisplayCardScreen = (props) => {
                             </>
 
                                 :
-                                <View style={{ width: 85, flexDirection: 'row', justifyContent: 'space-between',alignItems:'center',top:4 }}>
+                                <View style={{ width: 85, flexDirection: 'row', justifyContent: 'space-between',alignItems:'center',right: 4,top:-2 }}>
                                     <TouchableOpacity onPress={handelDelete}>
                                         <MIcons name="delete" size={23} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>
@@ -292,7 +295,7 @@ const DisplayCardScreen = (props) => {
                                         setItems([])
                                         setEditMode(!editMode)
                                     }}>
-                                        <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
+                                        <MIcons name="check" size={23} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>
                                 </View>
                         }
@@ -413,19 +416,16 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: Constants.appColors.PRIMARY_COLOR,
-        padding: 6,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 8,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        paddingVertical:8,
     },
     textStyle2: {
         color: Constants.appColors.WHITE,
         fontSize: 20,
-        marginLeft: 8,
-        marginTop: 4,
         textAlign: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
 });

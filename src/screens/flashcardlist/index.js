@@ -4,10 +4,12 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomHeader from "../../components/header";
+import PouchDB from 'pouchdb-react-native';
 import { useTranslation } from 'react-i18next';
 import CustomButton from "../../components/button/CustomButton";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import CustomStepper from '../../components/stepper/CustomStepper';
+import { NavigationEvents } from 'react-navigation';
 import {
     NAVIGATION_TEST_CATEGORY_SCREEN_PATH,
     NAVIGATION_FRONT_DISPLAY_SCREEN_PATH,
@@ -15,6 +17,9 @@ import {
 } from '../../navigations/Routes';
 import { Input } from 'react-native-elements';
 import Toast from 'react-native-simple-toast';
+import {defaultFlashcardTestSettings} from '../../utills/userdata';
+var testSettings = new PouchDB('testsettings');
+
 
 const MAX_LENGTH = 100;
 const MIN_LENGTH = 0;
@@ -28,7 +33,8 @@ const FlashcardListScreen = (props) => {
     const [limitNewCards, setLimitNewCards] = useState(false);
     const [reviewIncorrectCards, setReviewIncorrectCards] = useState(false);
     const [updated, setUpdated] = useState(false)
-    const [maxLength, setMaxLength] = useState('10')
+    const [maxLength, setMaxLength] = useState('20')
+    const [flashcardTestSettings, setFlashcardTestSettings] = useState({})
 
     //toggle user settings data 
     const toggleSwitch = (id) => {
@@ -62,11 +68,51 @@ const FlashcardListScreen = (props) => {
                 },
                 {
                     text: `Reset Test Settings`,
-                    onPress: () => console.log("Reset scores Pressed")
+                    onPress: () => {
+                        testSettings.get(flashcardTestSettings.id).then(function (doc) {
+                            const newx = {
+                                ...doc,
+                                ...defaultFlashcardTestSettings
+                            }
+                            console.log(newx)
+                            testSettings.put(newx).then((response) => {
+                                console.log('responcen : ', response)
+                                Toast.show(`${t("SettingsResetSucessfullyText")}`, Toast.SHORT)
+                                getTestSettings()
+                                
+                            }).catch((e) =>
+                                console.log('ERORor: ', e))
+                        }).catch(function (err) {
+                            console.log('EROR : ', err);
+                        });
+                    }
                 }
             ])
     }
 
+    //load user setting 
+    async function getTestSettings() {
+        testSettings.allDocs(
+            {
+                include_docs: true,
+                attachments: true,
+            },
+            function (err, response) {
+                if (err) {
+                    setFlashcardTestSettings({})
+                    return console.log('error ',err);
+                }
+
+                //console.log("user settings data ", JSON.stringify(response.rows))
+                setFlashcardTestSettings(response.rows[0])
+                setLimitMaxTestLength(response.rows[0].doc.limtMaxTestLength)
+                setMaxLength(`${response.rows[0].doc.maxLength}`)
+                setLimitNewCards(response.rows[0].doc.limitNewCards)
+                setReviewIncorrectCards(response.rows[0].doc.reviewIncurrectAtTestEnd)
+                return response.rows[0];
+            },
+        );
+    }
 
     const calculateLength = (type) => {
         if (!isNaN(maxLength)) {
@@ -76,12 +122,14 @@ const FlashcardListScreen = (props) => {
                     return
                 } else {
                     setMaxLength(`${parseInt(maxLength) + 1}`)
+                    setUpdated(true)
                 }
             } else {
                 if (maxLength == MIN_LENGTH) {
                     return
                 } else {
                     setMaxLength(`${parseInt(maxLength) - 1}`)
+                    setUpdated(true)
                 }
             }
         }
@@ -161,6 +209,7 @@ const FlashcardListScreen = (props) => {
                                 if(val <= MAX_LENGTH && val>= MIN_LENGTH)
                                 {
                                     setMaxLength(val)
+                                    setUpdated(true)
                                 }else{
                                     console.log('invalid')
                                     Toast.show(`Value should be between ${MIN_LENGTH} to ${MAX_LENGTH}`)
@@ -228,14 +277,49 @@ const FlashcardListScreen = (props) => {
         </>)
     }
 
+    // console.log('data :',flashcardTestSettings)
+    //update settings data
+    function flshcardTestSettings() {
+            testSettings.get(flashcardTestSettings.id).then(function (doc) {
+                let newObject = {
+                    ...flashcardTestSettings,
+                    "doc" : {
+                        ...doc,
+                        limtMaxTestLength: limitMaxTestLength,
+                    maxLength,
+                    limitNewCards,
+                    reviewIncurrectAtTestEnd:reviewIncorrectCards}
+                }
+                // console.log('new obj doc : ', JSON.stringify(newObject))
+                
+                testSettings.put(newObject.doc).then((response) => {
+                    //console.log('responcen : ', response)
+                    getTestSettings()
+                    setUpdated(false)
+                }).catch((e) =>
+                    console.log('ERORor: ', e))
+            }).catch(function (err) {
+                console.log('EROR : ', err);
+            });
+    
+    }
+
+    useEffect(()=>flshcardTestSettings(),[updated])
+
+
     return (
         <View style={{ flex: 1 }}>
+            <NavigationEvents onDidFocus={(payload) => getTestSettings()} />
             <View style={{ backgroundColor: Constants.appColors.PRIMARY_COLOR, paddingTop: Platform.OS == "ios" ? getStatusBarHeight() : 0 }}>
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
-                <CustomHeader
-                    title={`${t("FlashcardListPageTitle")}`}
-                />
-                <TouchableOpacity style={{ width: 120, position: 'absolute', marginTop: Platform.OS == 'ios' ? 55 : 12 }} onPress={onStartTestPress}><Text style={{ marginLeft: 12, color: Constants.appColors.WHITE, fontSize: 18, fontWeight: '400' }}>Start Test</Text></TouchableOpacity>
+                <View style={styles.container}>
+                   <View style={{ alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 4,top:9 }}>
+                            <TouchableOpacity onPress={onStartTestPress }>
+                                <Text style={{color: 'white',fontSize: 18, fontWeight: '400' }}>{`Start Test`}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    <Text style={[styles.textStyle,{borderWidth:0}]}>{`${t("FlashcardListPageTitle")}`}</Text>
+                </View>
             </View>
             <View style={{ flex: 1 }}>
                 <View style={{
@@ -297,19 +381,34 @@ export default FlashcardListScreen;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Constants.appColors.PRIMARY_COLOR,
-        padding: 6,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 8,
         flexDirection: 'row',
+        paddingVertical:8,
     },
     textStyle: {
         color: Constants.appColors.WHITE,
         fontSize: 20,
-        marginLeft: 8,
-        marginTop: 4,
         textAlign: 'center',
         fontWeight: 'bold',
+    },
+    addressContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginBottom: 6,
+        paddingRight: 8
+    },
+    itemStyle: {
+        justifyContent: 'center',
+        borderBottomWidth: .5,
+        paddingVertical: 8,
+        borderBottomColor: Constants.appColors.LIGHTGRAY
+    },
+    textStyle2: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Constants.appColors.BLACK,
+        width: '67%'
     },
     MenuItems: {
         height: 40,
@@ -323,17 +422,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center'
     },
-    textStyle2: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: Constants.appColors.BLACK,
-        width: '67%'
-    },
-    itemStyle: {
-        justifyContent: 'center',
-        borderBottomWidth: .5,
-        paddingVertical: 8,
-        borderBottomColor: Constants.appColors.LIGHTGRAY
-    }
-
-});
+})

@@ -188,10 +188,10 @@ const NewCardScreen = (props) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
                 <CustomInput
-                    label={`${t("KoreanHandwordText")}`}
+                    label={`${t("KoreanHandwordText")}*`}
                     ref={koreanHandWordRef}
                     labelStyle={{ fontSize: 13, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder={`${t("KoreanHandwordPlaceholderText")}*`}
+                    placeholder={`${t("KoreanHandwordPlaceholderText")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}
@@ -273,10 +273,10 @@ const NewCardScreen = (props) => {
                     onSubmitEditing={() => englishHandWordRef.current.focus()}
                 />
                 <CustomInput
-                    label={`${t("EnglishHandwordText")}`}
+                    label={`${t("EnglishHandwordText")}*`}
                     ref={englishHandWordRef}
                     labelStyle={{ fontSize: 13, marginBottom: 4, marginLeft: 4, color: Constants.appColors.DARKGRAY, fontWeight: '400' }}
-                    placeholder={`${t("EnglishHandwordPlaceholderText")}*`}
+                    placeholder={`${t("EnglishHandwordPlaceholderText")}`}
                     autoCapitalize='none'
                     returnKeyType='next'
                     autoCorrect={false}

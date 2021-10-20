@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Platform,
@@ -17,17 +17,17 @@ import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import {useTranslation} from 'react-i18next';
-import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
+import { useTranslation } from 'react-i18next';
+import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
-import {defaultSettings} from '../../utills/userdata';
+import { defaultSettings, defaultFlashcardTestSettings } from '../../utills/userdata';
 import db from '../../utills/loadDb';
-import {partofspeech} from '../../utills/userdata';
+import { partofspeech, vocabularyLevel } from '../../utills/userdata';
 import * as Animatable from 'react-native-animatable';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
@@ -35,6 +35,7 @@ PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
 let backHandlerClickCount = 0;
 var userDB = new PouchDB('usersettings');
+var testSettings = new PouchDB('testsettings');
 
 const HomeScreen = (props) => {
   const MAX_NUMBER_OF_RECENT_DATA = 3;
@@ -45,27 +46,27 @@ const HomeScreen = (props) => {
   const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
 
-  // let position = isKeyboardVisible
-  //   ? Sizes.WINDOW_HEIGHT * 0.016
-  //   : searchText.length > 0
-  //   ? Sizes.WINDOW_HEIGHT * 0.01
-  //   : Sizes.WINDOW_HEIGHT * 0.29;
-  // const [topPositon, setTopPositon] = useState(position);
-
-  // const [ids, setIDS] = useState([]);
-  // const [newData, setNewData] = useState([]);
-
   async function loadFile(index) {
     if (index == 1) {
       userDB
         .post(defaultSettings)
+        .then(function (response) {
+          loadFile(2)
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    }
+    if (index == 2) {
+      testSettings
+        .post(defaultFlashcardTestSettings)
         .then(function (response) {
           AsyncStorage.setItem('inserted_data', 'inserted');
           setLoading(false);
@@ -113,8 +114,8 @@ const HomeScreen = (props) => {
     return isKeyboardVisible
       ? Sizes.WINDOW_HEIGHT * 0.016
       : text.length > 0
-      ? Sizes.WINDOW_HEIGHT * 0.01
-      : Sizes.WINDOW_HEIGHT * 0.29;
+        ? Sizes.WINDOW_HEIGHT * 0.01
+        : Sizes.WINDOW_HEIGHT * 0.29;
   }
 
   function moveUp() {
@@ -190,6 +191,7 @@ const HomeScreen = (props) => {
         console.log('cleared v');
       } else {
         setReacientlySearchedData([]);
+        setReacientlySearchedStatus(`${t('NoRecentDataAvalibleText')}`);
         console.log('cleared s');
       }
 
@@ -224,21 +226,26 @@ const HomeScreen = (props) => {
   const onClear = () => {
     onSearchSubmit();
     setSearchText('');
+    Keyboard.dismiss();
   };
 
   // search the entered data
   function onSearchSubmit() {
     if (searchText) {
-      if (reacientlySearchedData.length > MAX_NUMBER_OF_RECENT_DATA) {
-        reacientlySearchedData.splice(MAX_NUMBER_OF_RECENT_DATA, 1);
+      if (reacientlySearchedData.includes(searchText)) {
+        return
+      } else {
+        if (reacientlySearchedData.length > MAX_NUMBER_OF_RECENT_DATA) {
+          reacientlySearchedData.splice(MAX_NUMBER_OF_RECENT_DATA, 1);
+        }
+        AsyncStorage.setItem(
+          'search_data',
+          JSON.stringify([searchText, ...reacientlySearchedData]),
+        );
+        getDatafromStorage('search_data');
+        setSearchText(searchText);
+        getWordData(searchText);
       }
-      AsyncStorage.setItem(
-        'search_data',
-        JSON.stringify([searchText, ...reacientlySearchedData]),
-      );
-      getDatafromStorage('search_data');
-      setSearchText(searchText);
-      getWordData(searchText);
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -279,19 +286,19 @@ const HomeScreen = (props) => {
       'CREATE INDEX idx_words_info_searchLemma ON words_info (searchLemma);';
 
     db.transaction((tx) => {
-      tx.executeSql(query, [], (tx, results) => {});
+      tx.executeSql(query, [], (tx, results) => { });
     });
 
     const query1 = 'CREATE INDEX idx_words_app_lemma ON words_app (lemma);';
     db.transaction((tx) => {
-      tx.executeSql(query1, [], (tx, results) => {});
+      tx.executeSql(query1, [], (tx, results) => { });
     });
   }
 
   function getWordData(text) {
     console.log('data searching');
     setSearchdata([]);
-    const engQuery = `SELECT words_info.id, words_info.lemma, words_info.partofspeech, words_info.origin,
+    const engQuery = `SELECT words_info.id, words_info.lemma, words_info.partofspeech, words_info.vocabularyLevel as vocabularyLevel, words_info.origin,
           JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
           AS sense,
 
@@ -311,7 +318,7 @@ const HomeScreen = (props) => {
       GROUP BY words_info.id  
       ORDER by words_info.lemma;`;
 
-    const koreanQuery = `SELECT w.id, w.lemma, w.partofspeech, w.origin,
+    const koreanQuery = `SELECT w.id, w.lemma, w.partofspeech, w.origin,w.vocabularyLevel as vocabularyLevel,
           JSON_GROUP_ARRAY(DISTINCT(json_object('en_lm', words_en.en_lm, 'en_def', words_en.en_def)))
           AS sense,
 
@@ -388,9 +395,8 @@ const HomeScreen = (props) => {
     // console.log(arr)
     if (arr != 'undefined') {
       return arr.map((data, i) => {
-        // if (data.l == '몽골어') {
         return (
-          <View key={`${i}`} style={{flexDirection: 'row'}}>
+          <View key={`${i} `} style={{ flexDirection: 'row',alignItems:'center' }}>
             <Text
               style={{
                 fontSize: 15,
@@ -405,7 +411,6 @@ const HomeScreen = (props) => {
               }}>{`${data.en_lm}`}</Text>
           </View>
         );
-        // }
       });
     } else {
       return <></>;
@@ -417,8 +422,8 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
-          <TouchableOpacity key={index} onPress={() => setSearchText(item)}>
+        renderItem={({ item, index }) => (
+          <TouchableOpacity key={index} onPress={() => { setSearchText(item); Keyboard.dismiss() }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -427,15 +432,18 @@ const HomeScreen = (props) => {
                 backgroundColor: 'white',
                 paddingVertical: 8,
                 paddingHorizontal: 8,
-                marginVertical: 6,
+                marginVertical: 4,
                 marginHorizontal: 8,
                 borderRadius: 10,
               }}>
               <Text
+                numberOfLines={1}
+                ellipsizeMode='tail'
                 style={{
                   fontSize: 16,
                   color: Constants.appColors.BLACK,
                   paddingLeft: 12,
+                  width: Sizes.WINDOW_WIDTH - 48
                 }}>
                 {item}
               </Text>
@@ -455,7 +463,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
@@ -468,56 +476,55 @@ const HomeScreen = (props) => {
                 backgroundColor: 'white',
                 paddingVertical: 8,
                 paddingHorizontal: 8,
-                marginVertical: 6,
+                marginVertical: 4,
                 marginHorizontal: 8,
                 borderRadius: 10,
               }}>
-              {(item?.partofspeech ?? item?.partOfSpeech) && (
-                <View
-                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      try {
-                        Tts.setDefaultLanguage('ko-KR');
-                        Tts.speak(item?.lemma);
-                      } catch (e) {
-                        Toast.show('No Audio File Found', Toast.SHORT);
-                      }
-                    }}>
-                    <Image
-                      source={require('../../assets/logo/audio-black-icon.png')}
-                      style={{width: 18, height: 18, resizeMode: 'contain'}}
-                    />
-                  </TouchableOpacity>
+                <View style={{ zIndex: 4,position: 'absolute', right: 12, top: 12, justifyContent: 'flex-start', width: 40 }}>
+                  {(item?.partofspeech ?? item?.partOfSpeech) && (
+                    <View
+                      style={{ alignItems: 'flex-end' }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          try {
+                            Tts.setDefaultLanguage('ko-KR');
+                            Tts.speak(item?.lemma);
+                          } catch (e) {
+                            //console.log(`cannot play the sound file`, e)
+                            Toast.show('No Audio File Found', Toast.SHORT);
+                          }
+                        }}>
+                        <Image
+                          source={require('../../assets/logo/audio-black-icon.png')}
+                          style={{ width: 18, height: 18, resizeMode: 'contain' }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+
+                  {item?.vocabularyLevel && (
+                    <View style={{ flexDirection: 'row-reverse', marginTop: 8 }}>
+                      {vocabularyLevel[item?.vocabularyLevel] != 0 && vocabularyLevel[item?.vocabularyLevel] != 'undefined' && [...Array(vocabularyLevel[item.vocabularyLevel])].map(
+                        (e, i) => (
+                          <Image
+                            key={i}
+                            style={{ width: 12, height: 12 }}
+                            source={require('../../assets/logo/star.png')}
+                          />
+                        ),
+                      )}
+                    </View>
+                  )}
                 </View>
-              )}
-              {item?.vocabularyLevel && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    zIndex: 3,
-                    right: 20,
-                    top: 36,
-                    flexDirection: 'row',
-                  }}>
-                  {[...Array(item?.vocabularyLevel)].map((e, i) => (
-                    <Image
-                      key={i}
-                      style={{width: 10, height: 10}}
-                      source={require('../../assets/logo/star.png')}
-                    />
-                  ))}
-                </View>
-              )}
               <Text style={styles.TextStyle}>
-                <Text style={{fontWeight: 'bold'}}>{item?.lemma}</Text>
+                <Text style={{ fontWeight: 'bold' }}>{item?.lemma}</Text>
                 <Text>{item?.origin && `(${item?.origin})`}</Text>
               </Text>
               {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <Text
                   style={[
                     styles.TextStyle,
-                    {color: Constants.appColors.GRAY, fontSize: 12},
+                    { color: Constants.appColors.GRAY, fontSize: 12, fontStyle: 'italic',},
                   ]}>
                   {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
                     (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
@@ -550,94 +557,97 @@ const HomeScreen = (props) => {
         // keyboardShouldPersistTaps={'never'}
         onScrollEndDrag={() => Keyboard.dismiss()}
         keyboardDismissMode={'on-drag'}
-        renderItem={({item, index}) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => {
-              // console.log(item)
-              storeRecentlyViewedData(item);
-              props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
-                searchResultData: item,
-                ids,
-              });
-            }}>
-            <View
-              style={{
-                backgroundColor: 'white',
-                paddingVertical: 8,
-                paddingHorizontal: 8,
-                marginVertical: 6,
-                marginHorizontal: 8,
-                borderRadius: 10,
-                height: 'auto',
-                justifyContent: 'center',
+        renderItem={({ item, index }) => {
+          // console.log(item);
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                console.log(item)
+                storeRecentlyViewedData(item);
+                props.navigation.navigate(NAVIGATION_SEARCH_RESULT_SCREEN_PATH, {
+                  searchResultData: item,
+                  ids,
+                });
               }}>
-              {(item?.partofspeech ?? item?.partOfSpeech) && (
-                <View
-                  style={{position: 'absolute', zIndex: 3, right: 16, top: 8}}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      try {
-                        Tts.setDefaultLanguage('ko-KR');
-                        Tts.speak(item?.lemma);
-                      } catch (e) {
-                        //console.log(`cannot play the sound file`, e)
-                        Toast.show('No Audio File Found', Toast.SHORT);
-                      }
-                    }}>
-                    <Image
-                      source={require('../../assets/logo/audio-black-icon.png')}
-                      style={{width: 18, height: 18, resizeMode: 'contain'}}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {item?.vocabularyLevel && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    zIndex: 3,
-                    right: 16,
-                    top: 36,
-                    flexDirection: 'row',
-                  }}>
-                  {[...Array(item?.vocabularyLevel)].map((e, i) => (
-                    <Image
-                      key={i}
-                      style={{width: 10, height: 10}}
-                      source={require('../../assets/logo/star.png')}
-                    />
-                  ))}
-                </View>
-              )}
-              <Text style={styles.TextStyle}>
-                {item?.lemma}
-                {item?.origin && `(${item?.origin})`}
-              </Text>
-              {item?.partofspeech || item?.partOfSpeech ? (
-                <Text
-                  style={[
-                    styles.TextStyle,
-                    {color: Constants.appColors.GRAY, fontSize: 12},
-                  ]}>
-                  {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
-                    (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
-                </Text>
-              ) : (
-                <></>
-              )}
               <View
-                key={index}
                 style={{
-                  marginHorizontal: 4,
-
-                  paddingLeft: 12,
+                  backgroundColor: 'white',
+                  paddingVertical: 8,
+                  paddingHorizontal: 8,
+                  marginTop: 6,
+                  marginHorizontal: 8,
+                  borderRadius: 10,
+                  height: 'auto',
+                  justifyContent: 'center',
+                  marginBottom: index + 1 == searchedData.length ? 6 : 0
                 }}>
-                {item?.sense && renderEquivalent(item?.sense)}
+
+                <View style={{ zIndex: 4,position: 'absolute', right: 12, top: 16, justifyContent: 'flex-start', width: 40 }}>
+                  {(item?.partofspeech ?? item?.partOfSpeech) && (
+                    <View
+                      style={{ alignItems: 'flex-end' }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          try {
+                            Tts.setDefaultLanguage('ko-KR');
+                            Tts.speak(item?.lemma);
+                          } catch (e) {
+                            //console.log(`cannot play the sound file`, e)
+                            Toast.show('No Audio File Found', Toast.SHORT);
+                          }
+                        }}>
+                        <Image
+                          source={require('../../assets/logo/audio-black-icon.png')}
+                          style={{ width: 18, height: 18, resizeMode: 'contain' }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+
+                  {item?.vocabularyLevel && (
+                    <View style={{ flexDirection: 'row-reverse', marginTop: 4 }}>
+                      {vocabularyLevel[item?.vocabularyLevel] != 0 && vocabularyLevel[item?.vocabularyLevel] != 'undefined' && [...Array(vocabularyLevel[item.vocabularyLevel])].map(
+                        (e, i) => (
+                          <Image
+                            key={i}
+                            style={{ width: 12, height: 12 }}
+                            source={require('../../assets/logo/star.png')}
+                          />
+                        ),
+                      )}
+                    </View>
+                  )}
+                </View>
+                
+                <Text style={styles.TextStyle}>
+                  {item?.lemma}
+                  {item?.origin && `(${item?.origin})`}
+                </Text>
+                {item?.partofspeech || item?.partOfSpeech ? (
+                  <Text
+                    style={[
+                      styles.TextStyle,
+                      { color: Constants.appColors.GRAY, fontSize: 12,fontStyle: 'italic', },
+                    ]}>
+                    {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
+                      (item?.partOfSpeech && partofspeech[item?.partOfSpeech])}
+                  </Text>
+                ) : (
+                  <></>
+                )}
+                <View
+                  key={index}
+                  style={{
+                    marginHorizontal: 4,
+                    paddingLeft: 12,
+                  }}>
+                  {item?.sense && renderEquivalent(item?.sense)}
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        )}
+            </TouchableOpacity>
+          )
+        }}
         keyExtractor={(item, index) => index.toString()}
         data={searchedData}
         numColumns={1}
@@ -645,10 +655,10 @@ const HomeScreen = (props) => {
       />
     );
   }
-  console.log(searchText.length > 0 && isKeyboardVisible);
+
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -684,10 +694,10 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
+              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.18 }}>
                 <Image
                   source={require('../../assets/logo/home-logo.png')}
-                  style={{width: 300, height: 100, resizeMode: 'contain'}}
+                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
                 />
               </View>
             )}
@@ -728,7 +738,7 @@ const HomeScreen = (props) => {
               }}
               showCancel={true}
               onCancel={() => alert('ff')}
-              inputStyle={{color: 'black', marginLeft: -2, marginTop: 4}}
+              inputStyle={{ color: 'black', marginLeft: -2, marginTop: 4 }}
               placeholder={
                 searchText.length === 0 && isKeyboardVisible === false
                   ? `${t('SearchBarPlaceholderText')}`
@@ -740,9 +750,9 @@ const HomeScreen = (props) => {
             {/* </View> */}
 
             {/* </TouchableWithoutFeedback> */}
-            {isKeyboardVisible && (
+            {searchText.length != 0 && (
               <TouchableOpacity onPress={onCancel}>
-                <View style={{alignItems: 'center', paddingHorizontal: 12}}>
+                <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
                   <Text
                     style={{
                       color: Constants.appColors.WHITE,
@@ -754,8 +764,8 @@ const HomeScreen = (props) => {
             )}
           </Animatable.View>
           {isKeyboardVisible &&
-          searchText.length == 0 &&
-          reacientlySearchedData.length != 0 ? (
+            searchText.length == 0 &&
+            reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -764,7 +774,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>{`${t(
+                <Text style={{ fontWeight: 'bold' }}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -793,16 +803,16 @@ const HomeScreen = (props) => {
               }}>
               <Image
                 source={require('../../assets/logo/recent-icon.png')}
-                style={{width: 60, height: 60}}
+                style={{ width: 60, height: 60 }}
               />
-              <Text style={{paddingTop: 4}}>{reacientlySearchedStatus}</Text>
+              <Text style={{ paddingTop: 4 }}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
           {!isKeyboardVisible &&
-          searchText.length == 0 &&
-          reacientlyViewedDataSet.length != 0 ? (
+            searchText.length == 0 &&
+            reacientlyViewedDataSet.length != 0 ? (
             <>
               <View
                 style={{
@@ -811,7 +821,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{fontWeight: 'bold'}}>{`${t(
+                <Text style={{ fontWeight: 'bold' }}>{`${t(
                   'RecentlyViewedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -843,9 +853,9 @@ const HomeScreen = (props) => {
               }}>
               <Image
                 source={require('../../assets/logo/search-icon.png')}
-                style={{width: 50, height: 50}}
+                style={{ width: 50, height: 50 }}
               />
-              <Text style={{paddingTop: 4}}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{ paddingTop: 4 }}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

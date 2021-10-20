@@ -180,9 +180,9 @@ const FlashcardScreen = (props) => {
                     backgroundColor: 'white',
                     paddingVertical: 2,
                     marginVertical: 6,
-                    marginHorizontal: 8,
+                    marginHorizontal: 6,
                     borderRadius: 10,
-                    marginTop:index == 0 ? 8 : 0
+                    marginTop:index == 0 ? 6 : 0
                 }}>
                     <View
                         style={{
@@ -210,9 +210,10 @@ const FlashcardScreen = (props) => {
                             </View>
                         }
                         <View>
-                            <Text numberOfLines={1} style={{
+                            <Text numberOfLines={1} ellipsizeMode='tail' style={{
                                 fontWeight: '700',
                                 color: isActive ? Constants.appColors.WHITE : Constants.appColors.BLACK,
+                                width:Sizes.WINDOW_WIDTH-92,
                                 fontSize: 18,
                                 paddingLeft: editMode && item?.doc?.name != 'Uncategorized' ? -48 : 8
                             }}>{item?.doc?.name}</Text>
@@ -311,14 +312,14 @@ const FlashcardScreen = (props) => {
                 <StatusBar barStyle="light-content" backgroundColor={Constants.appColors.PRIMARY_COLOR} />
                 <View style={styles.container}>
                     {
-                        editMode && <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 0 }}>
+                        editMode && <View style={{ alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', left: 4,top:8 }}>
                             <TouchableOpacity onPress={() => { console.log('edit cancel'); setItems([]); setEditMode(!editMode) }}>
                                 <Text style={{ fontSize: 20, color: 'white' }}>{`${t("CancelText")}`}</Text>
                             </TouchableOpacity>
                         </View>
                     }
-                    <Text style={[styles.textStyle,{top: 4}]}>{!editMode ? `${t("FlashcardPageTitle")}` : `Edit Cards`}</Text>
-                    <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 0 }}>
+                    <Text style={[styles.textStyle,{borderWidth:0}]}>{!editMode ? `${t("FlashcardPageTitle")}` : `Edit Cards`}</Text>
+                    <View style={{ borderWidth:0,alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', right: 4,top:8}}>
                         {
                             !editMode ? <>
                                 <TouchableOpacity onPress={showDialog}>
@@ -349,12 +350,13 @@ const FlashcardScreen = (props) => {
                                         setEditMode(!editMode)
 
                                     }}>
-                                        <MIcons name="check" size={24} color={Constants.appColors.WHITE} />
+                                        <MIcons name="check" size={23} color={Constants.appColors.WHITE} />
                                     </TouchableOpacity>
                                 </>
                         }
                     </View>
                 </View>
+            
             </View>
             <View style={{ flex: 1 }}>
                 {
@@ -400,19 +402,21 @@ export default FlashcardScreen;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Constants.appColors.PRIMARY_COLOR,
-        padding: 6,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 8,
         flexDirection: 'row',
+        paddingVertical:8,
     },
     textStyle: {
         color: Constants.appColors.WHITE,
         fontSize: 20,
-        marginLeft: 8,
-        marginTop: 4,
         textAlign: 'center',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
-    addressContainer: { justifyContent: 'space-between', flexDirection: 'row', marginBottom: 6, paddingRight: 8 }
+    addressContainer: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginBottom: 6,
+        paddingRight: 8
+    }
 })

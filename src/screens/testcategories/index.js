@@ -74,8 +74,6 @@ const TestCategoryScreen = (props) => {
 
     const renderItem = ({ item, index }) => {
         return (
-            // <TouchableOpacity
-            //     onPress={() => { setUpdated(true); setCategoryName(item.doc.name) }}>
                 <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View
                         style={{
@@ -90,11 +88,12 @@ const TestCategoryScreen = (props) => {
                             borderRadius: 10,
                         }}>
                         <View>
-                            <Text style={{
+                            <Text numberOfLines={1} ellipsizeMode='tail' style={{
                                 fontWeight: '700',
                                 color: Constants.appColors.BLACK,
                                 fontSize: 18,
-                                paddingLeft: 16
+                                paddingLeft: 16,
+                                width:Sizes.WINDOW_WIDTH-92
                             }}>{item?.doc?.name}</Text>
                             <Text style={{ paddingLeft: 16, marginVertical: 6 }}>{item?.doc?.cards.length}{` ${t("CardsText")}`}</Text>
                         </View>
@@ -113,7 +112,6 @@ const TestCategoryScreen = (props) => {
                         />
                     </View>
                 </View>
-            // </TouchableOpacity>
         )
     }
 

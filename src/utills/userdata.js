@@ -87,8 +87,6 @@ export const defaultSettings = {
     }
 }
 
-
-
 export const lexicalUnit = {
     "구": "phrase",
     "단어": "word",
@@ -127,7 +125,6 @@ export const wordForm = {
     "활용": "application"
 }
 
-
 export const formRepresentation = {
     "준말": "abbreviation"
 }
@@ -151,14 +148,12 @@ export const senseRelation = {
     "여린말": "soft"
 }
 
-
 export const senseExample = {
     "구": "word",
     "문장": "sentence",
     "대화": "conversation",
     "1": "none"
 }
-
 
 export const language = {
     "몽골어": "Mongolian",
@@ -174,32 +169,38 @@ export const language = {
     "중국어": "Chinese",
 }
 
-
-
 export const forntDisplay = [
     {
-        id:1,
-        name:'Korean Hangul Handword',
-        value:true
+        id: 1,
+        name: 'Korean Hangul Handword',
+        value: true
     },
     {
-        id:2,
-        name:'Hanja Handword',
-        value:false
+        id: 2,
+        name: 'Hanja Handword',
+        value: false
     },
     {
-        id:3,
-        name:'Part of Speech',
-        value:false
+        id: 3,
+        name: 'Part of Speech',
+        value: false
     },
     {
-        id:4,
-        name:'Audio',
-        value:false
+        id: 4,
+        name: 'Audio',
+        value: false
     },
     {
-        id:5,
-        name:'Definition',
-        value:false
+        id: 5,
+        name: 'Definition',
+        value: false
     }
 ]
+
+
+export const defaultFlashcardTestSettings = {
+    limtMaxTestLength: true,
+    maxLength: 20,
+    limitNewCards:false,
+    reviewIncurrectAtTestEnd:true
+}

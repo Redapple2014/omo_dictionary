@@ -151,6 +151,8 @@ const HomeScreen = (props) => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
     createIndexes();
+    createCategoryTable();
+    createCardTable();
     let pos = getSearchBarPostion();
     setLastPositin(pos);
     const translate = {
@@ -284,6 +286,33 @@ const HomeScreen = (props) => {
     setSearchText('');
     Keyboard.dismiss();
   };
+
+  function createCardTable() {
+    const query = `CREATE TABLE IF NOT EXISTS cards(id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word_id INT,
+        category_id INT,
+        speech VARCHAR(100),
+        hanja VARCHAR(100),
+        definition JSON,
+        examples JSON,
+        koreanHeadWord VARCHAR(100),
+        card_order INT);`;
+
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {});
+    });
+  }
+
+  function createCategoryTable() {
+    const query = `CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name VARCHAR(100), 
+        type VARCHAR(30),  
+        cat_order INT);`;
+
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {});
+    });
+  }
 
   function createIndexes() {
     const query =

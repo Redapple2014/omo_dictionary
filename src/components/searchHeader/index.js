@@ -31,7 +31,7 @@ const SearchHeader = (props) => {
       <Text style={styles.textStyle}>{props.title}</Text>
       { props.show && 
         <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: props.showBookmark ? .35:.27 }}>
-          {props.showBookmark && <TouchableOpacity onPress={() => console.log('plus press')}>
+          {props.showBookmark && <TouchableOpacity onPress={props.bookMarkPress}>
             <EIcons name="plus" size={23} color={Constants.appColors.WHITE} />
           </TouchableOpacity>}
           <TouchableOpacity onPress={props.onSoundPlay}>

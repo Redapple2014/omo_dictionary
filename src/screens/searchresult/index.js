@@ -9,6 +9,7 @@ import {
   NativeModules,
   NativeEventEmitter,
   StyleSheet,
+  ToastAndroid
 } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Constants from '../../utills/Constants';
@@ -117,7 +118,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-  console.log(wordInfo)
+  // console.log(wordInfo)
 
   //load user setting
   async function fetchUserSettings() {
@@ -147,6 +148,114 @@ const SearchResultScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
+
+
+  //render idioms from sense
+  const renderIdiomsData = (idioms) => {
+    try {
+      let arr = JSON.parse(idioms);
+      return arr.map((data, i) => {
+        return (
+          <View style={{borderBottomWidth:.3,marginTop:2,borderBottomColor:Constants.appColors.LIGHTGRAY}}>
+            <View
+              style={{ flexDirection: 'row', marginVertical: 4, marginLeft: 6, left: 4 }}
+              key={`${i + data?.lemma}`}>
+              <Text style={{ fontSize: 17 }}>{i + 1} </Text>
+              <View>
+                <Text
+                  style={{
+                    color: Constants.appColors.BLACK,
+                    fontSize: 17,
+                    marginBottom: 4,
+                    fontWeight:'bold'
+                  }}>{`${data?.lemma} `}</Text>
+                {renderIdiomDefData(wordInfo.idiomsSense, data.sense_id)}
+              </View>
+            </View>
+            {data?.syntacticPattern && (
+              <View style={{ flexDirection: 'row',alignItems:'center' , top:-10,}}>
+                <View
+                  style={{
+                    backgroundColor: '#C32BAD',
+                    height: 22,
+                    width: '20%',
+                    alignItems: 'center',
+                    borderRadius: 10,
+                    marginRight: 8,
+                    left:24,
+                   
+                    justifyContent:'center'
+                  }}>
+                  <Text style={{ textAlign: 'center', color: 'white', fontSize: 13 }}>{`${t('SentenceText')}`}</Text>
+                </View>
+                <Text style={{  textAlign: 'center',fontSize: 13,marginLeft:20 }}>{data?.syntacticPattern}</Text>
+              </View>
+            )}
+          </View>
+        );
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //render idioms definations from sense
+  const renderIdiomDefData = (idiomsSense, id) => {
+    try {
+      let arr = JSON.parse(idiomsSense);
+      return arr.map((data, i) => {
+        if (data.sense_id === id) {
+          return (
+            <View key={`${i + data?.en_lm}`}>
+              <View style={{ flexDirection: 'column' }}>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                    color: Constants.appColors.PRIMARY_COLOR,
+                  }}>{`${data?.en_lm}`}</Text>
+                <Text
+                  style={{
+                    width: Sizes.WINDOW_WIDTH - 64,
+                    marginVertical: 2,
+                    color:Constants.appColors.GRAY
+                  }}>{`${data?.en_def}`}</Text>
+              </View>
+              {
+                upSet && <View
+                  style={{
+                    marginLeft: 0,
+                    height: 'auto',
+                    paddingVertical: 0,
+                    marginBottom: 4,
+                    paddingBottom: 4,
+                    borderBottomColor: Constants.appColors.LIGHTGRAY,
+                    left: -24,
+            
+                  }}>
+                  <CollapsibleView
+                    initExpanded={userSettings.showExamples}
+                    touchableWrapperStyle={{ alignItems: 'flex-start' }}
+                    noArrow
+                    title=" ">
+                    {renderIdiomsSenseSample(
+                      wordInfo.idiomsSenseSample,
+                      data.sense_id,
+                    )}
+                  </CollapsibleView>
+                </View>
+              }
+            </View>
+          );
+        } else {
+          return <></>;
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //render idioms Example from sense
   const renderIdiomsSenseSample = (idiomsSenseSample, id) => {
     try {
       let arr = JSON.parse(idiomsSenseSample);
@@ -189,111 +298,6 @@ const SearchResultScreen = (props) => {
         } else {
           return <></>;
         }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const renderIdiomDefData = (idiomsSense, id) => {
-    try {
-      let arr = JSON.parse(idiomsSense);
-      return arr.map((data, i) => {
-        if (data.sense_id === id) {
-          return (
-            <View key={`${i + data?.en_lm}`}>
-              <View style={{ flexDirection: 'column' }}>
-                <Text
-                  style={{
-                    width: Sizes.WINDOW_WIDTH - 64,
-                    color: Constants.appColors.PRIMARY_COLOR,
-                  }}>{`${data?.en_lm}`}</Text>
-                <Text
-                  style={{
-                    width: Sizes.WINDOW_WIDTH - 64,
-                    marginVertical: 2
-                  }}>{`${data?.en_def}`}</Text>
-              </View>
-              {
-                upSet && <View
-                  style={{
-                    marginLeft: 0,
-                    height: 'auto',
-                    paddingVertical: 0,
-                    borderBottomWidth: arr.length == i + 1 ? 0 : 0.4,
-                    marginBottom: 4,
-                    paddingBottom: 4,
-                    borderBottomColor: Constants.appColors.LIGHTGRAY,
-                    left: -16,
-                  }}>
-                  <CollapsibleView
-                    initExpanded={userSettings.showExamples}
-                    touchableWrapperStyle={{ alignItems: 'flex-start' }}
-                    noArrow
-                    title=" ">
-                    {renderIdiomsSenseSample(
-                      wordInfo.idiomsSenseSample,
-                      data.sense_id,
-                    )}
-                  </CollapsibleView>
-                </View>
-              }
-            </View>
-          );
-        } else {
-          return <></>;
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  //render idioms from sense
-  const renderIdiomsData = (idioms) => {
-    try {
-      let arr = JSON.parse(idioms);
-      return arr.map((data, i) => {
-        return (
-          <>
-            <View
-              style={{ flexDirection: 'row', marginVertical: 4, marginLeft: 6 }}
-              key={`${i + data?.lemma}`}>
-              <Text style={{ fontSize: 17 }}>{i + 1} </Text>
-              <View>
-                <Text
-                  style={{
-                    color: Constants.appColors.BLACK,
-                    fontSize: 17,
-                    marginBottom: 4,
-                  }}>{`${data?.lemma}; `}</Text>
-                {renderIdiomDefData(wordInfo.idiomsSense, data.sense_id)}
-              </View>
-            </View>
-            {data?.syntacticPattern && (
-              <View style={{ flexDirection: 'row', paddingHorizontal: 6 }}>
-                <View
-                  style={{
-                    backgroundColor: '#3D9CE0',
-                    height: 24,
-                    width: '30%',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                    marginRight: 8,
-                  }}>
-                  <Text
-                    style={{
-                      marginTop: 3,
-                      textAlign: 'center',
-                      color: 'white',
-                      marginHorizontal: 8,
-                    }}>{`${t('SentenceText')}`}</Text>
-                </View>
-                <Text style={{ marginTop: 3 }}>{data?.syntacticPattern}</Text>
-              </View>
-            )}
-          </>
-        );
       });
     } catch (e) {
       console.log(e);
@@ -437,19 +441,21 @@ const SearchResultScreen = (props) => {
   };
 
   const redenerToast = (xy) => {
-    const x = xy
-    switch (x) {
+    switch (xy) {
       case 0:
         return
       case 1:
-        Toast.show('⭐\nElementary Level', Toast.SHORT)
+        Toast.show('           ⭐\nElementary Level', Toast.SHORT)
+        break
       case 2:
-        Toast.show('⭐⭐\nElementary Level', Toast.SHORT)
+        Toast.show('         ⭐⭐\nElementary Level', Toast.SHORT)
+        break
       case 3:
-        Toast.show('⭐⭐⭐\nElementary Level', Toast.SHORT)
+        Toast.show('       ⭐⭐⭐\nElementary Level', Toast.SHORT,)
+        break
+      default:
+        break
     }
-
-    // return()
   }
 
   const renderData = (type, dataSet) => {
@@ -458,16 +464,12 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (type == 1) {
           return (
-            // <View key={i} style={{alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 13 }}>{`${data && data?.writtenForm}, `}</Text>
-              // {/* </View> */}
+            <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm}, `}</Text>
           )
         } else if (type == 2) {
-          if (data?.type == "파생어" && data?.writtenForm != 'undefined') {
+          if (data?.writtenForm != 'undefined') {
             return (
-              // <View key={i} style={{alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 13 }}>{`${data && data?.writtenForm}, `}</Text>
-                // {/* </View> */}
+              <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm}, `}</Text>
             )
           }
           else {
@@ -475,8 +477,6 @@ const SearchResultScreen = (props) => {
           }
         }
         else if (type == 3) {
-
-          // console.log("searchResultData : ", data)
           return (
             data?.SenseExample && data?.Equivalent &&
             <View style={{ borderBottomWidth: .7, borderBottomColor: Constants.appColors.LIGHTGRAY, paddingBottom: 4 }}>
@@ -485,16 +485,12 @@ const SearchResultScreen = (props) => {
                   data?.Equivalent && renderEquivalent(data?.Equivalent)
                 }
               </View>
-
               <View key={`${i + data?.id}`} style={{ marginHorizontal: 16 }}>
                 {
                   data?.SenseExample && renderSenseExample(data?.SenseExample)
-
                 }
-
               </View>
             </View>
-
           )
         }
         else {
@@ -525,6 +521,7 @@ const SearchResultScreen = (props) => {
           leftIcon={`${t('SearchText')}`}
           show={true}
           showBookmark={true}
+          bookMarkPress={() => Toast.show('Work in progress!', Toast.SHORT)}
           onPressleftIcon={() =>
             props.navigation.dispatch(NavigationActions.back())
           }
@@ -623,22 +620,27 @@ const SearchResultScreen = (props) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ borderTopWidth: .3, paddingVertical: 8, paddingHorizontal: 4, borderTopColor: Constants.appColors.LIGHTGRAY }}>
+          <View style={{ justifyContent: 'space-around', height: 'auto', borderTopWidth: (wordInfo?.relatedForm && JSON.parse(wordInfo?.relatedForm).length > 0 || wordInfo?.wordForm && JSON.parse(wordInfo?.wordForm).length > 0) ? .3 : 0, paddingVertical: ((wordInfo?.relatedForm && JSON.parse(wordInfo?.relatedForm).length > 0) || (wordInfo?.wordForm && JSON.parse(wordInfo?.wordForm).length > 0)) ? 6 : 0, paddingHorizontal: 4, borderTopColor: Constants.appColors.LIGHTGRAY }}>
             {
-             wordInfo?.wordForm && JSON.parse(wordInfo?.wordForm).length > 0  &&
-              <View style={{ flexDirection: 'row' }}>
-                <View style={{ backgroundColor: '#3D9CE0', height: 22,left:-4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
-                  <Text style={{ textAlign: 'center', color: 'white',fontSize:12 }}>Applications</Text>
+              wordInfo?.wordForm && JSON.parse(wordInfo?.wordForm).length > 0 &&
+              <View style={{ flexDirection: 'row', marginBottom: 2 }}>
+                <View style={{ backgroundColor: '#3D9CE0', height: 22, left: -4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                  <Text style={{ textAlign: 'center', color: 'white', fontSize: 12 }}>Applications</Text>
                 </View>
-                {wordInfo?.wordForm && renderData(1, wordInfo.wordForm)}
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  {wordInfo?.wordForm && renderData(1, wordInfo.wordForm)}
+                </View>
               </View>
             }
             {
-           wordInfo?.relatedForm && JSON.parse(wordInfo?.relatedForm).length > 0 &&
-              <View style={{ marginTop: 8, flexDirection: 'row', marginBottom: 4 }}>
-                <View style={{ backgroundColor: '#5ED65C', height: 22,left:-4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
-                  <Text style={{ textAlign: 'center', color: 'white',fontSize:12 }}>Derivatives</Text>
-                </View>{wordInfo?.relatedForm && renderData(2, wordInfo.relatedForm)}
+              wordInfo?.relatedForm && JSON.parse(wordInfo?.relatedForm).length > 0 &&
+              <View style={{ flexDirection: 'row', marginTop: 2 }}>
+                <View style={{ backgroundColor: '#5ED65C', height: 22, left: -4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                  <Text style={{ textAlign: 'center', color: 'white', fontSize: 12 }}>Derivatives</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  {wordInfo?.relatedForm && renderData(2, wordInfo.relatedForm)}
+                </View>
               </View>
             }
           </View>
@@ -650,7 +652,6 @@ const SearchResultScreen = (props) => {
                 backgroundColor: '#f8f8f8',
                 paddingHorizontal: 16,
                 paddingVertical: 4,
-
               }}>
               <Text
                 style={{ fontSize: 16, fontWeight: '600', color: Constants.appColors.GRAY }}>{`${t(
@@ -667,7 +668,7 @@ const SearchResultScreen = (props) => {
                       paddingHorizontal: 16,
                       paddingVertical: 4
                     }}>
-                    <Text style={{ fontSize: 16, color: Constants.appColors.GRAY }}>{`${t('IdiomsText')}`}</Text>
+                    <Text style={{ fontSize: 16, color: Constants.appColors.GRAY,fontWeight:'600' }}>{`${t('IdiomsText')}`}</Text>
                   </View>
                   <View style={{ paddingRight: 12, paddingHorizontal: 10 }}>
                     {wordInfo?.idiomsDef &&

@@ -266,9 +266,25 @@ useEffect(()=>{
     }
   }
 
+
   //store reciently viewed data
-  function storeRecentlyViewedData(newData) {
+  async function objectPropInArray(list, prop, val) {
+    if (list.length > 0 ) {
+      for (let i in list) {
+        if (list[i][prop] === val) {
+          return true;
+        }
+      }
+    }
+    return false;  
+  }
+
+  async function storeRecentlyViewedData(newData) {
+    const x = await objectPropInArray(reacientlyViewedDataSet, 'id', newData.id);
     if (newData) {
+      if (x) {
+        return;
+      } else {
       if (reacientlyViewedDataSet.length > MAX_NUMBER_OF_RECENT_VIEWED_DATA) {
         reacientlyViewedDataSet.splice(MAX_NUMBER_OF_RECENT_VIEWED_DATA, 1);
       }
@@ -277,6 +293,7 @@ useEffect(()=>{
         JSON.stringify([newData, ...reacientlyViewedDataSet]),
       );
       getDatafromStorage('recent_data');
+      }
     } else {
       console.log('search text input is empty');
       setSearchText('');
@@ -412,7 +429,7 @@ useEffect(()=>{
         return (
           <View
             key={`${i} `}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
+            style={{flexDirection: 'row', alignItems: 'center',}}>
             <Text
               style={{
                 fontSize: 15,
@@ -506,7 +523,7 @@ useEffect(()=>{
                   zIndex: 4,
                   position: 'absolute',
                   right: 12,
-                  top: 12,
+                  top: 8,
                   justifyContent: 'flex-start',
                   width: 40,
                 }}>
@@ -531,7 +548,7 @@ useEffect(()=>{
                 )}
 
                 {item?.vocabularyLevel && (
-                  <View style={{flexDirection: 'row-reverse', marginTop: 8}}>
+                  <View style={{flexDirection: 'row-reverse', marginTop: 6}}>
                     {vocabularyLevel[item?.vocabularyLevel] != 0 &&
                       vocabularyLevel[item?.vocabularyLevel] != 'undefined' &&
                       [...Array(vocabularyLevel[item.vocabularyLevel])].map(
@@ -558,6 +575,7 @@ useEffect(()=>{
                       color: Constants.appColors.GRAY,
                       fontSize: 12,
                       fontStyle: 'italic',
+                      marginVertical:1
                     },
                   ]}>
                   {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
@@ -624,7 +642,7 @@ useEffect(()=>{
                     zIndex: 4,
                     position: 'absolute',
                     right: 12,
-                    top: 16,
+                    top: 8,
                     justifyContent: 'flex-start',
                     width: 40,
                   }}>
@@ -649,7 +667,7 @@ useEffect(()=>{
                   )}
 
                   {item?.vocabularyLevel && (
-                    <View style={{flexDirection: 'row-reverse', marginTop: 4}}>
+                    <View style={{flexDirection: 'row-reverse', marginTop: 6}}>
                       {vocabularyLevel[item?.vocabularyLevel] != 0 &&
                         vocabularyLevel[item?.vocabularyLevel] != 'undefined' &&
                         [...Array(vocabularyLevel[item.vocabularyLevel])].map(
@@ -677,6 +695,7 @@ useEffect(()=>{
                         color: Constants.appColors.GRAY,
                         fontSize: 12,
                         fontStyle: 'italic',
+                        marginVertical:1
                       },
                     ]}>
                     {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
@@ -800,7 +819,7 @@ useEffect(()=>{
 
             {searchText.length != 0 && (
               <TouchableOpacity onPress={onCancel}>
-                <View style={{alignItems: 'center', paddingHorizontal: 12}}>
+                <View style={{alignItems: 'center', paddingHorizontal: 12,top:4}}>
                   <Text
                     style={{
                       color: Constants.appColors.WHITE,

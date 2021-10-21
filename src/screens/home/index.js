@@ -232,7 +232,6 @@ const HomeScreen = (props) => {
   }
 
   const onClear = () => {
-    alert('mmm');
     onSearchSubmit();
     setSearchText('');
     Keyboard.dismiss();
@@ -765,13 +764,13 @@ const HomeScreen = (props) => {
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 43,
+                height: 34,
                 borderRadius: 14,
-                marginTop: -10,
+                marginTop: -1,
               }}
               containerStyle={{
                 borderRadius: 20,
-                height: 30,
+                height: 34,
                 flex: isKeyboardVisible ? 0.99 : 1,
                 padding: 0,
                 marginTop: 0,

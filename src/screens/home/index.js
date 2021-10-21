@@ -135,12 +135,12 @@ const HomeScreen = (props) => {
         translateY: Sizes.WINDOW_HEIGHT * 0.016,
       },
     };
+
     searchView.current?.animate(translate, 200);
   }
 
   function moveDown() {
     let pos = getSearchBarPostion();
-
     const translate = {
       from: {
         translateY: Sizes.WINDOW_HEIGHT * 0.016,
@@ -386,7 +386,9 @@ useEffect(()=>{
       'keyboardDidShow',
       () => {
         setKeyboardVisible(true);
-        moveUp();
+        setTimeout(() => {
+          moveUp();
+        }, 10);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -771,13 +773,13 @@ useEffect(()=>{
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 43,
+                height: 34,
                 borderRadius: 14,
-                marginTop: -10,
+                marginTop: -1,
               }}
               containerStyle={{
                 borderRadius: 20,
-                height: 30,
+                height: 34,
                 flex: isKeyboardVisible ? 0.99 : 1,
                 padding: 0,
                 marginTop: 0,

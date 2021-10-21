@@ -32,6 +32,7 @@ const SearchResultScreen = (props) => {
   const ids = props.navigation.getParam('ids', []);
   const { t, i18n } = useTranslation();
   const [initData, setInitdata] = useState(data.id);
+  // const [initData, setInitdata] = useState(14956);
   const [userSettings, setUserSettings] = useState({});
   const [update, setUpdate] = useState(false)
   const [upSet, setUpSet] = useState(false)
@@ -116,7 +117,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-  // console.log(userSettings.showExamples)
+  console.log(wordInfo)
 
   //load user setting
   async function fetchUserSettings() {
@@ -210,7 +211,7 @@ const SearchResultScreen = (props) => {
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
-                    marginVertical:2
+                    marginVertical: 2
                   }}>{`${data?.en_def}`}</Text>
               </View>
               {
@@ -312,20 +313,17 @@ const SearchResultScreen = (props) => {
                 marginVertical: 2,
                 marginLeft: 6,
                 alignItems: 'center',
-
               }}
               key={`${i + data?.en_lm}`}>
               <Text style={{ fontSize: 17, textAlign: 'center' }}>
                 {data.sense_id}{' '}
               </Text>
-              {/* <View> */}
               <Text
                 style={{
                   color: Constants.appColors.PRIMARY_COLOR,
                   fontSize: 17,
                   textAlign: 'center',
                 }}>{`${data?.en_lm}; `}</Text>
-              {/* </View> */}
             </View>
             {renderSeneDefData(wordInfo.sense, data.sense_id)}
           </>
@@ -353,6 +351,7 @@ const SearchResultScreen = (props) => {
                 <Text
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
+                    color: Constants.appColors.GRAY
                   }}>{`${data?.en_def}`}</Text>
               </View>
               {
@@ -400,7 +399,7 @@ const SearchResultScreen = (props) => {
               style={{
                 marginVertical: 2,
                 paddingLeft: 6,
-                borderLeftWidth: 2,
+                borderLeftWidth: 3,
                 borderLeftColor: Constants.appColors.PRIMARY_COLOR,
                 marginLeft: 8,
               }}>
@@ -452,6 +451,62 @@ const SearchResultScreen = (props) => {
 
     // return()
   }
+
+  const renderData = (type, dataSet) => {
+    let arr = JSON.parse(dataSet)
+    if (dataSet != 'undefined') {
+      return arr.map((data, i) => {
+        if (type == 1) {
+          return (
+            // <View key={i} style={{alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 13 }}>{`${data && data?.writtenForm}, `}</Text>
+              // {/* </View> */}
+          )
+        } else if (type == 2) {
+          if (data?.type == "파생어" && data?.writtenForm != 'undefined') {
+            return (
+              // <View key={i} style={{alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13 }}>{`${data && data?.writtenForm}, `}</Text>
+                // {/* </View> */}
+            )
+          }
+          else {
+            return (<Text></Text>)
+          }
+        }
+        else if (type == 3) {
+
+          // console.log("searchResultData : ", data)
+          return (
+            data?.SenseExample && data?.Equivalent &&
+            <View style={{ borderBottomWidth: .7, borderBottomColor: Constants.appColors.LIGHTGRAY, paddingBottom: 4 }}>
+              <View key={i} style={{ marginHorizontal: 4, flexDirection: 'row' }}><Text style={{ fontSize: 17, marginTop: 2 }}>{`${i + 1} `}</Text>
+                {
+                  data?.Equivalent && renderEquivalent(data?.Equivalent)
+                }
+              </View>
+
+              <View key={`${i + data?.id}`} style={{ marginHorizontal: 16 }}>
+                {
+                  data?.SenseExample && renderSenseExample(data?.SenseExample)
+
+                }
+
+              </View>
+            </View>
+
+          )
+        }
+        else {
+          return (<></>)
+        }
+      })
+    }
+    else {
+      return
+    }
+  }
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -524,10 +579,10 @@ const SearchResultScreen = (props) => {
           backgroundColor: Constants.appColors.WHITE,
 
         }}>
-        <View style={{ paddingHorizontal: 16, backgroundColor: 'white', }}>
+        <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
           <View
             style={{
-              paddingVertical: 10,
+              paddingVertical: 6,
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
@@ -539,14 +594,14 @@ const SearchResultScreen = (props) => {
             </View>
             {userSettings.displayRomaja && wordInfo?.lemma && (
               <Text
-                style={{ marginVertical: 2, color: Constants.appColors.GRAY }}>
+                style={{ marginVertical: 2, color: Constants.appColors.GRAY, }}>
                 {hangulRomanization.convert(wordInfo?.lemma)}
               </Text>
             )}
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: userSettings.displayRomaja ? 2 : 4 }}>
               {(wordInfo?.partofspeech ?? wordInfo?.partOfSpeech) && (
                 <Text
-                  style={{ paddingRight: 6, color: Constants.appColors.GRAY, fontStyle: 'italic', }}>
+                  style={{ paddingRight: 6, color: Constants.appColors.GRAY, fontStyle: 'italic' }}>
                   {(wordInfo?.partofspeech &&
                     partofspeech[wordInfo?.partofspeech]) ??
                     (wordInfo?.partOfSpeech &&
@@ -568,7 +623,25 @@ const SearchResultScreen = (props) => {
               </TouchableOpacity>
             </View>
           </View>
-
+          <View style={{ borderTopWidth: .3, paddingVertical: 8, paddingHorizontal: 4, borderTopColor: Constants.appColors.LIGHTGRAY }}>
+            {
+             wordInfo?.wordForm && JSON.parse(wordInfo?.wordForm).length > 0  &&
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ backgroundColor: '#3D9CE0', height: 22,left:-4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                  <Text style={{ textAlign: 'center', color: 'white',fontSize:12 }}>Applications</Text>
+                </View>
+                {wordInfo?.wordForm && renderData(1, wordInfo.wordForm)}
+              </View>
+            }
+            {
+           wordInfo?.relatedForm && JSON.parse(wordInfo?.relatedForm).length > 0 &&
+              <View style={{ marginTop: 8, flexDirection: 'row', marginBottom: 4 }}>
+                <View style={{ backgroundColor: '#5ED65C', height: 22,left:-4, width: '30%', marginRight: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                  <Text style={{ textAlign: 'center', color: 'white',fontSize:12 }}>Derivatives</Text>
+                </View>{wordInfo?.relatedForm && renderData(2, wordInfo.relatedForm)}
+              </View>
+            }
+          </View>
         </View>
         {wordInfo?.sense && wordInfo?.senseExample && (
           <>
@@ -580,7 +653,7 @@ const SearchResultScreen = (props) => {
 
               }}>
               <Text
-                style={{ fontSize: 16, color: Constants.appColors.GRAY }}>{`${t(
+                style={{ fontSize: 16, fontWeight: '600', color: Constants.appColors.GRAY }}>{`${t(
                   'DefinitionText',
                 )}`}</Text>
             </View>

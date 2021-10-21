@@ -13,6 +13,7 @@ import {
   StyleSheet,
   BackHandler,
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
@@ -151,6 +152,10 @@ const HomeScreen = (props) => {
     searchView.current?.animate(translate, 200);
   }
 
+useEffect(()=>{
+  getWordData(searchText);
+},[searchText])
+
   useEffect(() => {
     //BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
@@ -232,7 +237,7 @@ const HomeScreen = (props) => {
   }
 
   const onClear = () => {
-    alert('mmm');
+    // alert('mmm');
     onSearchSubmit();
     setSearchText('');
     Keyboard.dismiss();
@@ -755,6 +760,7 @@ const HomeScreen = (props) => {
               alignSelf: 'center',
               width: '95%',
             }}>
+
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -777,19 +783,19 @@ const HomeScreen = (props) => {
                 marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
+              leftIconContainerStyle={{right:-10}}
               showCancel={true}
-              inputStyle={{color: 'black', marginLeft: -2, marginTop: 4}}
+              inputStyle={{color: 'black',fontSize:16}}
+
               placeholder={
-                searchText.length === 0 && isKeyboardVisible === false
+                searchText.length == 0 && !isKeyboardVisible
                   ? `${t('SearchBarPlaceholderText')}`
                   : ''
               }
               onSubmitEditing={onSearchSubmit}
               onClear={onClear}
             />
-            {/* </View> */}
 
-            {/* </TouchableWithoutFeedback> */}
             {searchText.length != 0 && (
               <TouchableOpacity onPress={onCancel}>
                 <View style={{alignItems: 'center', paddingHorizontal: 12}}>

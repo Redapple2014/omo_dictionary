@@ -16,6 +16,7 @@ const CustomSearchBar = React.forwardRef((props, ref) => (
     onSubmitEditing={props.onSubmitEditing}
     showCancel={props.showCancel}
     onClear={props.onClear}
+    leftIconContainerStyle={props.leftIconContainerStyle}
   />
 ));
 

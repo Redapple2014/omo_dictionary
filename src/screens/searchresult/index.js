@@ -267,7 +267,7 @@ const SearchResultScreen = (props) => {
               style={{
                 marginVertical: 2,
                 paddingLeft: 6,
-                borderLeftWidth: 2,
+                borderLeftWidth: 3,
                 borderLeftColor: Constants.appColors.PRIMARY_COLOR,
                 marginLeft: 8,
               }}>

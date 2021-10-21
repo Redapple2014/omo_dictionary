@@ -22,7 +22,7 @@ import Toast from 'react-native-simple-toast';
 import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
 import { NavigationEvents } from 'react-navigation';
-
+import db from '../../utills/loadDb';
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -123,46 +123,32 @@ const FlashcardScreen = (props) => {
     }
 
     const initCat = async () => {
-        const json = {
-            "category": "flashcard",
-            "name": "Uncategorized",
-            "type": "Uncategorized",
-            "cards": []
-        }
-        await localDB
-            .post(json)
-            .then(function (result) {
-                console.log('Row inserted Successfully');
-            })
-            .catch(function (err) {
-                console.log('err=======', err);
-                //setLoading(false);
-                console.log(
-                    'Unable to insert into DB. Error: ' + err.name + ' - ' + err.message,
-                );
-            });
-        fetchData()
+        const query = `INSERT INTO categories(name,type,cat_order) VALUES('Uncategorized','flashcard',999);`;
+    
+        db.transaction((tx) => {
+          tx.executeSql(query, [], (tx, results) => {
+            console.log('inserted categories: ',results.rows.item(0))
+          });
+        });
     }
 
 
+
     const checkInit = async () => {
-        localDB
-            .find({
-                selector: {
-                    'name': { $eq: `Uncategorized` },
-                },
-                limit: 20,
-            })
-            .then(function (result) {
-                if (result.docs.length > 0) {
-                    //Toast.show('Category already exist', Toast.SHORT//)/
-                } else {
-                    initCat()
-                }
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
+        // const query = `DROP TABLE IF EXISTS categories `;
+         const query = `SELECT name FROM categories WHERE name = 'Uncategorized'`;
+    
+        db.transaction((tx) => {
+          tx.executeSql(query, [], (tx, results) => {
+            let row = results.rows.item(0);
+           if(row.name==='Uncategorized'){
+               return
+           }else{
+            initCat()
+           }
+        // console.log('inserted categories: ',results)
+          });
+        });
     }
 
     //render each category with drag feature

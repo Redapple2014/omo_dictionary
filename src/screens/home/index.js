@@ -8,12 +8,11 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   ActivityIndicator,
   StyleSheet,
   BackHandler,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import {SearchBar} from 'react-native-elements';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
@@ -26,6 +25,7 @@ import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
+import {NavigationState} from 'react-navigation';
 import {
   defaultSettings,
   defaultFlashcardTestSettings,
@@ -37,7 +37,6 @@ import * as Animatable from 'react-native-animatable';
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
-let backHandlerClickCount = 0;
 var userDB = new PouchDB('usersettings');
 var testSettings = new PouchDB('testsettings');
 
@@ -56,6 +55,7 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
+  const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.016);
 
   async function loadFile(index) {
     if (index == 1) {
@@ -81,34 +81,17 @@ const HomeScreen = (props) => {
     }
   }
 
-  const getActiveRouteState = (route) => {
-    if (
-      !route.routes ||
-      route.routes.length === 0 ||
-      route.index >= route.routes.length
-    ) {
-      return route;
-    }
-    const childActiveRoute = route.routes[route.index];
-    return getActiveRouteState(childActiveRoute);
-  };
-
   function handleBackButtonClick() {
-    console.log('data : ', props.navigation.state.routeName);
-    // let name = getActiveRouteState(props.navigation.state)
+    let isFocused = props.navigation.isFocused();
     if (props.navigation.state.routeName == 'HomeScreen') {
-      backHandlerClickCount += 1;
-      if (backHandlerClickCount < 2) {
-        isKeyboardVisible ? Keyboard.dismiss() : setSearchText('');
-        Toast.show('Press back twice to close app');
-      } else {
-        BackHandler.exitApp();
+      let text = inputEl.current.props.value;
+      if (isFocused == true && (text.length > 0 || isKeyboardVisible)) {
+        setSearchText('');
+        Keyboard.dismiss();
+        return true;
       }
-      setTimeout(() => {
-        backHandlerClickCount = 0;
-      }, 500);
 
-      return true;
+      return false;
     }
     return false;
   }
@@ -127,6 +110,10 @@ const HomeScreen = (props) => {
 
   function moveUp() {
     let pos = getSearchBarPostion();
+    if (lastPositin == Sizes.WINDOW_HEIGHT * 0.016) {
+      return;
+    }
+    setLastPositin(Sizes.WINDOW_HEIGHT * 0.016);
     const translate = {
       from: {
         translateY: pos,
@@ -141,6 +128,10 @@ const HomeScreen = (props) => {
 
   function moveDown() {
     let pos = getSearchBarPostion();
+    if (lastPositin == pos) {
+      return;
+    }
+    setLastPositin(pos);
     const translate = {
       from: {
         translateY: Sizes.WINDOW_HEIGHT * 0.016,
@@ -152,16 +143,16 @@ const HomeScreen = (props) => {
     searchView.current?.animate(translate, 200);
   }
 
-useEffect(()=>{
-  getWordData(searchText);
-},[searchText])
+  useEffect(() => {
+    getWordData(searchText);
+  }, [searchText]);
 
   useEffect(() => {
-    //BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 
     createIndexes();
     let pos = getSearchBarPostion();
-
+    setLastPositin(pos);
     const translate = {
       from: {
         translateY: 10,
@@ -237,7 +228,6 @@ useEffect(()=>{
   }
 
   const onClear = () => {
-    // alert('mmm');
     onSearchSubmit();
     setSearchText('');
     Keyboard.dismiss();
@@ -388,7 +378,7 @@ useEffect(()=>{
         setKeyboardVisible(true);
         setTimeout(() => {
           moveUp();
-        }, 10);
+        }, 20);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -762,7 +752,6 @@ useEffect(()=>{
               alignSelf: 'center',
               width: '95%',
             }}>
-
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -785,10 +774,9 @@ useEffect(()=>{
                 marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
-              leftIconContainerStyle={{right:-10}}
+              leftIconContainerStyle={{right: -10}}
               showCancel={true}
-              inputStyle={{color: 'black',fontSize:16}}
-
+              inputStyle={{color: 'black', fontSize: 16}}
               placeholder={
                 searchText.length == 0 && !isKeyboardVisible
                   ? `${t('SearchBarPlaceholderText')}`

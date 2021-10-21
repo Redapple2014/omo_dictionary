@@ -762,7 +762,7 @@ const HomeScreen = (props) => {
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 34,
+                height: 43,
                 borderRadius: 14,
                 marginTop: -1,
               }}

@@ -134,12 +134,12 @@ const HomeScreen = (props) => {
         translateY: Sizes.WINDOW_HEIGHT * 0.016,
       },
     };
+
     searchView.current?.animate(translate, 200);
   }
 
   function moveDown() {
     let pos = getSearchBarPostion();
-
     const translate = {
       from: {
         translateY: Sizes.WINDOW_HEIGHT * 0.016,
@@ -380,7 +380,9 @@ const HomeScreen = (props) => {
       'keyboardDidShow',
       () => {
         setKeyboardVisible(true);
-        moveUp();
+        setTimeout(() => {
+          moveUp();
+        }, 10);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(

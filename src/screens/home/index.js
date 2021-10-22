@@ -34,6 +34,7 @@ import db from '../../utills/loadDb';
 import {partofspeech, vocabularyLevel} from '../../utills/userdata';
 import * as Animatable from 'react-native-animatable';
 
+
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
@@ -55,7 +56,7 @@ const HomeScreen = (props) => {
   const inputEl = useRef(null);
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
-  const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.016);
+  const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.02);
 
   async function loadFile(index) {
     if (index == 1) {
@@ -104,48 +105,50 @@ const HomeScreen = (props) => {
       : Sizes.WINDOW_HEIGHT * 0.29;
   }
 
-  if (!isKeyboardVisible && searchText.length === 0) {
+  if (!isKeyboardVisible && searchText.length == 0) {
     moveDown();
   }
 
   function moveUp() {
     let pos = getSearchBarPostion();
-    if (lastPositin == Sizes.WINDOW_HEIGHT * 0.016) {
+    console.log(pos)
+    if (lastPositin == Sizes.WINDOW_HEIGHT * 0.02) {
       return;
     }
-    setLastPositin(Sizes.WINDOW_HEIGHT * 0.016);
+    setLastPositin(Sizes.WINDOW_HEIGHT * 0.02);
     const translate = {
       from: {
         translateY: pos,
       },
       to: {
-        translateY: Sizes.WINDOW_HEIGHT * 0.016,
+        translateY: Sizes.WINDOW_HEIGHT * 0.02,
       },
     };
 
-    searchView.current?.animate(translate, 200);
+    searchView.current?.animate(translate, 85);
   }
 
   function moveDown() {
     let pos = getSearchBarPostion();
+    console.log(pos)
     if (lastPositin == pos) {
       return;
     }
     setLastPositin(pos);
     const translate = {
       from: {
-        translateY: Sizes.WINDOW_HEIGHT * 0.016,
+        translateY: Sizes.WINDOW_HEIGHT * 0.02,
       },
       to: {
         translateY: pos,
       },
     };
-    searchView.current?.animate(translate, 200);
+    searchView.current?.animate(translate, 160);
   }
 
-  // useEffect(() => {
-  //   getWordData(searchText);
-  // }, [searchText]);
+  useEffect(() => {
+    getWordData(searchText);
+  }, [searchText]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
@@ -157,13 +160,13 @@ const HomeScreen = (props) => {
     setLastPositin(pos);
     const translate = {
       from: {
-        translateY: 10,
+        translateY: 0,
       },
       to: {
         translateY: pos,
       },
     };
-    searchView.current?.animate(translate, 5);
+    searchView.current?.animate(translate, 50);
     return () => {
       BackHandler.removeEventListener(
         'hardwareBackPress',
@@ -172,7 +175,7 @@ const HomeScreen = (props) => {
     };
   }, []);
 
-  getSearchBarPostion();
+  
 
   //lopping of all json
   async function loadAllJsons() {
@@ -317,8 +320,11 @@ const HomeScreen = (props) => {
         koreanHeadWord VARCHAR(100),
         card_order INT);`;
 
-    db.transaction((tx) => {
-      tx.executeSql(query, [], (tx, results) => {});
+        db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+
+        console.log('created')
+      });
     });
   }
 
@@ -328,8 +334,12 @@ const HomeScreen = (props) => {
         type VARCHAR(30),  
         cat_order INT);`;
 
-    db.transaction((tx) => {
-      tx.executeSql(query, [], (tx, results) => {});
+        db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+
+
+        console.log('created')
+      });
     });
   }
 
@@ -820,11 +830,12 @@ const HomeScreen = (props) => {
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
           paddingTop: Platform.OS == 'ios' ? getStatusBarHeight() : 0,
+
         }}>
-        <StatusBar
+        {/* <StatusBar
           barStyle="light-content"
           backgroundColor={Constants.appColors.PRIMARY_COLOR}
-        />
+        /> */}
       </View>
       {isLoading ? (
         <View style={[styles.spinnerStyle]}>
@@ -841,17 +852,16 @@ const HomeScreen = (props) => {
               backgroundColor: 'red',
               justifyContent: 'center',
               height:
-                isKeyboardVisible || searchText.length > 0
-                  ? Sizes.WINDOW_HEIGHT * 0.1
-                  : Sizes.WINDOW_HEIGHT * 0.38,
+                isKeyboardVisible || searchText.length != 0
+                  ? Platform.OS == 'ios' ?  Sizes.WINDOW_HEIGHT * 0.08 : Sizes.WINDOW_HEIGHT * 0.1 
+                  : Platform.OS == 'ios' ?  Sizes.WINDOW_HEIGHT * 0.36 : Sizes.WINDOW_HEIGHT * 0.38 ,
               backgroundColor: Constants.appColors.PRIMARY_COLOR,
-              justifyContent: 'center',
               alignItems: 'center',
             }}>
             {isKeyboardVisible || searchText.length > 0 ? (
               <></>
             ) : (
-              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.18}}>
+              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.15}}>
                 <Image
                   source={require('../../assets/logo/home-logo.png')}
                   style={{width: 300, height: 100, resizeMode: 'contain'}}
@@ -869,7 +879,7 @@ const HomeScreen = (props) => {
               flexDirection: 'row',
               alignItems: 'center',
               alignSelf: 'center',
-              width: '95%',
+              width: '92%',
             }}>
             <CustomSearchBar
               ref={inputEl}
@@ -881,19 +891,19 @@ const HomeScreen = (props) => {
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 43,
-                borderRadius: 14,
-                marginTop: -1,
+                height: 45,
+                borderRadius: 15,
+                marginTop: -2,
               }}
               containerStyle={{
                 borderRadius: 20,
-                height: 34,
+                height: 36,
                 flex: 1,
                 padding: 0,
                 marginTop: 0,
-                backgroundColor: Constants.appColors.PRIMARY_COLOR,
+                // backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
-              leftIconContainerStyle={{right: -10}}
+              leftIconContainerStyle={{right: -12}}
               showCancel={true}
               inputStyle={{color: 'black', fontSize: 16}}
               placeholder={
@@ -911,7 +921,7 @@ const HomeScreen = (props) => {
                   style={{
                     alignItems: 'center',
                     paddingHorizontal: 8,
-                    left: 4,
+                    left: 8,
                     top: 4,
                   }}>
                   <Text

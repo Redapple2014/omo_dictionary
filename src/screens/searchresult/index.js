@@ -585,7 +585,7 @@ const SearchResultScreen = (props) => {
               <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>
                 {wordInfo?.lemma}
               </Text>
-              <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>
+              <Text style={{ fontSize: 24, color: 'black', fontWeight: '400' }}>
                 {wordInfo?.origin && `(${wordInfo?.origin})`}
               </Text>
             </View>

@@ -22,7 +22,8 @@ import Toast from 'react-native-simple-toast';
 import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
 import { NavigationEvents } from 'react-navigation';
-import db from '../../utills/loadDb';
+
+import db from '../../utills/loadDb'
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -39,47 +40,33 @@ const FlashcardScreen = (props) => {
 
     //insert category function handeller
     async function insert() {
-        localDB
-            .find({
-                selector: {
-                    'name': { $eq: `${newCategoryName}` },
-                },
-                limit: 20,
-            })
-            .then(function (result) {
-                // console.log(result.docs)
-                if (result.docs.length > 0) {
-                    Toast.show('Category already exist', Toast.SHORT)
-                } else {
-                    insertData()
-                }
-            })
-            .catch(function (err) {
-                console.log(err);
+        console.log( newCategoryName)
+        const query = `SELECT * FROM categories WHERE name = '${newCategoryName}'`;
+        db.transaction((tx) => {
+            tx.executeSql(query, [], (tx, results) => {
+              var len = results.rows.length;
+              console.log(len, newCategoryName)
+              if(len==0){
+                console.log('call created')
+                insertData()
+              } else{
+                console.log('have')
+                Toast.show('Category already exist', Toast.SHORT)
+              }
             });
+          });
     }
 
     //insert function to create a new category
     async function insertData() {
-        const json = {
-            "category": "flashcard",
-            "name": newCategoryName,
-            "type": newCategoryName,
-            "cards": []
-        }
-        await localDB
-            .post(json)
-            .then(function (result) {
-                console.log('Row inserted Successfully');
-            })
-            .catch(function (err) {
-                console.log('err=======', err);
-                //setLoading(false);
-                console.log(
-                    'Unable to insert into DB. Error: ' + err.name + ' - ' + err.message,
-                );
-            });
-        fetchData()
+        const query = `INSERT INTO categories(name,type,cat_order) VALUES(${newCategoryName},'flashcard',1);`;
+        db.transaction((tx) => {
+          tx.executeSql(query, [], (tx, results) => {
+              setNewCategoryName('')
+            console.log('inserted categories: ',results)
+          });
+        });
+        fetchData2()
     }
 
     //fetch function
@@ -101,6 +88,24 @@ const FlashcardScreen = (props) => {
             },
         );
     }
+
+
+        //fetch function
+        async function fetchData2() {
+            const query = `SELECT * FROM categories`;
+            db.transaction((tx) => {
+                tx.executeSql(query, [], (tx, results) => {
+                  var len = results.rows.length;
+                  console.log(len);
+                  var temp = [];
+                  for (let i = 0; i < len; i++) {
+                    let row = results.rows.item(i);
+                    temp.push(row);
+                  }
+                  console.log(temp)
+                });
+              });
+        }
 
     //dalete data function
     async function deleteData() {
@@ -127,28 +132,26 @@ const FlashcardScreen = (props) => {
     
         db.transaction((tx) => {
           tx.executeSql(query, [], (tx, results) => {
-            console.log('inserted categories: ',results.rows.item(0))
+            console.log('inserted categories: ',results)
           });
         });
     }
 
-
-
     const checkInit = async () => {
         // const query = `DROP TABLE IF EXISTS categories `;
-         const query = `SELECT name FROM categories WHERE name = 'Uncategorized'`;
-    
+         const query = `SELECT * FROM categories WHERE name = 'Uncategorized'`;
         db.transaction((tx) => {
-          tx.executeSql(query, [], (tx, results) => {
-            let row = results.rows.item(0);
-           if(row.name==='Uncategorized'){
-               return
-           }else{
-            initCat()
-           }
-        // console.log('inserted categories: ',results)
+            tx.executeSql(query, [], (tx, results) => {
+              var len = results.rows.length;
+              console.log(len);
+
+              if(len==0){
+                initCat()
+              } else{
+                return
+              }
+            });
           });
-        });
     }
 
     //render each category with drag feature
@@ -222,7 +225,9 @@ const FlashcardScreen = (props) => {
     }
 
     useEffect(() => {
+  
         checkInit()
+
     }, [])
 
     //Show dialog popup
@@ -261,7 +266,7 @@ const FlashcardScreen = (props) => {
     //handel save function from dialog input
     const handleSave = () => {
         if (newCategoryName.length > 0) {
-            console.log('name : ', newCategoryName)
+            // console.log('name : ', newCategoryName)
             setVisible(false);
             setNewCategoryName('')
             insert()

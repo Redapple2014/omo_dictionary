@@ -143,9 +143,9 @@ const HomeScreen = (props) => {
     searchView.current?.animate(translate, 200);
   }
 
-  useEffect(() => {
-    getWordData(searchText);
-  }, [searchText]);
+  // useEffect(() => {
+  //   getWordData(searchText);
+  // }, [searchText]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
@@ -232,7 +232,6 @@ const HomeScreen = (props) => {
   const onClear = () => {
     onSearchSubmit();
     setSearchText('');
-    Keyboard.dismiss();
   };
 
   // search the entered data
@@ -389,16 +388,18 @@ const HomeScreen = (props) => {
 
     let query = '';
     if (isKoreanWord(text)) {
-      console.log('korean word====');
+      // console.log('korean word====');
       query = koreanQuery;
+      // console.log(query)
     } else {
-      console.log('english word====');
+      // console.log('english word====');
       query = engQuery;
     }
 
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
+        console.log(len)
         console.log('Query completed : ', len);
         var temp = [];
         var ids = [];
@@ -440,6 +441,25 @@ const HomeScreen = (props) => {
     };
   }, []);
 
+
+  const redenerToast = (xy) => {
+    switch (xy) {
+      case 0:
+        return
+      case 1:
+        Toast.show('            ⭐\nElementary Level', Toast.SHORT)
+        break
+      case 2:
+        Toast.show('         ⭐⭐\nElementary Level', Toast.SHORT)
+        break
+      case 3:
+        Toast.show('       ⭐⭐⭐\nElementary Level', Toast.SHORT,)
+        break
+      default:
+        break
+    }
+  }
+
   //render method of equivalent under sence of each item
   function renderEquivalent(dataSet) {
     let arr = JSON.parse(dataSet);
@@ -453,6 +473,7 @@ const HomeScreen = (props) => {
               style={{
                 fontSize: 15,
                 marginTop: 2,
+                left:4,
                 color: Constants.appColors.BLACK,
               }}>{`${i + 1} `}</Text>
             <Text
@@ -460,6 +481,7 @@ const HomeScreen = (props) => {
                 color: Constants.appColors.BLACK,
                 fontSize: 15,
                 marginTop: 2,
+                left:4,
               }}>{`${data.en_lm}`}</Text>
           </View>
         );
@@ -533,18 +555,24 @@ const HomeScreen = (props) => {
                 backgroundColor: 'white',
                 paddingVertical: 8,
                 paddingHorizontal: 8,
-                marginVertical: 4,
+                marginTop: 6,
                 marginHorizontal: 8,
                 borderRadius: 10,
+                height: 'auto',
+                justifyContent: 'center',
+                marginBottom: index + 1 == searchedData.length ? 6 : 0,
+                // borderWidth:1
+               
               }}>
               <View
                 style={{
                   zIndex: 4,
                   position: 'absolute',
-                  right: 12,
+                  right: 8,
                   top: 8,
                   justifyContent: 'flex-start',
                   width: 40,
+                  // borderWidth:1
                 }}>
                 {(item?.partofspeech ?? item?.partOfSpeech) && (
                   <View style={{alignItems: 'flex-end'}}>
@@ -567,7 +595,8 @@ const HomeScreen = (props) => {
                 )}
 
                 {item?.vocabularyLevel && (
-                  <View style={{flexDirection: 'row-reverse', marginTop: 6}}>
+                  <TouchableOpacity onPress={()=>redenerToast(vocabularyLevel[item.vocabularyLevel])}>
+                  <View style={{flexDirection: 'row-reverse', marginTop: 8,zIndex: 4,}}>
                     {vocabularyLevel[item?.vocabularyLevel] != 0 &&
                       vocabularyLevel[item?.vocabularyLevel] != 'undefined' &&
                       [...Array(vocabularyLevel[item.vocabularyLevel])].map(
@@ -580,12 +609,13 @@ const HomeScreen = (props) => {
                         ),
                       )}
                   </View>
+                  </TouchableOpacity>
                 )}
               </View>
-              <Text style={styles.TextStyle}>
-                <Text style={{fontWeight: 'bold'}}>{item?.lemma}</Text>
-                <Text>{item?.origin && `(${item?.origin})`}</Text>
-              </Text>
+              <View style={{flexDirection:'row',alignItems:'center'}}>
+                  <Text style={[styles.TextStyle,{fontWeight: 'bold',paddingLeft:0,marginRight:4}]}>{item?.lemma}</Text>
+                  <Text style={[styles.TextStyle,{paddingLeft:0}]}>{item?.origin && `(${item?.origin})`}</Text>
+                </View>
               {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <Text
                   style={[
@@ -594,7 +624,9 @@ const HomeScreen = (props) => {
                       color: Constants.appColors.GRAY,
                       fontSize: 12,
                       fontStyle: 'italic',
-                      marginVertical:1
+                      marginVertical:1,
+                      paddingLeft:0,
+                      // borderWidth:1
                     },
                   ]}>
                   {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
@@ -605,7 +637,8 @@ const HomeScreen = (props) => {
                 key={index}
                 style={{
                   marginHorizontal: 4,
-                  paddingLeft: 12,
+                    left: -4,
+                    // borderWidth:1
                 }}>
                 {item?.sense && renderEquivalent(item?.sense)}
               </View>
@@ -655,15 +688,17 @@ const HomeScreen = (props) => {
                   height: 'auto',
                   justifyContent: 'center',
                   marginBottom: index + 1 == searchedData.length ? 6 : 0,
+                  // borderWidth:1
                 }}>
                 <View
                   style={{
                     zIndex: 4,
                     position: 'absolute',
-                    right: 12,
+                    right: 8,
                     top: 8,
                     justifyContent: 'flex-start',
                     width: 40,
+                    // borderWidth:1
                   }}>
                   {(item?.partofspeech ?? item?.partOfSpeech) && (
                     <View style={{alignItems: 'flex-end'}}>
@@ -686,6 +721,7 @@ const HomeScreen = (props) => {
                   )}
 
                   {item?.vocabularyLevel && (
+                  <TouchableOpacity onPress={()=>redenerToast(vocabularyLevel[item.vocabularyLevel])}>
                     <View style={{flexDirection: 'row-reverse', marginTop: 6}}>
                       {vocabularyLevel[item?.vocabularyLevel] != 0 &&
                         vocabularyLevel[item?.vocabularyLevel] != 'undefined' &&
@@ -699,13 +735,14 @@ const HomeScreen = (props) => {
                           ),
                         )}
                     </View>
+                    </TouchableOpacity>
                   )}
                 </View>
 
-                <Text style={styles.TextStyle}>
-                  {item?.lemma}
-                  {item?.origin && `(${item?.origin})`}
-                </Text>
+                <View style={{flexDirection:'row',alignItems:'center'}}>
+                  <Text style={[styles.TextStyle,{fontWeight: 'bold',paddingLeft:0,marginRight:4}]}>{item?.lemma}</Text>
+                  <Text style={[styles.TextStyle,{paddingLeft:0}]}>{item?.origin && `(${item?.origin})`}</Text>
+                </View>
                 {item?.partofspeech || item?.partOfSpeech ? (
                   <Text
                     style={[
@@ -714,7 +751,10 @@ const HomeScreen = (props) => {
                         color: Constants.appColors.GRAY,
                         fontSize: 12,
                         fontStyle: 'italic',
-                        marginVertical:1
+                        marginVertical:1,
+                        left:0,
+                        paddingLeft:0,
+                        // borderWidth:1
                       },
                     ]}>
                     {(item?.partofspeech && partofspeech[item?.partofspeech]) ??
@@ -727,7 +767,8 @@ const HomeScreen = (props) => {
                   key={index}
                   style={{
                     marginHorizontal: 4,
-                    paddingLeft: 12,
+                    left: -4,
+                    // borderWidth:1
                   }}>
                   {item?.sense && renderEquivalent(item?.sense)}
                 </View>
@@ -800,6 +841,7 @@ const HomeScreen = (props) => {
               alignSelf: 'center',
               width: '95%',
             }}>
+
             <CustomSearchBar
               ref={inputEl}
               lightTheme
@@ -817,14 +859,15 @@ const HomeScreen = (props) => {
               containerStyle={{
                 borderRadius: 20,
                 height: 34,
-                flex: isKeyboardVisible ? 0.99 : 1,
+                flex: 1,
                 padding: 0,
                 marginTop: 0,
                 backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
-              leftIconContainerStyle={{right: -10}}
+              leftIconContainerStyle={{right:-10}}
               showCancel={true}
-              inputStyle={{color: 'black', fontSize: 16}}
+              inputStyle={{color: 'black',fontSize:16}}
+
               placeholder={
                 searchText.length == 0 && !isKeyboardVisible
                   ? `${t('SearchBarPlaceholderText')}`
@@ -834,9 +877,10 @@ const HomeScreen = (props) => {
               onClear={onClear}
             />
 
-            {searchText.length != 0 && (
+
+            {(isKeyboardVisible || searchText.length != 0 ) && (
               <TouchableOpacity onPress={onCancel}>
-                <View style={{alignItems: 'center', paddingHorizontal: 12,top:4}}>
+                <View style={{alignItems: 'center', paddingHorizontal: 8,left:4,top:4}}>
                   <Text
                     style={{
                       color: Constants.appColors.WHITE,

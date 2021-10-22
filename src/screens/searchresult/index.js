@@ -445,7 +445,7 @@ const SearchResultScreen = (props) => {
       case 0:
         return
       case 1:
-        Toast.show('           ⭐\nElementary Level', Toast.SHORT)
+        Toast.show('            ⭐\nElementary Level', Toast.SHORT)
         break
       case 2:
         Toast.show('         ⭐⭐\nElementary Level', Toast.SHORT)
@@ -464,12 +464,12 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (type == 1) {
           return (
-            <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm}, `}</Text>
+            <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm} `}</Text>
           )
         } else if (type == 2) {
           if (data?.writtenForm != 'undefined') {
             return (
-              <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm}, `}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '400' }}>{`${data && data?.writtenForm} `}</Text>
             )
           }
           else {

@@ -30,13 +30,18 @@ const ViewFlashcardDataScreen = (props) => {
     //render the user's flash card data
     const renderData = () => {
         // const arr = data.definition
-        const arr2 = data?.examples
-        // console.log(arr)
+ 
+         try {
+            const arr2 =   JSON.parse(data?.examples)
+            console.log('mydata: ',arr2)
             return arr2.map((data, i) => {
-                        return (
-                            <View key={i} style={{ marginHorizontal: 2, }}><Text>{`${data && arr2[i].value}`}</Text></View>
-                        )
-                        })
+                return (
+                    <View key={i} style={{ marginHorizontal: 2, }}><Text>{`${i+1} ${data && arr2[i].value}`}</Text></View>
+                )
+                })
+            }catch(c){
+                console.log(e)
+            }
     }
 
     return (
@@ -65,27 +70,31 @@ const ViewFlashcardDataScreen = (props) => {
             <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
                 <View style={{ paddingVertical: 10 }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.koreanHeadWord}</Text>
+                        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.koreanHeadWord && data?.koreanHeadWord}</Text>
                         <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.englishHeadWord && `(${data?.englishHeadWord})`}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }} >
-                        <Text style={{ paddingRight: 6, }}>{data?.speech}</Text>
-                        <Text>{data?.vocabularyLevel}</Text>
+                        <Text style={{ paddingRight: 6, }}>{data?.speech && data.speech}</Text>
+                        {/* <Text>{data.vocabularyLevel && data?.vocabularyLevel}</Text> */}
                     </View>
                 </View>
             </View>
-            {!data?.definition  && <>
-                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}><Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text></View>
-                <View style={{ backgroundColor: 'white' }}>
-                    <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false} style={{  paddingHorizontal: 12,marginBottom:12,marginTop:6 }}>
+            
+          {data?.definition.length>0 && (<View>
+                <View style={{ backgroundColor: '#f8f8f8', paddingHorizontal: 16, paddingVertical: 8 }}>
+                    <Text style={{ fontSize: 16 }}>{`${t("DefinitionText")}`}</Text>
+                    </View>
+               <View style={{ backgroundColor: 'white' }}>
+                      <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false} style={{  paddingHorizontal: 12,marginBottom:12,marginTop:6 }}>
 
-                    <Text style={{color:Constants.appColors.PRIMARY_COLOR,marginLeft:2,fontSize:18}}>{data?.definition}</Text>
+                   <Text style={{color:Constants.appColors.PRIMARY_COLOR,marginLeft:2,fontSize:18}}>{data?.definition && data?.definition}</Text>
                   
-                        {!data?.definition && renderData()}
-                        </ScrollView>
-                </View>
-            </>
+                        {data?.definition && renderData()}
+                 </ScrollView>
+                </View> 
+                </View>)
             }
+            
 
         </View>
     )

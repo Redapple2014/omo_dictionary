@@ -72,30 +72,11 @@ const FlashcardScreen = (props) => {
         console.log('inserted categories: ', results);
       });
     });
-    fetchData2();
+    fetchData();
   }
 
   //fetch function
   async function fetchData() {
-    localDB.allDocs(
-      {
-        since: 0,
-        include_docs: true,
-      },
-      function (err, response) {
-        if (err) {
-          return console.log(err);
-        }
-        // handle result
-        setData(response.rows);
-        //    console.log("fetched data ", response.rows)
-        return response.rows;
-      },
-    );
-  }
-
-  //fetch function
-  async function fetchData2() {
     const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
         JSON_GROUP_ARRAY(json_object('id', cards.id, 
                                       'word_id', cards.word_id,
@@ -114,7 +95,7 @@ const FlashcardScreen = (props) => {
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
-        console.log(len);
+        console.log('len : ' ,len);
         var temp = [];
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
@@ -122,6 +103,7 @@ const FlashcardScreen = (props) => {
           row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
         }
+        // console.log('temp : ',temp)
         setData(temp);
       });
     });
@@ -129,25 +111,21 @@ const FlashcardScreen = (props) => {
 
   //dalete data function
   async function deleteData() {
+
+    console.log('seletced items : ',items)
     items.map((item) => {
-      localDB
-        .get(item)
-        .then(function (doc) {
-          localDB.remove(doc['_id'], doc['_rev'], function (err) {
-            if (err) {
-              return console.log(err);
-            } else {
-              console.log('Document deleted successfully');
-              fetchData();
-              setEditMode(!editMode);
-            }
-          });
-        })
-        .catch(function (err) {
-          console.log(err);
+      const query = `DELETE FROM categories WHERE id = '${item}'`;
+      db.transaction((tx) => {
+        tx.executeSql(query, [], (tx, results) => {
+          console.log(results)
         });
+      });
     });
+
+
     setItems([]);
+    fetchData();
+    setEditMode(false)
   }
 
   const initCat = async () => {
@@ -156,6 +134,7 @@ const FlashcardScreen = (props) => {
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         console.log('inserted categories: ', results);
+        fetchData()
       });
     });
   };
@@ -179,7 +158,7 @@ const FlashcardScreen = (props) => {
 
   //render each category with drag feature
   const renderItem = ({item, index, move, moveEnd, isActive}) => {
-    // console.log(item)
+    // console.log('item : ',item)
     return (
       <TouchableOpacity
         onPress={() =>
@@ -349,7 +328,7 @@ const FlashcardScreen = (props) => {
 
   return (
     <View style={{flex: 1}}>
-      <NavigationEvents onDidFocus={(payload) => fetchData2()} />
+      <NavigationEvents onDidFocus={(payload) => fetchData()} />
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -464,7 +443,8 @@ const FlashcardScreen = (props) => {
           <DraggableFlatList
             data={myData}
             renderItem={renderItem}
-            keyExtractor={(item, index) => `draggable-item-${item.key}`}
+            keyExtractor={(item, index) => {
+              return `draggable-item-${item.id}`}}
             scrollPercent={5}
             onMoveEnd={({data}) => setData(data)}
           />
@@ -472,7 +452,7 @@ const FlashcardScreen = (props) => {
           <FlatList
             data={myData}
             renderItem={renderItem}
-            keyExtractor={(item, index) => `draggable-item-${item.key}`}
+            keyExtractor={(item, index) => `draggable-item-${item.id}`}
           />
         )}
         {myData.length == 0 && (

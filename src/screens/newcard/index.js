@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   StatusBar,
@@ -11,49 +11,30 @@ import {
 } from 'react-native';
 import CustomHeader from '../../components/header';
 import Constants from '../../utills/Constants';
-import {NavigationActions} from 'react-navigation';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {useTranslation} from 'react-i18next';
+import { NavigationActions } from 'react-navigation';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { useTranslation } from 'react-i18next';
 import CustomInput from '../../components/input/CustomInput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import CustomPopup from '../../components/popup/CustomPopup';
 import Sizes from '../../utills/Size';
-import {partofspeech} from '../../utills/userdata';
+import { partofspeech, listOfpartofSpeechArr } from '../../utills/userdata';
 
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
 var localDB = new PouchDB('flashcard');
 
-const listOfpartofSpeech = [
-  '감탄사',
-  '관형사',
-  '대명사',
-  '동사',
-  '명사',
-  '보조 동사',
-  '보조 형용사',
-  '부사',
-  '수사',
-  '어미',
-  '의존 명사',
-  '접사',
-  '조사',
-  '품사 없음',
-  '형용사',
-];
+
 
 const NewCardScreen = (props) => {
   const pathFrom = props.navigation.getParam('path', '');
-
-  // console.log('path data : ',pathFrom)
-
   const [isOverlayActive, setOverlayActive] = useState(false);
   const [isPoPOverlayActive, setPopOverlayActive] = useState(false);
   const [myData, setData] = useState([]);
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const koreanHandWordRef = useRef(null);
   const partOfSpeechRef = useRef(null);
   const hanjaRef = useRef(null);
@@ -64,40 +45,75 @@ const NewCardScreen = (props) => {
   const [englishHandWord, setEnglishHandWord] = useState('');
   const [definitionsInputs, setDefinitionsInputs] = useState('');
   const [category, setCategory] = useState(
-    pathFrom ? pathFrom?.doc?.name : `Uncategorized`,
+    pathFrom!='Uncategorized' ? pathFrom?.name : `Uncategorized`,
   );
-  // const [definitionsInputs, setDefinitionsInputs] = useState([{ key: '', value: '' }]);
-  const [examplesInputs, setExamplesInputs] = useState([{key: '', value: ''}]);
-  const [catDetails, setCatDetails] = useState(pathFrom ? pathFrom : {});
+  const [examplesInputs, setExamplesInputs] = useState([{ key: '', value: '' }]);
+  const [catDetails, setCatDetails] = useState({});
+
+  console.log('catDetails : ', catDetails)
+  console.log('category : ', category)
 
   //fetch all flashcard data
   async function fetchData() {
-    localDB.allDocs(
-      {
-        include_docs: true,
-        attachments: true,
-      },
-      function (err, response) {
-        if (err) {
-          return console.log(err);
+    const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
+        JSON_GROUP_ARRAY(json_object('id', cards.id, 
+                                      'word_id', cards.word_id,
+                                      'speech', cards.speech,
+                                      'hanja', cards.hanja,
+                                      'englishHeadWord', cards.englishHeadWord,
+                                      'definition', cards.definition,
+                                      'examples', cards.examples,
+                                      'koreanHeadWord',cards.koreanHeadWord,
+                                      'card_order', cards.card_order)) 
+        AS allCards
+    FROM categories
+    LEFT JOIN cards on categories.id = cards.category_id
+    GROUP BY categories.id
+    order by categories.cat_order`;
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.length;
+        // console.log('len : ' ,len);
+        var temp = [];
+        for (let i = 0; i < len; i++) {
+          let row = results.rows.item(i);
+          row.cards = JSON.parse(row.allCards);
+          row.cards = row.cards.filter((item) => item.id != null);
+          temp.push(row);
         }
-        // handle result
-        setData(response.rows);
-        //console.log("fetched data ", response.rows)
-        return response.rows;
-      },
-    );
+        // console.log('temp : ',temp)
+        setData(temp);
+      });
+    });
   }
+
+  async function getCatdata() {
+      const query = `SELECT * FROM categories WHERE name = '${category}'`;
+      console.log(query)
+      db.transaction((tx) => {
+        tx.executeSql(query, [], (tx, results) => {
+          var item = results.rows.raw(0)[0];
+          console.log('getCatdata : ' ,item);
+          setCatDetails(item)
+        });
+      });
+
+  }
+
+
+  useEffect(()=>{
+    getCatdata()
+  },[category])
 
   //add dynamic input
   const addHandler = (type) => {
     if (type == 'd') {
       const _inputs = [...definitionsInputs];
-      _inputs.push({key: '', value: ''});
+      _inputs.push({ key: '', value: '' });
       setDefinitionsInputs(_inputs);
     } else {
       const _input = [...examplesInputs];
-      _input.push({key: '', value: ''});
+      _input.push({ key: '', value: '' });
       setExamplesInputs(_input);
     }
   };
@@ -128,37 +144,26 @@ const NewCardScreen = (props) => {
     }
   };
 
-  const checkInit = async () => {
-    localDB
-      .find({
-        selector: {
-          name: {$eq: `Uncategorized`},
-        },
-        limit: 20,
-      })
-      .then(function (result) {
-        console.log('data record: ', result);
-        let x = {
-          docs: result?.docs,
-          id: result?.docs[0]._id,
-        };
-        console.log(x);
-        if (pathFrom.length == 0) {
-          setCatDetails(x);
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  };
+  // const checkInit = async () => {
+
+  //   const query = `SELECT * FROM categories WHERE name = 'Uncategorized'`;
+  //   console.log(query)
+  //   db.transaction((tx) => {
+  //     tx.executeSql(query, [], (tx, results) => {
+  //       var item = results.rows.raw(0)[0];
+  //       console.log('len item : ', item);
+        
+  //       setCatDetails(item)
+  //       setUpdate(true)
+  //     });
+  //   });
+  // };
 
   useEffect(() => {
-    checkInit();
+    // checkInit();
+    fetchData()
   }, []);
 
-  function errorCB(err) {
-    console.log('SQL Error: ' + err);
-  }
 
   function insertCard(
     word_id,
@@ -171,6 +176,16 @@ const NewCardScreen = (props) => {
     koreanHeadWord,
     card_order,
   ) {
+    console.log('indert data : ',word_id,
+      category_id,
+      speech,
+      hanja,
+      englishHeadWord,
+      definition,
+      examples,
+      koreanHeadWord,
+      card_order)
+
     db.transaction(function (tx) {
       tx.executeSql(
         'INSERT INTO cards (word_id, category_id, speech,hanja, englishHeadWord, definition, examples, koreanHeadWord, card_order) VALUES (?,?,?,?,?,?,?,?,?)',
@@ -203,11 +218,11 @@ const NewCardScreen = (props) => {
       if (category !== `${t('SelectaCategoryText')}`) {
         insertCard(
           null,
-          1,
+          catDetails.id,
           partOfSpeech,
           hanja,
           englishHandWord,
-          examplesInputs[0].value,
+          definitionsInputs,
           examplesInputs,
           koreanHandWord,
           1,
@@ -241,15 +256,15 @@ const NewCardScreen = (props) => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   //go back handeller
   const goBack = () => props.navigation.dispatch(NavigationActions.back());
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -267,7 +282,7 @@ const NewCardScreen = (props) => {
           onPressrightIcon={handleDone}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <CustomInput
           label={`${t('KoreanHandwordText')}*`}
           ref={koreanHandWordRef}
@@ -290,17 +305,17 @@ const NewCardScreen = (props) => {
             borderWidth: 0,
           }}
           keyboardType="email-address"
-          leftIconContainerStyle={{marginRight: 16}}
+          leftIconContainerStyle={{ marginRight: 16 }}
           placeholderTextColor={Constants.appColors.LIGHTGRAY}
           placeholderFontSize={1}
-          containerStyle={{height: 30, marginTop: 8}}
+          containerStyle={{ height: 30, marginTop: 8 }}
           value={koreanHandWord}
           onChangeText={(value) => {
             setKoreanHandWord(value);
           }}
           onSubmitEditing={() => hanjaRef.current.focus()}
         />
-        <View style={{marginLeft: 12, marginTop: 48}}>
+        <View style={{ marginLeft: 12, marginTop: 48 }}>
           <Text>{`${t('PartOfSpeechText')}`}</Text>
         </View>
         <TouchableOpacity onPress={() => setPopOverlayActive(true)}>
@@ -347,8 +362,8 @@ const NewCardScreen = (props) => {
               marginBottom: 12,
             }}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={{fontSize: 16, marginBottom: 12}}>{`${t(
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t(
                 'SelectPartSpeechText',
               )}`}</Text>
               <TouchableOpacity
@@ -362,7 +377,7 @@ const NewCardScreen = (props) => {
             </View>
             <FlatList
               keyboardShouldPersistTaps={'handled'}
-              renderItem={({item, index}) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity
                   onPress={() => {
                     setPopOverlayActive(!isPoPOverlayActive);
@@ -387,7 +402,7 @@ const NewCardScreen = (props) => {
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
-              data={listOfpartofSpeech}
+              data={listOfpartofSpeechArr}
               numColumns={1}
               showsVerticalScrollIndicator={false}
             />
@@ -415,10 +430,10 @@ const NewCardScreen = (props) => {
             borderWidth: 0,
           }}
           keyboardType="email-address"
-          leftIconContainerStyle={{marginRight: 16}}
+          leftIconContainerStyle={{ marginRight: 16 }}
           placeholderTextColor={Constants.appColors.LIGHTGRAY}
           placeholderFontSize={1}
-          containerStyle={{height: 40, marginTop: 8}}
+          containerStyle={{ height: 40, marginTop: 8 }}
           value={hanja}
           onChangeText={(value) => {
             setHanja(value);
@@ -447,15 +462,15 @@ const NewCardScreen = (props) => {
             borderWidth: 0,
           }}
           keyboardType="email-address"
-          leftIconContainerStyle={{marginRight: 16}}
+          leftIconContainerStyle={{ marginRight: 16 }}
           placeholderTextColor={Constants.appColors.LIGHTGRAY}
           placeholderFontSize={1}
-          containerStyle={{height: 40, marginVertical: 36}}
+          containerStyle={{ height: 40, marginVertical: 36 }}
           value={englishHandWord}
           onChangeText={(value) => {
             setEnglishHandWord(value);
           }}
-          onSubmitEditing={() => {}}
+          onSubmitEditing={() => { }}
         />
         <CustomPopup
           visible={isOverlayActive}
@@ -468,10 +483,10 @@ const NewCardScreen = (props) => {
             width: '100%',
             maxHeight: Sizes.WINDOW_HEIGHT * 0.5,
           }}>
-          <View style={{paddingHorizontal: 12, paddingTop: 8, flex: 1}}>
+          <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={{fontSize: 16, marginBottom: 12}}>{`${t(
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t(
                 'SelectCategoryText',
               )}`}</Text>
               <TouchableOpacity
@@ -484,17 +499,18 @@ const NewCardScreen = (props) => {
               </TouchableOpacity>
             </View>
             {myData.length == 0 ? (
-              <View style={{marginBottom: 12}}>
-                <Text style={{textAlign: 'center'}}>{`${t(
+              <View style={{ marginBottom: 12 }}>
+                <Text style={{ textAlign: 'center' }}>{`${t(
                   'NodataFoundText',
                 )}`}</Text>
               </View>
             ) : (
               <FlatList
                 keyboardShouldPersistTaps={'handled'}
-                renderItem={({item, index}) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity
                     onPress={() => {
+                      console.log(item)
                       setCategory(item?.name);
                       setCatDetails(item);
                       setOverlayActive(!isOverlayActive);
@@ -548,15 +564,15 @@ const NewCardScreen = (props) => {
             borderWidth: 0,
           }}
           keyboardType="email-address"
-          leftIconContainerStyle={{marginRight: 16}}
+          leftIconContainerStyle={{ marginRight: 16 }}
           placeholderTextColor={Constants.appColors.LIGHTGRAY}
           placeholderFontSize={1}
-          containerStyle={{height: 40, marginTop: 8}}
+          containerStyle={{ height: 40, marginTop: 8 }}
           value={definitionsInputs}
           onChangeText={(value) => {
             setDefinitionsInputs(value);
           }}
-          onSubmitEditing={() => {}}
+          onSubmitEditing={() => { }}
         />
         {/* {definitionsInputs.map((input, key) => (
                     <View style={[styles.inputContainer,{height: 48,borderRadius:6,}]} key={key}>
@@ -576,21 +592,21 @@ const NewCardScreen = (props) => {
                         </TouchableOpacity>
                     </View>
                 </View> */}
-        <View style={{marginLeft: 12, marginTop: 36}}>
+        <View style={{ marginLeft: 12, marginTop: 36 }}>
           <Text>{`${t('ExamplesText')}`}</Text>
         </View>
         {examplesInputs.map((input, key) => (
           <View
-            style={[styles.inputContainer, {height: 48, borderRadius: 6}]}
+            style={[styles.inputContainer, { height: 48, borderRadius: 6 }]}
             key={key}>
             <TextInput
               placeholder={` ${t('EnterSampleExamplesText')} ${key + 1}`}
               value={input.value}
               onChangeText={(text) => inputHandler('e', text, key)}
-              style={{fontSize: 17}}
+              style={{ fontSize: 17 }}
               placeholderTextColor={Constants.appColors.LIGHTGRAY}
             />
-            <View style={{position: 'absolute', right: 4}}>
+            <View style={{ position: 'absolute', right: 4 }}>
               <TouchableOpacity onPress={() => deleteHandler('e', key)}>
                 <Icon
                   name="minuscircle"
@@ -609,7 +625,7 @@ const NewCardScreen = (props) => {
             marginLeft: 12,
           }}>
           <Text>{`${t('AddAnAdditionalExample')}`}</Text>
-          <View style={{position: 'absolute', right: 20}}>
+          <View style={{ position: 'absolute', right: 20 }}>
             <TouchableOpacity onPress={() => addHandler('e')}>
               <Icon
                 name="pluscircle"
@@ -619,7 +635,7 @@ const NewCardScreen = (props) => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{marginLeft: 12, marginTop: 8}}>
+        <View style={{ marginLeft: 12, marginTop: 8 }}>
           <Text>{`${t('CategoryText')}`}</Text>
         </View>
         <TouchableOpacity onPress={() => setOverlayActive(true)}>

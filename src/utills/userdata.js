@@ -113,6 +113,24 @@ export const partofspeech = {
     "형용사": "adjective"
 }
 
+export const listOfpartofSpeechArr = [
+    '감탄사',
+    '관형사',
+    '대명사',
+    '동사',
+    '명사',
+    '보조 동사',
+    '보조 형용사',
+    '부사',
+    '수사',
+    '어미',
+    '의존 명사',
+    '접사',
+    '조사',
+    '품사 없음',
+    '형용사',
+  ];
+
 export const vocabularyLevel = {
     "고급": 1,
     "없음": 0,
@@ -196,7 +214,6 @@ export const forntDisplay = [
         value: false
     }
 ]
-
 
 export const defaultFlashcardTestSettings = {
     limtMaxTestLength: true,

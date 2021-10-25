@@ -55,7 +55,9 @@ const HomeScreen = (props) => {
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
   const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.02);
+  const [expand,setExpand] = useState(false)
 
+// console.log(expand)
   async function loadFile(index) {
     if (index == 1) {
       userDB
@@ -96,10 +98,10 @@ const HomeScreen = (props) => {
   }
 
   function getSearchBarPostion() {
-    return isKeyboardVisible
-      ? Sizes.WINDOW_HEIGHT * 0.016
-      : searchText.length > 0
-      ? Sizes.WINDOW_HEIGHT * 0.016
+    return isKeyboardVisible 
+      ? Sizes.WINDOW_HEIGHT * 0.02
+      : searchText.length>0
+      ? Sizes.WINDOW_HEIGHT * 0.02
       : Sizes.WINDOW_HEIGHT * 0.29;
   }
 
@@ -109,7 +111,7 @@ const HomeScreen = (props) => {
 
   function moveUp() {
     let pos = getSearchBarPostion();
-    console.log(pos);
+    // console.log(pos);
     if (lastPositin == Sizes.WINDOW_HEIGHT * 0.02) {
       return;
     }
@@ -229,8 +231,16 @@ const HomeScreen = (props) => {
   }
 
   const onClear = () => {
-    onSearchSubmit();
+
+    console.log('here')
+    // onSearchSubmit();
+    // setExpand(false)
     setSearchText('');
+  };
+
+  const onCancel = () => {
+    setSearchText('');
+    Keyboard.dismiss();
   };
 
   // search the entered data
@@ -300,10 +310,7 @@ const HomeScreen = (props) => {
     return match ? match.length === text.length : false;
   };
 
-  const onCancel = () => {
-    setSearchText('');
-    Keyboard.dismiss();
-  };
+
 
   function createCardTable() {
     const query = `CREATE TABLE IF NOT EXISTS cards(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -431,7 +438,7 @@ const HomeScreen = (props) => {
         setKeyboardVisible(true);
         setTimeout(() => {
           moveUp();
-        }, 20);
+        }, 0);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -473,13 +480,14 @@ const HomeScreen = (props) => {
         return (
           <View
             key={`${i} `}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
+            style={{flexDirection: 'row', }}>
             <Text
               style={{
                 fontSize: 15,
                 marginTop: 2,
                 left: 4,
                 color: Constants.appColors.BLACK,
+                
               }}>{`${i + 1} `}</Text>
             <Text
               style={{
@@ -487,6 +495,7 @@ const HomeScreen = (props) => {
                 fontSize: 15,
                 marginTop: 2,
                 left: 4,
+              paddingLeft:4
               }}>{`${data.en_lm}`}</Text>
           </View>
         );
@@ -824,10 +833,6 @@ const HomeScreen = (props) => {
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
           paddingTop: Platform.OS == 'ios' ? getStatusBarHeight() : 0,
         }}>
-        {/* <StatusBar
-          barStyle="light-content"
-          backgroundColor={Constants.appColors.PRIMARY_COLOR}
-        /> */}
       </View>
       {isLoading ? (
         <View style={[styles.spinnerStyle]}>
@@ -854,7 +859,7 @@ const HomeScreen = (props) => {
               backgroundColor: Constants.appColors.PRIMARY_COLOR,
               alignItems: 'center',
             }}>
-            {isKeyboardVisible || searchText.length > 0 ? (
+            {isKeyboardVisible || searchText.length > 0  ? (
               <></>
             ) : (
               <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.15}}>
@@ -863,7 +868,8 @@ const HomeScreen = (props) => {
                   style={{width: 300, height: 100, resizeMode: 'contain'}}
                 />
               </View>
-            )}
+            )
+            }
           </View>
           <Animatable.View
             ref={searchView}
@@ -884,6 +890,7 @@ const HomeScreen = (props) => {
               onChangeText={(value) => {
                 setSearchText(value);
                 getWordData(value);
+                // setExpand(true)
               }}
               inputContainerStyle={{
                 backgroundColor: Constants.appColors.TRANSPARENT,
@@ -899,7 +906,7 @@ const HomeScreen = (props) => {
                 marginTop: 0,
                 // backgroundColor: Constants.appColors.PRIMARY_COLOR,
               }}
-              leftIconContainerStyle={{right: -12}}
+              leftIconContainerStyle={{right: -6}}
               showCancel={true}
               inputStyle={{color: 'black', fontSize: 16}}
               placeholder={

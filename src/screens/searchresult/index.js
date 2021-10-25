@@ -292,7 +292,7 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_1}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_1 && (
+              {userSettings.displayRomaja && data?.example_1 && (
                 <Text style={styles.exampleStyle}>
                   {hangulRomanization.convert(data?.example_1)}
                 </Text>
@@ -303,7 +303,7 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_2}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_2 && (
+              {userSettings.displayRomaja && data?.example_2 && (
                 <Text style={styles.exampleStyle}>
                   {hangulRomanization.convert(data?.example_2)}
                 </Text>
@@ -331,7 +331,7 @@ const SearchResultScreen = (props) => {
                 flexDirection: 'row',
                 marginVertical: 2,
                 marginLeft: 6,
-                alignItems: 'center',
+                // alignItems: 'center',
               }}
               key={`${i + data?.en_lm}`}>
               <Text style={{fontSize: 17, textAlign: 'center'}}>
@@ -341,7 +341,7 @@ const SearchResultScreen = (props) => {
                 style={{
                   color: Constants.appColors.PRIMARY_COLOR,
                   fontSize: 17,
-                  textAlign: 'center',
+                  paddingRight:16
                 }}>{`${data?.en_lm}; `}</Text>
             </View>
             {renderSeneDefData(wordInfo.sense, data.sense_id)}
@@ -371,6 +371,7 @@ const SearchResultScreen = (props) => {
                   style={{
                     width: Sizes.WINDOW_WIDTH - 64,
                     color: Constants.appColors.GRAY,
+                    
                   }}>{`${data?.en_def}`}</Text>
               </View>
               {upSet && (
@@ -426,7 +427,7 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_1}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_1 && (
+              {userSettings.displayRomaja && data?.example_1 && (
                 <Text style={styles.exampleStyle}>
                   {hangulRomanization.convert(data?.example_1)}
                 </Text>
@@ -437,7 +438,7 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.PRIMARY_COLOR,
                   }}>{`${data.example_2}`}</Text>
               )}
-              {userSettings.displayTranslatorExample && data?.example_2 && (
+              {userSettings.displayRomaja && data?.example_2 && (
                 <Text style={styles.exampleStyle}>
                   {hangulRomanization.convert(data?.example_2)}
                 </Text>
@@ -479,14 +480,14 @@ const SearchResultScreen = (props) => {
           return (
             <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
               data && data?.writtenForm
-            } `}</Text>
+            }`}{arr.length==i+1 ? '' : ' ,'}</Text>
           );
         } else if (type == 2) {
           if (data?.writtenForm != 'undefined') {
             return (
               <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
                 data && data?.writtenForm
-              } `}</Text>
+              }`}{arr.length==i+1 ? '' : ' ,'}</Text>
             );
           } else {
             return <Text></Text>;
@@ -594,18 +595,19 @@ const SearchResultScreen = (props) => {
         showsVerticalScrollIndicator={false}
         style={{
           backgroundColor: Constants.appColors.WHITE,
-        }}>
+        }}>{
+          upSet ? 
+       ( <>
         <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
           <View
             style={{
               paddingVertical: 6,
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center',}}>
               <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
                 {wordInfo?.lemma}
-              </Text>
               <Text style={{fontSize: 24, color: 'black', fontWeight: '400'}}>
-                {wordInfo?.origin && `(${wordInfo?.origin})`}
+                {wordInfo?.origin && ` (${wordInfo?.origin})`}</Text>
               </Text>
             </View>
             {userSettings.displayRomaja && wordInfo?.lemma && (
@@ -687,9 +689,10 @@ const SearchResultScreen = (props) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: 10,
+                    borderWidth:1
                   }}>
                   <Text
-                    style={{textAlign: 'center', color: 'white', fontSize: 12}}>
+                    style={{textAlign: 'center', color: 'white', fontSize: 12,borderWidth:1}}>
                     Applications
                   </Text>
                 </View>
@@ -782,6 +785,10 @@ const SearchResultScreen = (props) => {
             </View>
           </>
         )}
+        </>)
+        :
+        <View style={{justifyContent:'center',alignItems:'center',flex:1,height:Sizes.WINDOW_HEIGHT-64,width:Sizes.WINDOW_WIDTH}}><Text>loading...</Text></View>
+        }
       </ScrollView>
     </View>
   );

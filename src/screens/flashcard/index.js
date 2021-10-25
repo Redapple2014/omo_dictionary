@@ -46,6 +46,7 @@ const FlashcardScreen = (props) => {
   //insert category function handeller
   async function insert() {
     console.log(newCategoryName);
+
     const query = `SELECT * FROM categories WHERE name = '${newCategoryName}'`;
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
@@ -64,9 +65,9 @@ const FlashcardScreen = (props) => {
 
   //insert function to create a new category
   async function insertData() {
-    const query = `INSERT INTO categories(name,type,cat_order) VALUES(${newCategoryName},'custom',1);`;
+    const query = `INSERT INTO categories(name,type,cat_order) VALUES(?,?,?);`;
     db.transaction((tx) => {
-      tx.executeSql(query, [], (tx, results) => {
+      tx.executeSql(query, [newCategoryName, 'custom', 1], (tx, results) => {
         setNewCategoryName('');
         console.log('inserted categories: ', results);
       });
@@ -118,9 +119,9 @@ const FlashcardScreen = (props) => {
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
           row.cards = JSON.parse(row.allCards);
+          row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
         }
-        console.log('===data=================', temp);
         setData(temp);
       });
     });

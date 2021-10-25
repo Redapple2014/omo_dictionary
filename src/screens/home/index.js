@@ -30,10 +30,8 @@ import {
   defaultSettings,
   defaultFlashcardTestSettings,
 } from '../../utills/userdata';
-import db from '../../utills/loadDb';
 import {partofspeech, vocabularyLevel} from '../../utills/userdata';
 import * as Animatable from 'react-native-animatable';
-
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
@@ -111,7 +109,7 @@ const HomeScreen = (props) => {
 
   function moveUp() {
     let pos = getSearchBarPostion();
-    console.log(pos)
+    console.log(pos);
     if (lastPositin == Sizes.WINDOW_HEIGHT * 0.02) {
       return;
     }
@@ -130,7 +128,7 @@ const HomeScreen = (props) => {
 
   function moveDown() {
     let pos = getSearchBarPostion();
-    console.log(pos)
+    console.log(pos);
     if (lastPositin == pos) {
       return;
     }
@@ -174,8 +172,6 @@ const HomeScreen = (props) => {
       );
     };
   }, []);
-
-  
 
   //lopping of all json
   async function loadAllJsons() {
@@ -315,15 +311,15 @@ const HomeScreen = (props) => {
         category_id INT,
         speech VARCHAR(100),
         hanja VARCHAR(100),
-        definition JSON,
-        examples JSON,
+        englishHeadWord VARCHAR(100), 
+        definition VARCHAR(100),
+        examples TEXT,
         koreanHeadWord VARCHAR(100),
         card_order INT);`;
 
-        db.transaction((tx) => {
+    db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
-
-        console.log('created')
+        console.log('created');
       });
     });
   }
@@ -334,11 +330,9 @@ const HomeScreen = (props) => {
         type VARCHAR(30),  
         cat_order INT);`;
 
-        db.transaction((tx) => {
+    db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
-
-
-        console.log('created')
+        console.log('created');
       });
     });
   }
@@ -403,7 +397,6 @@ const HomeScreen = (props) => {
     if (isKoreanWord(text)) {
       // console.log('korean word====');
       query = koreanQuery;
-      // console.log(query)
     } else {
       // console.log('english word====');
       query = engQuery;
@@ -830,7 +823,6 @@ const HomeScreen = (props) => {
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
           paddingTop: Platform.OS == 'ios' ? getStatusBarHeight() : 0,
-
         }}>
         {/* <StatusBar
           barStyle="light-content"
@@ -853,8 +845,12 @@ const HomeScreen = (props) => {
               justifyContent: 'center',
               height:
                 isKeyboardVisible || searchText.length != 0
-                  ? Platform.OS == 'ios' ?  Sizes.WINDOW_HEIGHT * 0.08 : Sizes.WINDOW_HEIGHT * 0.1 
-                  : Platform.OS == 'ios' ?  Sizes.WINDOW_HEIGHT * 0.36 : Sizes.WINDOW_HEIGHT * 0.38 ,
+                  ? Platform.OS == 'ios'
+                    ? Sizes.WINDOW_HEIGHT * 0.08
+                    : Sizes.WINDOW_HEIGHT * 0.1
+                  : Platform.OS == 'ios'
+                  ? Sizes.WINDOW_HEIGHT * 0.36
+                  : Sizes.WINDOW_HEIGHT * 0.38,
               backgroundColor: Constants.appColors.PRIMARY_COLOR,
               alignItems: 'center',
             }}>

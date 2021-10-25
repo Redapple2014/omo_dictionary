@@ -1,25 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, LogBox } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createAppContainer } from 'react-navigation';
+import React, {useState, useEffect} from 'react';
+import {View, Text, StatusBar, LogBox} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createAppContainer} from 'react-navigation';
 
-import { MainAppNavigator } from './navigations/Navigator';
+import {MainAppNavigator} from './navigations/Navigator';
 import NavigationService from './navigations/NavigationService';
 
-import SplashScreen from 'react-native-splash-screen'
+import SplashScreen from 'react-native-splash-screen';
 
-import { Provider } from 'react-redux';
-import { store } from './store/store';
+import {Provider} from 'react-redux';
+import {store} from './store/store';
+import {openDatabase, DEBUG, enablePromise} from 'react-native-sqlite-storage';
 
 const AppContainer = createAppContainer(MainAppNavigator);
 
 LogBox.ignoreLogs(['Animated: ...', 'Reanimated 2']);
 
+DEBUG(true);
+global.db = openDatabase(
+  {name: 'omo_en_v1.db', createFromLocation: 1},
+  openCB,
+  errorCB,
+);
 
+// open database failed
+function errorCB(err) {
+  console.log('SQL Error: ' + err);
+}
 
+// open database successfully
+// 가
+function openCB() {
+  console.log('Database OPENED');
+}
 
 const App = () => {
-
   const [hideSplash, setHideSplash] = React.useState(false);
 
   React.useEffect(() => {
@@ -32,20 +47,22 @@ const App = () => {
     hideSplash && SplashScreen.hide();
   }, [hideSplash]);
 
-
   return (
     <NavigationContainer>
       <Provider store={store}>
-        <StatusBar barStyle="light-content" hidden={false} backgroundColor='#E1223C' />
+        <StatusBar
+          barStyle="light-content"
+          hidden={false}
+          backgroundColor="#E1223C"
+        />
         <AppContainer
-          ref={navigatorRef => {
+          ref={(navigatorRef) => {
             NavigationService.setTopLevelNavigator(navigatorRef);
           }}
         />
       </Provider>
     </NavigationContainer>
-  )
-}
-
+  );
+};
 
 export default App;

@@ -38,7 +38,7 @@ var localDB = new PouchDB('flashcard');
 
 const DisplayCardScreen = (props) => {
   const data1 = props.navigation.getParam('data', 'nothing sent');
-  const [data, setData] = useState(data1?.doc);
+  const [data, setData] = useState(data1);
   const [editMode, setEditMode] = useState(false);
   const [items, setItems] = useState([]);
   const [leftItems, setLeftItems] = useState(data?.cards);

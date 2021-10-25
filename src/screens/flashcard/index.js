@@ -30,7 +30,6 @@ import {CheckBox} from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
 import {NavigationEvents} from 'react-navigation';
 
-import db from '../../utills/loadDb';
 PouchDB.plugin(require('pouchdb-find'));
 
 //db instance with db_name
@@ -65,7 +64,7 @@ const FlashcardScreen = (props) => {
 
   //insert function to create a new category
   async function insertData() {
-    const query = `INSERT INTO categories(name,type,cat_order) VALUES(${newCategoryName},'flashcard',1);`;
+    const query = `INSERT INTO categories(name,type,cat_order) VALUES(${newCategoryName},'custom',1);`;
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         setNewCategoryName('');
@@ -96,7 +95,21 @@ const FlashcardScreen = (props) => {
 
   //fetch function
   async function fetchData2() {
-    const query = `SELECT * FROM categories`;
+    const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
+        JSON_GROUP_ARRAY(json_object('id', cards.id, 
+                                      'word_id', cards.word_id,
+                                      'speech', cards.speech,
+                                      'hanja', cards.hanja,
+                                      'englishHeadWord', cards.englishHeadWord,
+                                      'definition', cards.definition,
+                                      'examples', cards.examples,
+                                      'koreanHeadWord',cards.koreanHeadWord,
+                                      'card_order', cards.card_order)) 
+        AS allCards
+    FROM categories
+    LEFT JOIN cards on categories.id = cards.category_id
+    GROUP BY categories.id
+    order by categories.cat_order`;
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
@@ -104,9 +117,11 @@ const FlashcardScreen = (props) => {
         var temp = [];
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
+          row.cards = JSON.parse(row.allCards);
           temp.push(row);
         }
-        console.log(temp);
+        console.log('===data=================', temp);
+        setData(temp);
       });
     });
   }
@@ -135,7 +150,7 @@ const FlashcardScreen = (props) => {
   }
 
   const initCat = async () => {
-    const query = `INSERT INTO categories(name,type,cat_order) VALUES('Uncategorized','flashcard',999);`;
+    const query = `INSERT INTO categories(name,type,cat_order) VALUES('Uncategorized','default',999);`;
 
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
@@ -196,7 +211,7 @@ const FlashcardScreen = (props) => {
               marginLeft: 8,
               flexDirection: 'row',
             }}>
-            {editMode && item?.doc?.name != 'Uncategorized' && (
+            {editMode && item?.name != 'Uncategorized' && (
               <View style={{left: -4, zIndex: 4}}>
                 <CheckBox
                   checkedColor={Constants.appColors.PRIMARY_COLOR}
@@ -227,9 +242,9 @@ const FlashcardScreen = (props) => {
                   width: Sizes.WINDOW_WIDTH - 92,
                   fontSize: 18,
                   paddingLeft:
-                    editMode && item?.doc?.name != 'Uncategorized' ? -48 : 8,
+                    editMode && item?.name != 'Uncategorized' ? -48 : 8,
                 }}>
-                {item?.doc?.name}
+                {item?.name}
               </Text>
               <Text
                 style={{
@@ -237,10 +252,10 @@ const FlashcardScreen = (props) => {
                     ? Constants.appColors.WHITE
                     : Constants.appColors.BLACK,
                   paddingLeft:
-                    editMode && item?.doc?.name != 'Uncategorized' ? -48 : 8,
+                    editMode && item?.name != 'Uncategorized' ? -48 : 8,
                   paddingVertical: 4,
                 }}>
-                {item?.doc?.cards.length} {`${t('CardsText')}`}
+                {item?.cards.length} {`${t('CardsText')}`}
               </Text>
             </View>
           </View>
@@ -333,7 +348,7 @@ const FlashcardScreen = (props) => {
 
   return (
     <View style={{flex: 1}}>
-      <NavigationEvents onDidFocus={(payload) => fetchData()} />
+      <NavigationEvents onDidFocus={(payload) => fetchData2()} />
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,

@@ -37,6 +37,7 @@ var localDB = new PouchDB('flashcard');
 const DisplayCardScreen = (props) => {
   const data1 = props.navigation.getParam('data', 'nothing sent');
   const [data, setData] = useState(data1);
+
   const [editMode, setEditMode] = useState(false);
   const [items, setItems] = useState([]);
   const [leftItems, setLeftItems] = useState(data?.cards);
@@ -46,9 +47,12 @@ const DisplayCardScreen = (props) => {
   const [catDetails, setCatDetails] = useState({});
   const [category, setCategory] = useState('');
   const [myCardData, setMyCardData] = useState(data?.cards);
+  const [parsed,setParsed] = useState(false)
   const {t, i18n} = useTranslation();
 
-  console.log('data1 : ',data)
+
+  console.log('data1 : ',data1)
+  console.log('data : ',data)
   //Function to check if the item is checked or not
   const isChecked = (itemId) => {
     try {
@@ -115,8 +119,6 @@ db.transaction((tx) => {
     var len = results.rows.raw(0)[0];
     console.log('len item : ' ,len);
     setMyData(...temp);
-    // setMyCardData(data1,...temp.cards);
-    // console.log(temp)
   });
 });
   }
@@ -316,15 +318,16 @@ console.log(query)
 db.transaction((tx) => {
   tx.executeSql(query, [], (tx, results) => {
     var len = results.rows.length;
-    // console.log(len);
     console.log('Query completed : ', len);
     var temp = [];
     for (let i = 0; i < len; i++) {
       let row = results.rows.item(i);
-      temp.push(row);
-      console.log(row)
+          row.cards = JSON.parse(row.allCards);
+          row.cards = row.cards.filter((item) => item.id != null);
+          temp.push(row);
     }
-    //setData(temp);
+    console.log('temp *******',temp)
+    // setData(temp);
   });
 });
 
@@ -422,7 +425,7 @@ db.transaction((tx) => {
 
                 <TouchableOpacity
                   onPress={() => {
-                    if (data?.cards.length != 0) {
+                    if (1) {
                       props.navigation.setParams({edit: !editMode});
                       console.log('edit press');
                       setEditMode(!editMode);
@@ -434,7 +437,7 @@ db.transaction((tx) => {
                     name="edit"
                     size={23}
                     color={
-                      data?.cards.length != 0
+                      1
                         ? Constants.appColors.WHITE
                         : `rgba(255,255,255, 0.7)`
                     }
@@ -599,7 +602,7 @@ db.transaction((tx) => {
           />
         )}
 
-        {data?.cards.length == 0 && (
+        {data.cards && (
           <View
             style={{
               justifyContent: 'center',

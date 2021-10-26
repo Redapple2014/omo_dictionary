@@ -117,7 +117,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-  // console.log(wordInfo)
+  console.log(wordInfo)
 
   //load user setting
   async function fetchUserSettings() {
@@ -389,6 +389,7 @@ const SearchResultScreen = (props) => {
                     title=" ">
                     {renderSenseExampleData(
                       wordInfo.senseExample,
+                      wordInfo.translate,
                       data?.sense_id,
                     )}
                   </CollapsibleView>
@@ -405,10 +406,26 @@ const SearchResultScreen = (props) => {
     }
   };
 
-  //render Sense Example from sense
-  const renderSenseExampleData = (senseExample, sense_id) => {
+
+
+  const callTrans = (sense_id,k,transaction,f) => {
+   return transaction.map((data,i) => {
+      if(data.sense_id==sense_id && k==i){
+        if(f==1){
+          return <Text style={[styles.exampleStyle,{marginHorizontal:1}]}>{data.example_1}</Text>
+        }else{
+          return <Text style={[styles.exampleStyle,{marginHorizontal:1}]}>{data.example_2}</Text>
+        }
+      }
+   })
+  }
+
+
+  //render Sense Example from sense with transaction and romaja
+  const renderSenseExampleData = (senseExample,transaction, sense_id) => {
     try {
       let arr = JSON.parse(senseExample);
+      let trans = JSON.parse(transaction);
       return arr.map((data, i) => {
         if (data.sense_id === sense_id) {
           return (
@@ -432,6 +449,10 @@ const SearchResultScreen = (props) => {
                   {hangulRomanization.convert(data?.example_1)}
                 </Text>
               )}
+              {userSettings.displayTranslatorExample && data?.example_1 &&
+                  callTrans(sense_id,i,trans,1)
+              }
+          
               {data?.example_2 && (
                 <Text
                   style={{
@@ -443,6 +464,9 @@ const SearchResultScreen = (props) => {
                   {hangulRomanization.convert(data?.example_2)}
                 </Text>
               )}
+              {userSettings.displayTranslatorExample && data?.example_2 &&
+                  callTrans(sense_id,i,trans,2)
+              }
             </View>
           );
         } else {
@@ -689,10 +713,10 @@ const SearchResultScreen = (props) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: 10,
-                    borderWidth:1
+                    
                   }}>
                   <Text
-                    style={{textAlign: 'center', color: 'white', fontSize: 12,borderWidth:1}}>
+                    style={{textAlign: 'center', color: 'white', fontSize: 12,}}>
                     Applications
                   </Text>
                 </View>

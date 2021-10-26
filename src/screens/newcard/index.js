@@ -45,13 +45,10 @@ const NewCardScreen = (props) => {
   const [englishHandWord, setEnglishHandWord] = useState('');
   const [definitionsInputs, setDefinitionsInputs] = useState('');
   const [category, setCategory] = useState(
-    pathFrom!='Uncategorized' ? pathFrom?.name : `Uncategorized`,
+    pathFrom.length== 0 ?'Uncategorized' :  pathFrom?.name,
   );
   const [examplesInputs, setExamplesInputs] = useState([{ key: '', value: '' }]);
-  const [catDetails, setCatDetails] = useState({});
-
-  console.log('catDetails : ', catDetails)
-  console.log('category : ', category)
+  const [catDetails, setCatDetails] = useState('');
 
   //fetch all flashcard data
   async function fetchData() {
@@ -88,19 +85,23 @@ const NewCardScreen = (props) => {
   }
 
   async function getCatdata() {
-      const query = `SELECT * FROM categories WHERE name = '${category}'`;
-      console.log(query)
+
+    let query = '';
+    if(category != 'undefined'){
+      query = `SELECT * FROM categories WHERE name = '${category}'`;
+    }else{
+      query = `SELECT * FROM categories WHERE name = 'Uncategorized'`;
+    }
       db.transaction((tx) => {
         tx.executeSql(query, [], (tx, results) => {
           var item = results.rows.raw(0)[0];
           console.log('getCatdata : ' ,item);
           setCatDetails(item)
+          // console.log('set the item : ',item)
         });
       });
 
   }
-
-
   useEffect(()=>{
     getCatdata()
   },[category])
@@ -143,21 +144,6 @@ const NewCardScreen = (props) => {
       setExamplesInputs(_input);
     }
   };
-
-  // const checkInit = async () => {
-
-  //   const query = `SELECT * FROM categories WHERE name = 'Uncategorized'`;
-  //   console.log(query)
-  //   db.transaction((tx) => {
-  //     tx.executeSql(query, [], (tx, results) => {
-  //       var item = results.rows.raw(0)[0];
-  //       console.log('len item : ', item);
-        
-  //       setCatDetails(item)
-  //       setUpdate(true)
-  //     });
-  //   });
-  // };
 
   useEffect(() => {
     // checkInit();
@@ -215,6 +201,7 @@ const NewCardScreen = (props) => {
   //handel save flashcard data to a category
   const handleDone = () => {
     if (koreanHandWord.length > 0 && englishHandWord.length > 0) {
+      console.log(catDetails,"********")
       if (category !== `${t('SelectaCategoryText')}`) {
         insertCard(
           null,

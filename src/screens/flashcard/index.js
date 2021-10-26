@@ -103,7 +103,7 @@ const FlashcardScreen = (props) => {
           row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
         }
-        // console.log('temp : ',temp)
+        console.log('temp : ',temp)
         setData(temp);
       });
     });
@@ -161,11 +161,13 @@ const FlashcardScreen = (props) => {
     // console.log('item : ',item)
     return (
       <TouchableOpacity
-        onPress={() =>
-          !editMode &&
-          props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH, {
-            data: item,
-          })
+        onPress={() =>{
+            return !editMode &&
+            props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH, {
+              data: item,
+            })
+        }
+
         }
         onLongPress={move}
         onPressOut={moveEnd}>

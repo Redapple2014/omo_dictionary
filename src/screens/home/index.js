@@ -949,28 +949,6 @@ const HomeScreen = (props) => {
                 </View>
               )}
             </View>
-
-            {/* <Text> cancel</Text>
-
-            {(isKeyboardVisible || searchText.length != 0 || searchFocused) && ( */}
-            {/* <TouchableOpacity onPress={onCancel}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  //paddingHorizontal: 8,
-                  left: Sizes.WINDOW_WIDTH - 77,
-                  top: -24,
-                  //backgroundColor: 'blue',
-                }}>
-                <Text
-                  style={{
-                    color: Constants.appColors.GREEN,
-                    fontWeight: '600',
-                    fontSize: 15,
-                  }}>{`${t('CancelText')}`}</Text>
-              </View>
-            </TouchableOpacity> */}
-            {/* )} */}
           </Animatable.View>
           {searchText.length == 0 &&
           isSearch === true &&

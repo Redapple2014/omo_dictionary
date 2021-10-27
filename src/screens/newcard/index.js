@@ -84,6 +84,7 @@ const NewCardScreen = (props) => {
     });
   }
 
+  //get category data
   async function getCatdata() {
 
     let query = '';
@@ -102,6 +103,8 @@ const NewCardScreen = (props) => {
       });
 
   }
+
+
   useEffect(()=>{
     getCatdata()
   },[category])
@@ -146,7 +149,6 @@ const NewCardScreen = (props) => {
   };
 
   useEffect(() => {
-    // checkInit();
     fetchData()
   }, []);
 
@@ -162,15 +164,6 @@ const NewCardScreen = (props) => {
     koreanHeadWord,
     card_order,
   ) {
-    console.log('indert data : ',word_id,
-      category_id,
-      speech,
-      hanja,
-      englishHeadWord,
-      definition,
-      examples,
-      koreanHeadWord,
-      card_order)
 
     db.transaction(function (tx) {
       tx.executeSql(
@@ -214,27 +207,6 @@ const NewCardScreen = (props) => {
           koreanHandWord,
           1,
         );
-
-        // localDB.get(catDetails.id).then(function (doc) {
-        //     // console.log(doc)
-        //     const docObj = doc
-        //     const newCardObject = {
-        //         "koreanHeadWord": koreanHandWord,
-        //         "speech": partOfSpeech,
-        //         "hanja": hanja,
-        //         "englishHeadWord": englishHandWord,
-        //         "definition": definitionsInputs,
-        //         "examples": examplesInputs,
-        //     }
-        //     const newObj = Object.assign({}, docObj, { "cards": [...doc.cards, newCardObject] })
-        //     console.log(JSON.stringify(newObj))
-        //     localDB.put(newObj).then((response) => {
-        //         //console.log('responcen : ', response)
-        //         goBack()
-        //     }).catch((e) => console.log('ERORor: ', e))
-        // }).catch(function (err) {
-        //     console.log('EROR : ', err);
-        // });
       } else {
         Toast.show(`${t('SelectaCategoryText')}`, Toast.SHORT);
       }
@@ -243,9 +215,6 @@ const NewCardScreen = (props) => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   //go back handeller
   const goBack = () => props.navigation.dispatch(NavigationActions.back());

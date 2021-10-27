@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StatusBar,
@@ -10,21 +10,19 @@ import {
   Platform,
 } from 'react-native';
 import Constants from '../../utills/Constants';
-import {NavigationActions} from 'react-navigation';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {useTranslation} from 'react-i18next';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { NavigationActions } from 'react-navigation';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { useTranslation } from 'react-i18next';
 import Sizes from '../../utills/Size';
 import Toast from 'react-native-simple-toast';
 import Tts from 'react-native-tts';
-import {NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH} from '../../navigations/Routes';
+import { NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH } from '../../navigations/Routes';
 import MIcons from 'react-native-vector-icons/MaterialIcons';
-import FIcons from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {CheckBox} from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 import PouchDB from 'pouchdb-react-native';
-import {NAVIGATION_NEW_CARD_SCREEN_PATH} from '../../navigations/Routes';
-import {NavigationEvents} from 'react-navigation';
+import { NAVIGATION_NEW_CARD_SCREEN_PATH } from '../../navigations/Routes';
+import { NavigationEvents } from 'react-navigation';
 import CustomPopup from '../../components/popup/CustomPopup';
 import CustomButton from '../../components/button/CustomButton';
 import DraggableFlatList from 'react-native-draggable-dynamic-flatlist';
@@ -35,24 +33,22 @@ PouchDB.plugin(require('pouchdb-find'));
 var localDB = new PouchDB('flashcard');
 
 const DisplayCardScreen = (props) => {
-  const data1 = props.navigation.getParam('data', 'nothing sent');
-  const [data, setData] = useState(data1);
-
+  const id = props.navigation.getParam('data', 'nothing sent');
+  const [data, setData] = useState();
   const [editMode, setEditMode] = useState(false);
   const [items, setItems] = useState([]);
-  const [leftItems, setLeftItems] = useState(data?.cards);
+  const [leftItems, setLeftItems] = useState();
   const [newSet, setNewSet] = useState([]);
   const [isOverlayActive, setOverlayActive] = useState(false);
-  const [myData, setMyData] = useState([]);
-  const [catDetails, setCatDetails] = useState({});
+  const [currentCategory, setCurrentCategory] = useState([]);
+  const [selectedCategory,setSelectedCategoty] = useState()
+  const [allCategories, setAllCategoies] = useState([]);
+  const [displayCategory,setDisplayCategory] = useState([]);
   const [category, setCategory] = useState('');
-  const [myCardData, setMyCardData] = useState(data?.cards);
-  const [parsed,setParsed] = useState(false)
-  const {t, i18n} = useTranslation();
 
+  const [myCardData, setMyCardData] = useState();
+  const { t, i18n } = useTranslation();
 
-  console.log('data1 : ',data1)
-  console.log('data : ',data)
   //Function to check if the item is checked or not
   const isChecked = (itemId) => {
     try {
@@ -81,85 +77,83 @@ const DisplayCardScreen = (props) => {
     let x = leftItems.filter(
       (i) => !newSet.some((j) => i.koreanHeadWord === j.koreanHeadWord),
     );
-
-    // console.log('all : ', leftItems)
-    // console.log('selected : ', newSet)
-    // console.log('will keep : ', data)
-    // console.log('will keep : ', x)
+    console.log('selected : ', newSet)
+    console.log('will keep : ', x)
 
     if (newSet.length != 0) {
-      const newObj = Object.assign({}, data, {cards: x});
-      console.log(JSON.stringify(newObj));
-      localDB
-        .put(newObj)
-        .then((response) => {
-          console.log('responcen : ', response);
-          localDB
-            .get(newObj['_id'])
-            .then(function (doc) {
-              setData(doc);
-              setMyCardData(doc.cards);
-              setEditMode(!editMode);
-            })
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => console.log(e));
+      let arr = []
+      newSet.forEach((item, index) => {
+        arr.push(item.id)
+      })
+
+      console.log(arr)
+
+      const query = `DELETE FROM cards WHERE id IN (${arr})`
+
+      console.log(query)
+
+      db.transaction((tx) => {
+        tx.executeSql(query, [], (tx, results) => {
+          var len = results.rows.raw(0)[0];
+          console.log('len item : ', len);
+          setEditMode(false)
+          fetchData()
+        });
+      });
+
+
     } else {
       Toast.show(`${t('SelectItemToDeleteText')}`, Toast.SHORT);
     }
   };
 
+
+  //get all category details
+  async function getAllcategorys(){
+    const query = `SELECT * FROM categories order by cat_order`;
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.length;
+        let temp = [];
+        for (let i = 0; i < len; i++) {
+          let row = results.rows.item(i);
+          temp.push(row);
+        }
+        console.log('all ategories : ',temp)
+        setAllCategoies(temp)
+        // let x = temp.filter((item,index)=>item.name!=currentCategory.name)
+        // console.log('x : ',x)
+        // setDisplayCategory(x)
+      });
+    });
+  }
+
   //function to fetch the data
   async function fetchCatData() {
-
-    const query = `SELECT * FROM categories WHERE categories.id = ${data.id}`;
-
-db.transaction((tx) => {
-  tx.executeSql(query, [], (tx, results) => {
-    var len = results.rows.raw(0)[0];
-    console.log('len item : ' ,len);
-    setMyData(...temp);
-  });
-});
+    const query = `SELECT * FROM categories WHERE categories.id = ${id}`;
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.raw(0)[0];
+        console.log('current categoty  : ', len);
+        setCurrentCategory(len);
+      });
+    });
   }
 
   //Function responceble to drag items
   const moveHandel = () => {
     if (category) {
-      const x = Object.assign({}, catDetails?.doc, {
-        cards: [...catDetails?.doc?.cards, ...newSet],
-      });
-      console.log('final : ', JSON.stringify(x));
-      localDB
-        .put(x)
-        .then((response) => {
-          console.log('responcen : ', response);
-          localDB
-            .get(x['_id'])
-            .then(function (doc) {
-              console.log('updated card list data : ', JSON.stringify(doc));
-              handelDelete();
-              setOverlayActive(!isOverlayActive);
-            })
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => console.log(e));
+      if(currentCategory.name!=category){
+
+      }else{
+        Toast.show(`Cann't move to same category`, Toast.SHORT);
+      }
     } else {
       Toast.show(`${t('SelectCategoryToMove')}`, Toast.SHORT);
     }
   };
 
-  // const renderDef = (data) => {
-  //   return data.map((item, i) => {
-  //     return (
-  //       <Text style={[styles.TextStyle, {left: -8, fontSize: 12}]}>
-  //         {item.value && `${i + 1} ${item.value}`}
-  //       </Text>
-  //     );
-  //   });
-  // };
-
-  const renderItem = ({item, index, move, moveEnd, isActive}) => {
+  const renderItem = ({ item, index, move, moveEnd, isActive }) => {
     return (
       <View
         style={{
@@ -207,7 +201,7 @@ db.transaction((tx) => {
             !editMode &&
               props.navigation.navigate(
                 NAVIGATION_FLASH_CARD_DATA_SCREEN_PATH,
-                {item},
+                { item },
               );
           }}>
           <View
@@ -223,6 +217,7 @@ db.transaction((tx) => {
                 zIndex: 3,
                 right: editMode ? 42 : 16,
                 top: 8,
+              
               }}>
               <TouchableOpacity
                 onPress={() => {
@@ -236,33 +231,33 @@ db.transaction((tx) => {
                 }}>
                 <Image
                   source={require('../../assets/logo/audio-black-icon.png')}
-                  style={{width: 18, height: 18, resizeMode: 'contain'}}
+                  style={{ width: 18, height: 18, resizeMode: 'contain' }}
                 />
               </TouchableOpacity>
             </View>
             <View>
-            <Text
-              style={[
-                styles.TextStyle,
-                {left: -8, width: Sizes.WINDOW_WIDTH - 70},
-              ]}
-              numberOfLines={1}>
-              {item?.koreanHeadWord}
-              {item?.englishHeadWord && `(${item?.englishHeadWord})`}
-            </Text>
-            <Text
-              style={[
-                styles.TextStyle,
-                {
-                  left: -8,
-                  color: Constants.appColors.GRAY,
-                  fontSize: 12,
-                  paddingVertical: 2,
-                },
-              ]}>
-              {item?.speech}
-            </Text>
-            
+              <Text
+                style={[
+                  styles.TextStyle,
+                  { left: -8, width: editMode ? Sizes.WINDOW_WIDTH - 130 : Sizes.WINDOW_WIDTH - 70 },
+                ]}
+                numberOfLines={1}>
+                {item?.koreanHeadWord}
+                {item?.englishHeadWord && `(${item?.englishHeadWord})`}
+              </Text>
+              <Text
+                style={[
+                  styles.TextStyle,
+                  {
+                    left: -8,
+                    color: Constants.appColors.GRAY,
+                    fontSize: 12,
+                    paddingVertical: 2,
+                  },
+                ]}>
+                {item?.speech}
+              </Text>
+
               <Text
                 style={[
                   styles.TextStyle,
@@ -279,7 +274,7 @@ db.transaction((tx) => {
           </View>
         </TouchableOpacity>
         {editMode && (
-          <View style={{left: -70, justifyContent: 'center'}}>
+          <View style={{ left: -70, justifyContent: 'center' }}>
             <MIcons
               name="view-headline"
               size={22}
@@ -292,11 +287,8 @@ db.transaction((tx) => {
   };
 
   //fetch falshcard data using sorting by category name
- function fetchData() {
-
-  // console.log('called')
-
- const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
+  function fetchData() {
+    const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
  JSON_GROUP_ARRAY(json_object('id', cards.id, 
                                'word_id', cards.word_id,
                                'speech', cards.speech,
@@ -309,36 +301,39 @@ db.transaction((tx) => {
  AS allCards
 FROM categories
 LEFT JOIN cards on categories.id = cards.category_id
-WHERE  categories.id = ${data.id}
+WHERE  categories.id = ${id}
 GROUP BY categories.id
 order by categories.cat_order`;
 
 
-console.log(query)
-db.transaction((tx) => {
-  tx.executeSql(query, [], (tx, results) => {
-    var len = results.rows.length;
-    console.log('Query completed : ', len);
-    var temp = [];
-    for (let i = 0; i < len; i++) {
-      let row = results.rows.item(i);
+    console.log(query)
+    db.transaction((tx) => {
+      tx.executeSql(query, [], (tx, results) => {
+        var len = results.rows.length;
+        console.log('Query completed : ', len);
+        var temp = [];
+        for (let i = 0; i < len; i++) {
+          let row = results.rows.item(i);
           row.cards = JSON.parse(row.allCards);
           row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
-    }
-    console.log('temp *******',temp)
-    // setData(temp);
-  });
-});
-
+        }
+        console.log('temp *******', ...temp)
+        setData(...temp);
+        setMyCardData(temp[0].cards)
+        setLeftItems(temp[0].cards)
+      });
+    });
   }
 
   useEffect(() => {
-    fetchCatData();
+       fetchCatData();
+       getAllcategorys()
+
   }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <NavigationEvents
         onDidFocus={(payload) => {
           fetchData();
@@ -366,22 +361,23 @@ db.transaction((tx) => {
             {editMode ? (
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.setParams({edit: !editMode});
+                  props.navigation.setParams({ edit: !editMode });
                   setEditMode(!editMode);
                   setItems([]);
+                  setNewSet([])
                 }}>
-                <Text style={{fontSize: 20, color: 'white', top: 2}}>{`${t(
+                <Text style={{ fontSize: 20, color: 'white', top: 2 }}>{`${t(
                   'CancelText',
                 )}`}</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.setParams({edit: !editMode});
+                  props.navigation.setParams({ edit: !editMode });
                   setEditMode(!editMode);
                   props.navigation.dispatch(NavigationActions.back());
                 }}>
-                <Text style={{fontSize: 20, color: 'white', top: 2}}>{`${t(
+                <Text style={{ fontSize: 20, color: 'white', top: 2 }}>{`${t(
                   'BackText',
                 )}`}</Text>
               </TouchableOpacity>
@@ -390,7 +386,7 @@ db.transaction((tx) => {
           <Text
             ellipsizeMode="tail"
             numberOfLines={1}
-            style={[styles.textStyle2, , {borderWidth: 0, width: 150}]}>
+            style={[styles.textStyle2, , { borderWidth: 0, width: 150 }]}>
             {!editMode ? data?.name : `Edit Cards`}
           </Text>
           <View
@@ -407,14 +403,14 @@ db.transaction((tx) => {
             {!editMode ? (
               <>
                 <TouchableOpacity
-                  onPress={() =>
-
-                   { console.log('final move : ', data1)
+                  onPress={() => {
+                    console.log('final move : ', data)
                     return props.navigation.navigate(NAVIGATION_NEW_CARD_SCREEN_PATH, {
-                      path: data1,
-                    })}
+                      path: data,
+                    })
+                  }
                   }>
-                  <View style={{marginHorizontal: 12}}>
+                  <View style={{ marginHorizontal: 12 }}>
                     <MIcons
                       name="insert-drive-file"
                       size={23}
@@ -426,7 +422,7 @@ db.transaction((tx) => {
                 <TouchableOpacity
                   onPress={() => {
                     if (1) {
-                      props.navigation.setParams({edit: !editMode});
+                      props.navigation.setParams({ edit: !editMode });
                       console.log('edit press');
                       setEditMode(!editMode);
                     } else {
@@ -468,13 +464,13 @@ db.transaction((tx) => {
                   }}>
                   <Image
                     source={require('../../assets/logo/arrow-icon.png')}
-                    style={{width: 30, height: 30, resizeMode: 'contain'}}
+                    style={{ width: 30, height: 30, resizeMode: 'contain' }}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     console.log('save press');
-                    props.navigation.setParams({edit: !editMode});
+                    props.navigation.setParams({ edit: !editMode });
                     setItems([]);
                     setEditMode(!editMode);
                   }}>
@@ -500,14 +496,14 @@ db.transaction((tx) => {
               width: '100%',
               maxHeight: Sizes.WINDOW_HEIGHT * 0.5,
             }}>
-            <View style={{paddingHorizontal: 12, paddingTop: 8, flex: 1}}>
+            <View style={{ paddingHorizontal: 12, paddingTop: 8, flex: 1 }}>
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 16, marginBottom: 12}}>{`${t(
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16, marginBottom: 12 }}>{`${t(
                   'SelectCategoryText',
                 )}`}</Text>
                 <TouchableOpacity
-                  onPress={() => setOverlayActive(!isOverlayActive)}>
+                  onPress={() => {setOverlayActive(!isOverlayActive);setSelectedCategoty({});setCategory('')}}>
                   <Icon
                     name="closecircle"
                     size={24}
@@ -517,11 +513,11 @@ db.transaction((tx) => {
               </View>
               <FlatList
                 keyboardShouldPersistTaps={'handled'}
-                renderItem={({item, index}) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity
                     onPress={() => {
-                      setCategory(item?.doc?.name);
-                      setCatDetails(item);
+                      setCategory(item?.name);
+                      setSelectedCategoty(item)
                     }}>
                     <View
                       style={{
@@ -536,17 +532,17 @@ db.transaction((tx) => {
                           paddingLeft: 4,
                           paddingVertical: 8,
                           color:
-                            item?.doc?.name == category
+                            item?.name == category
                               ? Constants.appColors.PRIMARY_COLOR
                               : Constants.appColors.BLACK,
                         }}>
-                        {item?.doc?.name}
+                        {item?.name}
                       </Text>
                     </View>
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item, index) => index.toString()}
-                data={myData}
+                data={allCategories}
                 numColumns={1}
                 showsVerticalScrollIndicator={false}
               />
@@ -578,23 +574,24 @@ db.transaction((tx) => {
           </CustomPopup>
         )}
       </View>
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         {editMode ? (
           <DraggableFlatList
-            data={data?.cards}
+            data={myCardData}
             renderItem={renderItem}
             keyExtractor={(item, index) =>
-              `draggable-item-${item.englishHeadWord}`
+              `draggable-item-${index}${item.englishHeadWord}`
             }
             scrollPercent={5}
-            onMoveEnd={({data}) => setMyCardData(data)}
+            onMoveEnd={({ data }) => setMyCardData(data)
+            }
           />
         ) : (
           <FlatList
             keyboardShouldPersistTaps={'handled'}
             renderItem={renderItem}
             keyExtractor={(item, index) =>
-              `draggable-item-${item.englishHeadWord}`
+              `draggable-item-${index}${item.englishHeadWord}`
             }
             data={myCardData}
             numColumns={1}
@@ -602,7 +599,7 @@ db.transaction((tx) => {
           />
         )}
 
-        {data.cards && (
+        {data?.cards.length == 0 && (
           <View
             style={{
               justifyContent: 'center',
@@ -613,9 +610,9 @@ db.transaction((tx) => {
             }}>
             <Image
               source={require('../../assets/logo/grey-bookmark.png')}
-              style={{width: 50, height: 50}}
+              style={{ width: 50, height: 50 }}
             />
-            <Text style={{paddingTop: 4}}>{`${t('NoCardFoundText')}`}</Text>
+            <Text style={{ paddingTop: 4 }}>{`${t('NoCardFoundText')}`}</Text>
           </View>
         )}
       </View>
@@ -628,6 +625,7 @@ DisplayCardScreen.navigationOptions = {
 };
 
 export default DisplayCardScreen;
+
 const styles = StyleSheet.create({
   spinnerStyle: {
     justifyContent: 'center',

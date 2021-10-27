@@ -103,7 +103,7 @@ const FlashcardScreen = (props) => {
           row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
         }
-        console.log('temp : ',temp)
+        //console.log('temp : ',temp)
         setData(temp);
       });
     });
@@ -164,7 +164,7 @@ const FlashcardScreen = (props) => {
         onPress={() =>{
             return !editMode &&
             props.navigation.navigate(NAVIGATION_DISPLAY_CARD_SCREEN_PATH, {
-              data: item,
+              data: item.id,
             })
         }
 

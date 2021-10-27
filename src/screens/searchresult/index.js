@@ -504,14 +504,14 @@ const SearchResultScreen = (props) => {
           return (
             <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
               data && data?.writtenForm
-            }`}{arr.length==i+1 ? '' : ' ,'}</Text>
+            }`}{arr.length==i+1 ? '' : ', '}</Text>
           );
         } else if (type == 2) {
           if (data?.writtenForm != 'undefined') {
             return (
               <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
                 data && data?.writtenForm
-              }`}{arr.length==i+1 ? '' : ' ,'}</Text>
+              }`}{arr.length==i+1 ? '' : ', '}</Text>
             );
           } else {
             return <Text></Text>;
@@ -625,9 +625,9 @@ const SearchResultScreen = (props) => {
         <View style={{paddingHorizontal: 16, backgroundColor: 'white'}}>
           <View
             style={{
-              paddingVertical: 6,
+              paddingVertical: 8,
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
                 {wordInfo?.lemma}
               <Text style={{fontSize: 24, color: 'black', fontWeight: '400'}}>

@@ -68,11 +68,14 @@ const ViewFlashcardDataScreen = (props) => {
                 />
             </View>
             <View style={{ paddingHorizontal: 16, backgroundColor: 'white' }}>
-                <View style={{ paddingVertical: 10 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>{data?.koreanHeadWord && data?.koreanHeadWord}</Text>
-                        <Text style={{ fontSize: 24, color: 'black', fontWeight: '500' }}>{data?.englishHeadWord && `(${data?.englishHeadWord})`}</Text>
-                    </View>
+                <View style={{ paddingVertical: 8, }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 24, color: 'black', fontWeight: 'bold'}}>
+              {data?.koreanHeadWord && data?.koreanHeadWord}
+              <Text style={{fontSize: 24, color: 'black', fontWeight: '400'}}>
+              {data?.englishHeadWord && ` (${data?.englishHeadWord})`}</Text>
+              </Text>
+            </View>
                     <View style={{ flexDirection: 'row' }} >
                         <Text style={{ paddingRight: 6, }}>{data?.speech && data.speech}</Text>
                         {/* <Text>{data.vocabularyLevel && data?.vocabularyLevel}</Text> */}

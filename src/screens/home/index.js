@@ -852,10 +852,12 @@ const HomeScreen = (props) => {
               <></>
             ) : (
               <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.15}}>
-                <Image
-                  source={require('../../assets/logo/home-logo.png')}
-                  style={{width: 300, height: 100, resizeMode: 'contain'}}
-                />
+                {isSearch === false && (
+                  <Image
+                    source={require('../../assets/logo/home-logo.png')}
+                    style={{width: 300, height: 100, resizeMode: 'contain'}}
+                  />
+                )}
               </View>
             )}
           </View>

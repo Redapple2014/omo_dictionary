@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Platform,
@@ -12,25 +12,25 @@ import {
   StyleSheet,
   BackHandler,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import {SearchBar} from 'react-native-elements';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import Toast from 'react-native-simple-toast';
 import PouchDB from 'pouchdb-react-native';
 import Tts from 'react-native-tts';
-import { useTranslation } from 'react-i18next';
-import { NAVIGATION_SEARCH_RESULT_SCREEN_PATH } from '../../navigations/Routes';
+import {useTranslation} from 'react-i18next';
+import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
-import { NavigationState } from 'react-navigation';
+import {NavigationState} from 'react-navigation';
 import {
   defaultSettings,
   defaultFlashcardTestSettings,
 } from '../../utills/userdata';
-import { partofspeech, vocabularyLevel } from '../../utills/userdata';
+import {partofspeech, vocabularyLevel} from '../../utills/userdata';
 import * as Animatable from 'react-native-animatable';
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
@@ -48,14 +48,15 @@ const HomeScreen = (props) => {
   const [reacientlyViewedDataSet, setReacientlyViewedDataSet] = useState([]);
   const [reacientlySearchedStatus, setReacientlySearchedStatus] = useState('');
   const [searchedData, setSearchdata] = useState([]);
-  const { t, i18n } = useTranslation();
+  const {t, i18n} = useTranslation();
   const [isLoading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const inputEl = useRef(null);
   const searchView = useRef(null);
   const [ids, setIds] = useState([]);
   const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.02);
-  const [searchFocused, setSearchFocused] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
 
   // console.log(expand)
   async function loadFile(index) {
@@ -86,8 +87,20 @@ const HomeScreen = (props) => {
     let isFocused = props.navigation.isFocused();
     if (props.navigation.state.routeName == 'HomeScreen') {
       let text = inputEl.current.props.value;
-      if (isFocused == true && (text.length > 0 || isKeyboardVisible)) {
+      if (isFocused == true && text.length > 0) {
+        setSearchFocused(false);
+        setIsSearch(false);
+        const translate = {
+          from: {
+            translateY: Sizes.WINDOW_HEIGHT * 0.02,
+          },
+          to: {
+            translateY: Sizes.WINDOW_HEIGHT * 0.29,
+          },
+        };
+        searchView.current?.animate(translate, 80);
         setSearchText('');
+
         Keyboard.dismiss();
         return true;
       }
@@ -98,78 +111,33 @@ const HomeScreen = (props) => {
   }
 
   function getSearchBarPostion() {
-    // return isKeyboardVisible 
-    //   ? 
-    //   : 
-    //   ?  
+    // return isKeyboardVisible
+    //   ?
+    //   :
+    //   ?
     //   : ;
 
-
     if (isKeyboardVisible) {
-      return Sizes.WINDOW_HEIGHT * 0.02
-    }
-    else if (searchText.length > 0) {
-      Sizes.WINDOW_HEIGHT * 0.02
-    }
-    else if (searchFocused) {
-      return Sizes.WINDOW_HEIGHT * 0.02
-    }
-    else {
-      return Sizes.WINDOW_HEIGHT * 0.29
+      return Sizes.WINDOW_HEIGHT * 0.02;
+    } else if (searchText.length > 0) {
+      Sizes.WINDOW_HEIGHT * 0.02;
+    } else if (searchFocused) {
+      return Sizes.WINDOW_HEIGHT * 0.02;
+    } else {
+      return Sizes.WINDOW_HEIGHT * 0.29;
     }
   }
 
   function getTopBarPostion() {
-    if (isKeyboardVisible || searchText.length != 0 || searchFocused) {
+    if (isKeyboardVisible || searchText.length != 0 || isSearch === true) {
       return Platform.OS == 'ios'
         ? Sizes.WINDOW_HEIGHT * 0.08
-        : Sizes.WINDOW_HEIGHT * 0.1
+        : Sizes.WINDOW_HEIGHT * 0.1;
     } else {
       return Platform.OS == 'ios'
         ? Sizes.WINDOW_HEIGHT * 0.36
-        : Sizes.WINDOW_HEIGHT * 0.38
+        : Sizes.WINDOW_HEIGHT * 0.38;
     }
-  }
-
-  if (!isKeyboardVisible && searchText.length == 0) {
-    moveDown();
-  }
-
-  function moveUp() {
-    let pos = getSearchBarPostion();
-    // console.log(pos);
-    if (lastPositin == Sizes.WINDOW_HEIGHT * 0.02) {
-      return;
-    }
-    setLastPositin(Sizes.WINDOW_HEIGHT * 0.02);
-    const translate = {
-      from: {
-        translateY: pos,
-      },
-      to: {
-        translateY: Sizes.WINDOW_HEIGHT * 0.02,
-      },
-    };
-
-    searchView.current?.animate(translate, 85);
-  }
-
-  function moveDown() {
-    let pos = getSearchBarPostion();
-    console.log(pos);
-    if (lastPositin == pos) {
-      return;
-    }
-    setLastPositin(pos);
-    const translate = {
-      from: {
-        translateY: Sizes.WINDOW_HEIGHT * 0.02,
-      },
-      to: {
-        translateY: pos,
-      },
-    };
-    searchView.current?.animate(translate, 160);
   }
 
   useEffect(() => {
@@ -182,14 +150,12 @@ const HomeScreen = (props) => {
     createIndexes();
     createCategoryTable();
     createCardTable();
-    let pos = getSearchBarPostion();
-    setLastPositin(pos);
     const translate = {
       from: {
-        translateY: 0,
+        translateY: Sizes.WINDOW_HEIGHT * 0.02,
       },
       to: {
-        translateY: pos,
+        translateY: Sizes.WINDOW_HEIGHT * 0.29,
       },
     };
     searchView.current?.animate(translate, 50);
@@ -257,16 +223,25 @@ const HomeScreen = (props) => {
   }
 
   const onClear = () => {
-
-    console.log('here')
+    console.log('here');
     // onSearchSubmit();
     // setExpand(false)
     setSearchText('');
   };
 
   const onCancel = () => {
+    setIsSearch(false);
+    const translate = {
+      from: {
+        translateY: Sizes.WINDOW_HEIGHT * 0.02,
+      },
+      to: {
+        translateY: Sizes.WINDOW_HEIGHT * 0.29,
+      },
+    };
+    searchView.current?.animate(translate, 80);
     setSearchText('');
-    setSearchFocused(false)
+    setSearchFocused(false);
     Keyboard.dismiss();
   };
 
@@ -374,12 +349,12 @@ const HomeScreen = (props) => {
       'CREATE INDEX idx_words_info_searchLemma ON words_info (searchLemma);';
 
     db.transaction((tx) => {
-      tx.executeSql(query, [], (tx, results) => { });
+      tx.executeSql(query, [], (tx, results) => {});
     });
 
     const query1 = 'CREATE INDEX idx_words_app_lemma ON words_app (lemma);';
     db.transaction((tx) => {
-      tx.executeSql(query1, [], (tx, results) => { });
+      tx.executeSql(query1, [], (tx, results) => {});
     });
   }
 
@@ -461,9 +436,9 @@ const HomeScreen = (props) => {
       'keyboardDidShow',
       () => {
         setKeyboardVisible(true);
-        setTimeout(() => {
-          moveUp();
-        }, 0);
+        // setTimeout(() => {
+        //   moveUp();
+        // }, 0);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -497,23 +472,19 @@ const HomeScreen = (props) => {
     }
   };
 
-
   //render method of equivalent under sence of each item
   function renderEquivalent(dataSet) {
     let arr = JSON.parse(dataSet);
     if (arr != 'undefined') {
       return arr.map((data, i) => {
         return (
-          <View
-            key={`${i} `}
-            style={{ flexDirection: 'row', }}>
+          <View key={`${i} `} style={{flexDirection: 'row'}}>
             <Text
               style={{
                 fontSize: 15,
                 marginTop: 2,
                 left: 4,
                 color: Constants.appColors.BLACK,
-
               }}>{`${i + 1} `}</Text>
             <Text
               style={{
@@ -521,7 +492,7 @@ const HomeScreen = (props) => {
                 fontSize: 15,
                 marginTop: 2,
                 left: 4,
-                paddingLeft: 4
+                paddingLeft: 4,
               }}>{`${data.en_lm}`}</Text>
           </View>
         );
@@ -536,7 +507,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
@@ -582,7 +553,7 @@ const HomeScreen = (props) => {
     return (
       <FlatList
         keyboardShouldPersistTaps={'handled'}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity
             key={index}
             onPress={() => {
@@ -614,7 +585,7 @@ const HomeScreen = (props) => {
                   // borderWidth:1
                 }}>
                 {(item?.partofspeech ?? item?.partOfSpeech) && (
-                  <View style={{ alignItems: 'flex-end' }}>
+                  <View style={{alignItems: 'flex-end'}}>
                     <TouchableOpacity
                       onPress={() => {
                         try {
@@ -627,7 +598,7 @@ const HomeScreen = (props) => {
                       }}>
                       <Image
                         source={require('../../assets/logo/audio-black-icon.png')}
-                        style={{ width: 18, height: 18, resizeMode: 'contain' }}
+                        style={{width: 18, height: 18, resizeMode: 'contain'}}
                       />
                     </TouchableOpacity>
                   </View>
@@ -650,7 +621,7 @@ const HomeScreen = (props) => {
                           (e, i) => (
                             <Image
                               key={i}
-                              style={{ width: 12, height: 12 }}
+                              style={{width: 12, height: 12}}
                               source={require('../../assets/logo/star.png')}
                             />
                           ),
@@ -659,15 +630,15 @@ const HomeScreen = (props) => {
                   </TouchableOpacity>
                 )}
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text
                   style={[
                     styles.TextStyle,
-                    { fontWeight: 'bold', paddingLeft: 0, marginRight: 4 },
+                    {fontWeight: 'bold', paddingLeft: 0, marginRight: 4},
                   ]}>
                   {item?.lemma}
                 </Text>
-                <Text style={[styles.TextStyle, { paddingLeft: 0 }]}>
+                <Text style={[styles.TextStyle, {paddingLeft: 0}]}>
                   {item?.origin && `(${item?.origin})`}
                 </Text>
               </View>
@@ -716,7 +687,7 @@ const HomeScreen = (props) => {
         // keyboardShouldPersistTaps={'never'}
         onScrollEndDrag={() => Keyboard.dismiss()}
         keyboardDismissMode={'on-drag'}
-        renderItem={({ item, index }) => {
+        renderItem={({item, index}) => {
           // console.log(item);
           return (
             <TouchableOpacity
@@ -756,7 +727,7 @@ const HomeScreen = (props) => {
                     // borderWidth:1
                   }}>
                   {(item?.partofspeech ?? item?.partOfSpeech) && (
-                    <View style={{ alignItems: 'flex-end' }}>
+                    <View style={{alignItems: 'flex-end'}}>
                       <TouchableOpacity
                         onPress={() => {
                           try {
@@ -769,7 +740,7 @@ const HomeScreen = (props) => {
                         }}>
                         <Image
                           source={require('../../assets/logo/audio-black-icon.png')}
-                          style={{ width: 18, height: 18, resizeMode: 'contain' }}
+                          style={{width: 18, height: 18, resizeMode: 'contain'}}
                         />
                       </TouchableOpacity>
                     </View>
@@ -781,15 +752,15 @@ const HomeScreen = (props) => {
                         redenerToast(vocabularyLevel[item.vocabularyLevel])
                       }>
                       <View
-                        style={{ flexDirection: 'row-reverse', marginTop: 6 }}>
+                        style={{flexDirection: 'row-reverse', marginTop: 6}}>
                         {vocabularyLevel[item?.vocabularyLevel] != 0 &&
                           vocabularyLevel[item?.vocabularyLevel] !=
-                          'undefined' &&
+                            'undefined' &&
                           [...Array(vocabularyLevel[item.vocabularyLevel])].map(
                             (e, i) => (
                               <Image
                                 key={i}
-                                style={{ width: 12, height: 12 }}
+                                style={{width: 12, height: 12}}
                                 source={require('../../assets/logo/star.png')}
                               />
                             ),
@@ -799,15 +770,15 @@ const HomeScreen = (props) => {
                   )}
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Text
                     style={[
                       styles.TextStyle,
-                      { fontWeight: 'bold', paddingLeft: 0, marginRight: 4 },
+                      {fontWeight: 'bold', paddingLeft: 0, marginRight: 4},
                     ]}>
                     {item?.lemma}
                   </Text>
-                  <Text style={[styles.TextStyle, { paddingLeft: 0 }]}>
+                  <Text style={[styles.TextStyle, {paddingLeft: 0}]}>
                     {item?.origin && `(${item?.origin})`}
                   </Text>
                 </View>
@@ -853,13 +824,12 @@ const HomeScreen = (props) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
           paddingTop: Platform.OS == 'ios' ? getStatusBarHeight() : 0,
-        }}>
-      </View>
+        }}></View>
       {isLoading ? (
         <View style={[styles.spinnerStyle]}>
           <ActivityIndicator
@@ -881,14 +851,13 @@ const HomeScreen = (props) => {
             {isKeyboardVisible || searchText.length > 0 || searchFocused ? (
               <></>
             ) : (
-              <View style={{ marginBottom: Sizes.WINDOW_WIDTH * 0.15 }}>
+              <View style={{marginBottom: Sizes.WINDOW_WIDTH * 0.15}}>
                 <Image
                   source={require('../../assets/logo/home-logo.png')}
-                  style={{ width: 300, height: 100, resizeMode: 'contain' }}
+                  style={{width: 300, height: 100, resizeMode: 'contain'}}
                 />
               </View>
-            )
-            }
+            )}
           </View>
           <Animatable.View
             ref={searchView}
@@ -897,70 +866,113 @@ const HomeScreen = (props) => {
               backgroundColor: Constants.appColors.TRANSPARENT,
               marginTop: Sizes.statusBarHeight,
               position: 'absolute',
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
               alignSelf: 'center',
               width: '92%',
             }}>
-            <CustomSearchBar
-              ref={inputEl}
-              lightTheme
-              value={searchText}
-              onChangeText={(value) => {
-                setSearchText(value);
-                getWordData(value);
-                // setExpand(true)
-                setSearchFocused(true)
-              }}
-              inputContainerStyle={{
-                backgroundColor: Constants.appColors.TRANSPARENT,
-                height: 45,
-                borderRadius: 15,
-                marginTop: -2,
-              }}
-              containerStyle={{
-                borderRadius: 20,
-                height: 36,
-                flex: 1,
-                padding: 0,
-                marginTop: 0,
-                // backgroundColor: Constants.appColors.PRIMARY_COLOR,
-              }}
-              leftIconContainerStyle={{ right: -6 }}
-              showCancel={true}
-              inputStyle={{ color: 'black', fontSize: 16 }}
-              placeholder={
-                searchText.length == 0 && !isKeyboardVisible
-                  ? `${t('SearchBarPlaceholderText')}`
-                  : ''
-              }
-              onSubmitEditing={onSearchSubmit}
-              onClear={onClear}
-            />
-
-            {(isKeyboardVisible || searchText.length != 0 || searchFocused) && (
-              <TouchableOpacity onPress={onCancel}>
+            <View style={{width: Sizes.WINDOW_WIDTH}}>
+              <CustomSearchBar
+                ref={inputEl}
+                lightTheme
+                value={searchText}
+                onChangeText={(value) => {
+                  setSearchText(value);
+                  getWordData(value);
+                  // setExpand(true)
+                  setSearchFocused(true);
+                }}
+                inputContainerStyle={{
+                  backgroundColor: Constants.appColors.TRANSPARENT,
+                  height: 45,
+                  borderRadius: 15,
+                  marginTop: -2,
+                  width:
+                    isSearch === true
+                      ? Sizes.WINDOW_WIDTH - 87
+                      : Sizes.WINDOW_WIDTH - 30,
+                  marginRight: 0,
+                }}
+                containerStyle={{
+                  borderRadius: 20,
+                  height: 36,
+                  width:
+                    isSearch === true
+                      ? Sizes.WINDOW_WIDTH - 87
+                      : Sizes.WINDOW_WIDTH - 30,
+                  flex: 1,
+                  padding: 0,
+                  marginTop: 0,
+                }}
+                leftIconContainerStyle={{right: -6}}
+                showCancel={false}
+                inputStyle={{color: 'black', fontSize: 16}}
+                placeholder={
+                  isSearch === false ? `${t('SearchBarPlaceholderText')}` : ''
+                }
+                onSubmitEditing={onSearchSubmit}
+                onClear={onClear}
+                clearIcon={isSearch}
+                onFocus={() => {
+                  if (isSearch === false) {
+                    const translate = {
+                      from: {
+                        translateY: Sizes.WINDOW_HEIGHT * 0.29,
+                      },
+                      to: {
+                        translateY: Sizes.WINDOW_HEIGHT * 0.02,
+                      },
+                    };
+                    searchView.current?.animate(translate, 80);
+                    setIsSearch(true);
+                  }
+                }}
+              />
+              {isSearch === true && (
                 <View
                   style={{
                     alignItems: 'center',
-                    paddingHorizontal: 8,
-                    left: 8,
-                    top: 4,
+                    left: Sizes.WINDOW_WIDTH - 77,
+                    top: -24,
+                    width: 50,
                   }}>
-                  <Text
-                    style={{
-                      color: Constants.appColors.WHITE,
-                      fontWeight: '600',
-                      fontSize: 15,
-                    }}>{`${t('CancelText')}`}</Text>
+                  <TouchableOpacity onPress={onCancel}>
+                    <Text
+                      style={{
+                        color: Constants.appColors.WHITE,
+                        fontWeight: '600',
+                        fontSize: 15,
+                      }}>{`${t('CancelText')}`}</Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
-            )}
+              )}
+            </View>
+
+            {/* <Text> cancel</Text>
+
+            {(isKeyboardVisible || searchText.length != 0 || searchFocused) && ( */}
+            {/* <TouchableOpacity onPress={onCancel}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  //paddingHorizontal: 8,
+                  left: Sizes.WINDOW_WIDTH - 77,
+                  top: -24,
+                  //backgroundColor: 'blue',
+                }}>
+                <Text
+                  style={{
+                    color: Constants.appColors.GREEN,
+                    fontWeight: '600',
+                    fontSize: 15,
+                  }}>{`${t('CancelText')}`}</Text>
+              </View>
+            </TouchableOpacity> */}
+            {/* )} */}
           </Animatable.View>
-          {
-            searchText.length == 0 &&
-            searchFocused &&
-            reacientlySearchedData.length != 0 ? (
+          {searchText.length == 0 &&
+          isSearch === true &&
+          reacientlySearchedData.length != 0 ? (
             <>
               <View
                 style={{
@@ -968,9 +980,8 @@ const HomeScreen = (props) => {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
-                  
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{`${t(
+                <Text style={{fontWeight: 'bold'}}>{`${t(
                   'RecentlySearchedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -999,17 +1010,14 @@ const HomeScreen = (props) => {
               }}>
               <Image
                 source={require('../../assets/logo/recent-icon.png')}
-                style={{ width: 60, height: 60 }}
+                style={{width: 60, height: 60}}
               />
-              <Text style={{ paddingTop: 4 }}>{reacientlySearchedStatus}</Text>
+              <Text style={{paddingTop: 4}}>{reacientlySearchedStatus}</Text>
             </View>
           ) : (
             <></>
           )}
-          {!isKeyboardVisible &&
-            !searchFocused &&
-            searchText.length == 0 &&
-            reacientlyViewedDataSet.length != 0 ? (
+          {isSearch === false && reacientlyViewedDataSet.length != 0 ? (
             <>
               <View
                 style={{
@@ -1018,7 +1026,7 @@ const HomeScreen = (props) => {
                   justifyContent: 'space-between',
                   paddingHorizontal: 8,
                 }}>
-                <Text style={{ fontWeight: 'bold' }}>{`${t(
+                <Text style={{fontWeight: 'bold'}}>{`${t(
                   'RecentlyViewedText',
                 )}`}</Text>
                 <TouchableOpacity
@@ -1050,9 +1058,9 @@ const HomeScreen = (props) => {
               }}>
               <Image
                 source={require('../../assets/logo/search-icon.png')}
-                style={{ width: 50, height: 50 }}
+                style={{width: 50, height: 50}}
               />
-              <Text style={{ paddingTop: 4 }}>{`${t('NodataFoundText')}`}</Text>
+              <Text style={{paddingTop: 4}}>{`${t('NodataFoundText')}`}</Text>
             </View>
           ) : (
             <></>

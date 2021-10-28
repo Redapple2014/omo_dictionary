@@ -32,7 +32,7 @@ const SearchResultScreen = (props) => {
   const ids = props.navigation.getParam('ids', []);
   const {t, i18n} = useTranslation();
   const [initData, setInitdata] = useState(data.id);
-  // const [initData, setInitdata] = useState(14956);
+  // const [initData, setInitdata] = useState(68750);
   const [userSettings, setUserSettings] = useState({});
   const [update, setUpdate] = useState(false);
   const [upSet, setUpSet] = useState(false);
@@ -117,7 +117,7 @@ const SearchResultScreen = (props) => {
     getWordInfo();
   }, [initData]);
 
-  console.log(wordInfo)
+  console.log('wordinfo : ',wordInfo)
 
   //load user setting
   async function fetchUserSettings() {
@@ -185,14 +185,13 @@ const SearchResultScreen = (props) => {
                 <View
                   style={{
                     backgroundColor: '#C32BAD',
+                    marginRight: 8,
+                    left: 20,
+                    justifyContent: 'center',
                     height: 22,
-                    width: '20%',
+                    width: '30%',
                     alignItems: 'center',
                     borderRadius: 10,
-                    marginRight: 8,
-                    left: 24,
-
-                    justifyContent: 'center',
                   }}>
                   <Text
                     style={{
@@ -202,7 +201,7 @@ const SearchResultScreen = (props) => {
                     }}>{`${t('SentenceText')}`}</Text>
                 </View>
                 <Text
-                  style={{textAlign: 'center', fontSize: 13, marginLeft: 20}}>
+                  style={{ fontSize: 13, marginLeft: 20,width:Sizes.WINDOW_WIDTH*.6}}>
                   {data?.syntacticPattern}
                 </Text>
               </View>
@@ -236,7 +235,7 @@ const SearchResultScreen = (props) => {
                     color: Constants.appColors.GRAY,
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              {upSet && (
+              {upSet && wordInfo?.idiomsSenseSample && JSON.parse(wordInfo.idiomsSenseSample).length>0 && (
                 <View
                   style={{
                     marginLeft: 0,
@@ -331,11 +330,10 @@ const SearchResultScreen = (props) => {
                 flexDirection: 'row',
                 marginVertical: 2,
                 marginLeft: 6,
-                // alignItems: 'center',
               }}
               key={`${i + data?.en_lm}`}>
               <Text style={{fontSize: 17, textAlign: 'center'}}>
-                {data.sense_id}{' '}
+                {i+1}{'  '}
               </Text>
               <Text
                 style={{
@@ -374,7 +372,7 @@ const SearchResultScreen = (props) => {
                     
                   }}>{`${data?.en_def}`}</Text>
               </View>
-              {upSet && (
+              {upSet && wordInfo?.senseExample && JSON.parse(wordInfo.senseExample).length>0 &&(
                 <View
                   style={{
                     marginTop: 2,
@@ -406,8 +404,6 @@ const SearchResultScreen = (props) => {
     }
   };
 
-
-
   const callTrans = (sense_id,k,transaction,f) => {
    return transaction.map((data,i) => {
       if(data.sense_id==sense_id && k==i){
@@ -419,7 +415,6 @@ const SearchResultScreen = (props) => {
       }
    })
   }
-
 
   //render Sense Example from sense with transaction and romaja
   const renderSenseExampleData = (senseExample,transaction, sense_id) => {
@@ -483,13 +478,13 @@ const SearchResultScreen = (props) => {
       case 0:
         return;
       case 1:
-        Toast.show('            ⭐\nElementary Level', Toast.SHORT);
+        Toast.show('           ⭐\nAdvanced Level', Toast.SHORT);
         break;
       case 2:
-        Toast.show('         ⭐⭐\nElementary Level', Toast.SHORT);
+        Toast.show('           ⭐⭐\nIntermediate Level', Toast.SHORT);
         break;
       case 3:
-        Toast.show('       ⭐⭐⭐\nElementary Level', Toast.SHORT);
+        Toast.show('     ⭐⭐⭐\nBeginner Level', Toast.SHORT);
         break;
       default:
         break;
@@ -502,14 +497,14 @@ const SearchResultScreen = (props) => {
       return arr.map((data, i) => {
         if (type == 1) {
           return (
-            <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
+            <Text style={{fontSize: 13, fontWeight: '500'}}>{`${
               data && data?.writtenForm
             }`}{arr.length==i+1 ? '' : ', '}</Text>
           );
         } else if (type == 2) {
           if (data?.writtenForm != 'undefined') {
             return (
-              <Text style={{fontSize: 12, fontWeight: '400'}}>{`${
+              <Text style={{fontSize: 13, fontWeight: '500'}}>{`${
                 data && data?.writtenForm
               }`}{arr.length==i+1 ? '' : ', '}</Text>
             );
@@ -583,7 +578,7 @@ const SearchResultScreen = (props) => {
           onSoundPlay={() => {
             try {
               Tts.setDefaultLanguage('ko-KR');
-              Tts.speak(data?.lemma);
+              Tts.speak(wordInfo?.lemma);
             } catch (e) {
               //console.log(`cannot play the sound file`, e)
               Toast.show(`${t('NoAudioFileFoundText')}`, Toast.SHORT);
@@ -713,7 +708,6 @@ const SearchResultScreen = (props) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderRadius: 10,
-                    
                   }}>
                   <Text
                     style={{textAlign: 'center', color: 'white', fontSize: 12,}}>
@@ -723,8 +717,10 @@ const SearchResultScreen = (props) => {
                 <View
                   style={{
                     flexDirection: 'row',
-                    justifyContent: 'center',
                     alignItems: 'center',
+                    alignSelf:'center',
+                    width:Sizes.WINDOW_WIDTH*.6,
+                    flexWrap:'wrap'
                   }}>
                   {wordInfo?.wordForm && renderData(1, wordInfo.wordForm)}
                 </View>
@@ -756,8 +752,10 @@ const SearchResultScreen = (props) => {
                   <View
                     style={{
                       flexDirection: 'row',
-                      justifyContent: 'center',
                       alignItems: 'center',
+                      alignSelf:'center',
+                      width:Sizes.WINDOW_WIDTH*.6,
+                      flexWrap:'wrap',
                     }}>
                     {wordInfo?.relatedForm &&
                       renderData(2, wordInfo.relatedForm)}

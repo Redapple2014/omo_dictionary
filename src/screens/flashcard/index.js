@@ -32,8 +32,6 @@ import {NavigationEvents} from 'react-navigation';
 
 PouchDB.plugin(require('pouchdb-find'));
 
-//db instance with db_name
-var localDB = new PouchDB('flashcard');
 
 const FlashcardScreen = (props) => {
   const [myData, setData] = useState([]);
@@ -95,7 +93,6 @@ const FlashcardScreen = (props) => {
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
         var len = results.rows.length;
-        console.log('len : ' ,len);
         var temp = [];
         for (let i = 0; i < len; i++) {
           let row = results.rows.item(i);
@@ -103,21 +100,18 @@ const FlashcardScreen = (props) => {
           row.cards = row.cards.filter((item) => item.id != null);
           temp.push(row);
         }
-        //console.log('temp : ',temp)
-        setData(temp);
+        let x = temp.sort((a,b) =>(a.cat_order > b.cat_order) ? 1 : ((b.cat_order > a.cat_order) ? -1 : 0))
+        setData(x);
       });
     });
   }
 
   //dalete data function
   async function deleteData() {
-
-    console.log('seletced items : ',items)
     items.map((item) => {
       const query = `DELETE FROM categories WHERE id = '${item}'`;
       db.transaction((tx) => {
         tx.executeSql(query, [], (tx, results) => {
-          console.log(results)
         });
       });
     });
@@ -126,6 +120,23 @@ const FlashcardScreen = (props) => {
     setItems([]);
     fetchData();
     setEditMode(false)
+  }
+
+  const handelSave = () => {
+
+    const len = myData.length;
+    for (let i = 0; i < len; i++) {
+      const query = `UPDATE categories SET cat_order = ${i+1} WHERE id = ${myData[i].id}`
+      console.log('arrange : ', query)
+      db.transaction((tx) => {
+        tx.executeSql(query, [], (tx, results) => {
+        });
+      });
+    }
+    fetchData()
+    props.navigation.setParams({edit: !editMode});
+    setItems([]);
+    setEditMode(!editMode);
   }
 
   const initCat = async () => {
@@ -423,12 +434,7 @@ const FlashcardScreen = (props) => {
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {
-                    console.log('save press');
-                    props.navigation.setParams({edit: !editMode});
-                    setItems([]);
-                    setEditMode(!editMode);
-                  }}>
+                  onPress={handelSave}>
                   <MIcons
                     name="check"
                     size={23}

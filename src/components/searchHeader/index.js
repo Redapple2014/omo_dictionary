@@ -9,8 +9,6 @@ import {
 import Constants from '../../utills/Constants';
 import Icon from "react-native-vector-icons/Ionicons";
 import EIcons from "react-native-vector-icons/Entypo";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Sizes from '../../utills/Size';
 
 const SearchHeader = (props) => {
   return (
@@ -18,7 +16,7 @@ const SearchHeader = (props) => {
       {
         props.leftIcon ?
 
-          <View style={{ width: 100, left: -12, top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 100, left: -4 , top: 12, position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <TouchableOpacity onPress={props.onPressleftIcon}>
               <View style={{ flexDirection: 'row' }}>
                 <Icon name='chevron-back-sharp' size={23} color={Constants.appColors.WHITE} />
@@ -30,7 +28,7 @@ const SearchHeader = (props) => {
       }
       <Text style={styles.textStyle}>{props.title}</Text>
       { props.show && 
-        <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: props.showBookmark ? .40:.32 }}>
+        <View style={{ padding: 6, alignSelf: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', flex: props.showBookmark ? .45:.37 }}>
           {props.showBookmark && <TouchableOpacity onPress={props.bookMarkPress}>
             <EIcons name="plus" size={23} color={Constants.appColors.WHITE} />
           </TouchableOpacity>}

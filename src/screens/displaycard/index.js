@@ -41,9 +41,9 @@ const DisplayCardScreen = (props) => {
   const [newSet, setNewSet] = useState([]);
   const [isOverlayActive, setOverlayActive] = useState(false);
   const [currentCategory, setCurrentCategory] = useState([]);
-  const [selectedCategory,setSelectedCategoty] = useState()
+  const [selectedCategory, setSelectedCategoty] = useState()
   const [allCategories, setAllCategoies] = useState([]);
-  const [displayCategory,setDisplayCategory] = useState([]);
+  const [displayCategory, setDisplayCategory] = useState([]);
   const [category, setCategory] = useState('');
 
   const [myCardData, setMyCardData] = useState();
@@ -109,7 +109,7 @@ const DisplayCardScreen = (props) => {
 
 
   //get all category details
-  async function getAllcategorys(){
+  async function getAllcategorys() {
     const query = `SELECT * FROM categories order by cat_order`;
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
@@ -119,7 +119,7 @@ const DisplayCardScreen = (props) => {
           let row = results.rows.item(i);
           temp.push(row);
         }
-        console.log('all ategories : ',temp)
+        console.log('all ategories : ', temp)
         setAllCategoies(temp)
         // let x = temp.filter((item,index)=>item.name!=currentCategory.name)
         // console.log('x : ',x)
@@ -143,15 +143,48 @@ const DisplayCardScreen = (props) => {
   //Function responceble to drag items
   const moveHandel = () => {
     if (category) {
-      if(currentCategory.name!=category){
+      if (currentCategory.name != category) {
+        let arr = []
+        newSet.forEach((item, index) => {
+          arr.push(item.id)
+        })
+        const query = `UPDATE cards SET category_id = ${selectedCategory.id} WHERE id In (${arr})`
+        console.log('Move : ', query)
 
-      }else{
+        db.transaction((tx) => {
+          tx.executeSql(query, [], (tx, results) => {
+            var len = results.rows.raw(0)[0];
+            console.log('len item : ', len);
+            setEditMode(false)
+            setOverlayActive(!isOverlayActive)
+            fetchData()
+          });
+        });
+      } else {
         Toast.show(`Cann't move to same category`, Toast.SHORT);
       }
     } else {
       Toast.show(`${t('SelectCategoryToMove')}`, Toast.SHORT);
     }
   };
+
+
+
+  const handelSave = () => {
+      const len = myCardData.length;
+      for (let i = 0; i < len; i++) {
+        const query = `UPDATE cards SET card_order = ${i+1} WHERE id = ${myCardData[i].id}`
+        console.log('Move : ', query)
+        db.transaction((tx) => {
+          tx.executeSql(query, [], (tx, results) => {
+          });
+        });
+      }
+      fetchData()
+      props.navigation.setParams({ edit: !editMode });
+      setItems([]);
+      setEditMode(!editMode);
+  }
 
   const renderItem = ({ item, index, move, moveEnd, isActive }) => {
     return (
@@ -217,7 +250,7 @@ const DisplayCardScreen = (props) => {
                 zIndex: 3,
                 right: editMode ? 42 : 16,
                 top: 8,
-              
+
               }}>
               <TouchableOpacity
                 onPress={() => {
@@ -288,24 +321,7 @@ const DisplayCardScreen = (props) => {
 
   //fetch falshcard data using sorting by category name
   function fetchData() {
-    const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, 
- JSON_GROUP_ARRAY(json_object('id', cards.id, 
-                               'word_id', cards.word_id,
-                               'speech', cards.speech,
-                               'hanja', cards.hanja,
-                               'englishHeadWord', cards.englishHeadWord,
-                               'definition', cards.definition,
-                               'examples', cards.examples,
-                               'koreanHeadWord',cards.koreanHeadWord,
-                               'card_order', cards.card_order)) 
- AS allCards
-FROM categories
-LEFT JOIN cards on categories.id = cards.category_id
-WHERE  categories.id = ${id}
-GROUP BY categories.id
-order by categories.cat_order`;
-
-
+    const query = `SELECT categories.id, categories.name, categories.type, categories.cat_order, JSON_GROUP_ARRAY(json_object('id', cards.id, 'word_id', cards.word_id,'speech', cards.speech,'hanja', cards.hanja,'englishHeadWord', cards.englishHeadWord,'definition', cards.definition,'examples', cards.examples,'koreanHeadWord',cards.koreanHeadWord,'card_order', cards.card_order)) AS allCards FROM categories LEFT JOIN cards on categories.id = cards.category_id WHERE  categories.id = ${id} GROUP BY categories.id order by categories.cat_order`;
     console.log(query)
     db.transaction((tx) => {
       tx.executeSql(query, [], (tx, results) => {
@@ -316,6 +332,7 @@ order by categories.cat_order`;
           let row = results.rows.item(i);
           row.cards = JSON.parse(row.allCards);
           row.cards = row.cards.filter((item) => item.id != null);
+          row.cards = row.cards.sort((a,b) => (a.card_order > b.card_order) ? 1 : ((b.card_order > a.card_order) ? -1 : 0))
           temp.push(row);
         }
         console.log('temp *******', ...temp)
@@ -327,8 +344,8 @@ order by categories.cat_order`;
   }
 
   useEffect(() => {
-       fetchCatData();
-       getAllcategorys()
+    fetchCatData();
+    getAllcategorys()
 
   }, []);
 
@@ -468,12 +485,7 @@ order by categories.cat_order`;
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {
-                    console.log('save press');
-                    props.navigation.setParams({ edit: !editMode });
-                    setItems([]);
-                    setEditMode(!editMode);
-                  }}>
+                  onPress={handelSave}>
                   <MIcons
                     name="check"
                     size={23}
@@ -503,7 +515,7 @@ order by categories.cat_order`;
                   'SelectCategoryText',
                 )}`}</Text>
                 <TouchableOpacity
-                  onPress={() => {setOverlayActive(!isOverlayActive);setSelectedCategoty({});setCategory('')}}>
+                  onPress={() => { setOverlayActive(!isOverlayActive); setSelectedCategoty({}); setCategory('') }}>
                   <Icon
                     name="closecircle"
                     size={24}

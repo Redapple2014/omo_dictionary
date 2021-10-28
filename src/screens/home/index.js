@@ -3,7 +3,6 @@ import {
   View,
   Platform,
   Image,
-  StatusBar,
   Keyboard,
   FlatList,
   Text,
@@ -12,7 +11,6 @@ import {
   StyleSheet,
   BackHandler,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
 import Constants from '../../utills/Constants';
 import Sizes from '../../utills/Size';
 import CustomSearchBar from '../../components/searchbar/CustomSearchBar';
@@ -25,14 +23,14 @@ import {useTranslation} from 'react-i18next';
 import {NAVIGATION_SEARCH_RESULT_SCREEN_PATH} from '../../navigations/Routes';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
-import {NavigationState} from 'react-navigation';
 import {
   defaultSettings,
   defaultFlashcardTestSettings,
 } from '../../utills/userdata';
+import {NavigationEvents} from 'react-navigation';
 import {partofspeech, vocabularyLevel} from '../../utills/userdata';
 import * as Animatable from 'react-native-animatable';
-
+var hangulRomanization = require('hangul-romanization');
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite);
 PouchDB.plugin(require('pouchdb-find')).plugin(SQLiteAdapter);
 
@@ -57,8 +55,8 @@ const HomeScreen = (props) => {
   const [lastPositin, setLastPositin] = useState(Sizes.WINDOW_HEIGHT * 0.02);
   const [searchFocused, setSearchFocused] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
-
-  // console.log(expand)
+  const [userSettings, setUserSettings] = useState({});
+  const [upSet, setUpSet] = useState(false);
   async function loadFile(index) {
     if (index == 1) {
       userDB
@@ -110,12 +108,28 @@ const HomeScreen = (props) => {
     return false;
   }
 
+    //load user setting
+   function fetchUserSettings() {
+      userDB.allDocs(
+        {
+          include_docs: true,
+          attachments: true,
+        },
+        function (err, response) {
+          if (err) {
+            setUserSettings({});
+            return console.log(err);
+          }
+  
+          // console.log("user settings data ", JSON.stringify(response.rows[0].doc.Dictionary))
+          setUserSettings(response.rows[0].doc.Dictionary);
+          setUpSet(true);
+          return response.rows[0];
+        },
+      );
+    }
+
   function getSearchBarPostion() {
-    // return isKeyboardVisible
-    //   ?
-    //   :
-    //   ?
-    //   : ;
 
     if (isKeyboardVisible) {
       return Sizes.WINDOW_HEIGHT * 0.02;
@@ -223,9 +237,6 @@ const HomeScreen = (props) => {
   }
 
   const onClear = () => {
-    console.log('here');
-    // onSearchSubmit();
-    // setExpand(false)
     setSearchText('');
   };
 
@@ -436,9 +447,6 @@ const HomeScreen = (props) => {
       'keyboardDidShow',
       () => {
         setKeyboardVisible(true);
-        // setTimeout(() => {
-        //   moveUp();
-        // }, 0);
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -459,13 +467,13 @@ const HomeScreen = (props) => {
       case 0:
         return;
       case 1:
-        Toast.show('            ⭐\nElementary Level', Toast.SHORT);
+        Toast.show('           ⭐\nAdvanced Level', Toast.SHORT);
         break;
       case 2:
-        Toast.show('         ⭐⭐\nElementary Level', Toast.SHORT);
+        Toast.show('           ⭐⭐\nIntermediate Level', Toast.SHORT);
         break;
       case 3:
-        Toast.show('       ⭐⭐⭐\nElementary Level', Toast.SHORT);
+        Toast.show('     ⭐⭐⭐\nBeginner Level', Toast.SHORT);
         break;
       default:
         break;
@@ -642,6 +650,12 @@ const HomeScreen = (props) => {
                   {item?.origin && `(${item?.origin})`}
                 </Text>
               </View>
+              {userSettings.displayRomaja && item?.lemma && (
+              <Text
+                style={{ color: Constants.appColors.GRAY}}>
+                {hangulRomanization.convert(item?.lemma)}
+              </Text>
+            )}
               {(item?.partofspeech ?? item?.partOfSpeech) && (
                 <Text
                   style={[
@@ -782,6 +796,12 @@ const HomeScreen = (props) => {
                     {item?.origin && `(${item?.origin})`}
                   </Text>
                 </View>
+                {userSettings.displayRomaja && item?.lemma && (
+              <Text
+                style={{ color: Constants.appColors.GRAY}}>
+                {hangulRomanization.convert(item?.lemma)}
+              </Text>
+            )}
                 {item?.partofspeech || item?.partOfSpeech ? (
                   <Text
                     style={[
@@ -825,6 +845,7 @@ const HomeScreen = (props) => {
 
   return (
     <View style={{flex: 1}}>
+      <NavigationEvents onDidFocus={(payload) => fetchUserSettings()} />
       <View
         style={{
           backgroundColor: Constants.appColors.PRIMARY_COLOR,
@@ -1031,14 +1052,13 @@ const HomeScreen = (props) => {
           ) : searchedData.length == 0 && searchText.length > 0 ? (
             <View
               style={{
-                width: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: Sizes.WINDOW_HEIGHT * 0.2,
               }}>
               <Image
-                source={require('../../assets/logo/search-icon.png')}
-                style={{width: 50, height: 50}}
+                source={require('../../assets/logo/no-results.png')}
+                style={{width: 50, height: 50,resizeMode:'contain'}}
               />
               <Text style={{paddingTop: 4}}>{`${t('NodataFoundText')}`}</Text>
             </View>
